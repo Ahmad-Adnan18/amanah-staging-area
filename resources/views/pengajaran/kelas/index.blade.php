@@ -3,7 +3,6 @@
         <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div class="space-y-8">
 
-                <!-- Header Halaman -->
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                         <div>
@@ -18,6 +17,40 @@
                         @endcan
                     </div>
                 </div>
+
+                @if (session('success') || session('error'))
+                    @php
+                        $type = session('success') ? 'success' : 'error';
+                        $message = session('success') ?? session('error');
+                        $typeClasses = [
+                            'success' => 'bg-green-100 border-green-400 text-green-700',
+                            'error' => 'bg-red-100 border-red-400 text-red-700',
+                        ];
+                        $iconPaths = [
+                            'success' => 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+                            'error' => 'M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z',
+                        ];
+                        $hoverClasses = [
+                            'success' => 'hover:bg-green-200',
+                            'error' => 'hover:bg-red-200',
+                        ];
+                    @endphp
+                    <div id="notification-panel" class="relative rounded-lg border-l-4 p-4 {{ $typeClasses[$type] }}" role="alert">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $iconPaths[$type] }}" /></svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="font-bold">{{ $type === 'success' ? 'Berhasil!' : 'Terjadi Kesalahan!' }}</p>
+                                <p class="text-sm">{{ $message }}</p>
+                            </div>
+                            <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 {{ $hoverClasses[$type] }} inline-flex h-8 w-8" onclick="document.getElementById('notification-panel').style.display='none'" aria-label="Close">
+                                <span class="sr-only">Dismiss</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Form Pencarian & Aksi Massal -->
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4">
@@ -73,22 +106,13 @@
                     @endif
                 @endif
 
-                <!-- Notifikasi Sukses -->
-                @if (session('success'))
-                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" x-transition class="bg-green-100 border border-green-200 text-green-800 px-4 py-3 rounded-2xl shadow-sm flex justify-between items-center" role="alert">
-                    <p class="font-medium text-sm">{{ session('success') }}</p>
-                    <button @click="show = false" class="text-green-600 hover:text-green-800 transition-colors">&times;</button>
-                </div>
-                @endif
-
-                <!-- Tabel Kelas -->
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
                     <div class="hidden md:block">
                         <table class="min-w-full divide-y divide-slate-200">
                             <thead class="bg-slate-50">
                                 <tr>
                                     <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase">Nama Kelas</th>
-                                    <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase">Jumlah Santri</th>
+                                    <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase">Ruangan Induk</th> <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase">Status Jadwal</th> <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase">Jumlah Santri</th>
                                     <th class="relative px-6 py-3.5"><span class="sr-only">Aksi</span></th>
                                 </tr>
                             </thead>
@@ -96,6 +120,14 @@
                                 @forelse ($kelas_list as $kelas)
                                 <tr class="hover:bg-slate-50">
                                     <td class="px-6 py-4 font-medium text-slate-900">{{ $kelas->nama_kelas }}</td>
+                                    <td class="px-6 py-4 text-slate-500">{{ $kelas->room->name ?? 'N/A' }}</td>
+                                    <td class="px-6 py-4">
+                                        @if($kelas->is_active_for_scheduling)
+                                            <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">Aktif</span>
+                                        @else
+                                            <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">Nonaktif</span>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4 text-slate-500">{{ $kelas->santris_count }} santri</td>
                                     <td class="px-6 py-4 text-right space-x-4">
                                         <a href="{{ route('pengajaran.santris.index', $kelas) }}" class="font-medium text-red-600 hover:text-red-800">Lihat Santri</a>
@@ -111,7 +143,7 @@
                                     </td>
                                 </tr>
                                 @empty
-                                <tr><td colspan="3" class="px-6 py-12 text-center text-slate-500">Belum ada data kelas.</td></tr>
+                                <tr><td colspan="5" class="px-6 py-12 text-center text-slate-500">Belum ada data kelas.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -128,6 +160,16 @@
                                 <a href="{{ route('pengajaran.kelas.edit', $kelas) }}" class="text-slate-500 hover:text-slate-800"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg></a>
                                 @endcan
                             </div>
+                            <div class="mt-2 text-sm space-y-1">
+                                <p class="text-slate-600"><strong>Ruangan:</strong> {{ $kelas->room->name ?? 'N/A' }}</p>
+                                <p class="text-slate-600 flex items-center gap-2"><strong>Status Jadwal:</strong> 
+                                    @if($kelas->is_active_for_scheduling)
+                                        <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">Aktif</span>
+                                    @else
+                                        <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800">Nonaktif</span>
+                                    @endif
+                                </p>
+                            </div>
                             <div class="mt-4 pt-4 border-t border-slate-200 flex justify-between items-center">
                                 <a href="{{ route('pengajaran.santris.index', $kelas) }}" class="text-sm font-medium text-red-600 hover:text-red-800">Lihat Daftar Santri &rarr;</a>
                                 @can('delete', $kelas)
@@ -142,6 +184,10 @@
                         <div class="py-12 text-center text-slate-500">Belum ada data kelas.</div>
                         @endforelse
                     </div>
+                </div>
+
+                <div class="mt-8">
+                    {{ $kelas_list->links() }}
                 </div>
             </div>
         </div>

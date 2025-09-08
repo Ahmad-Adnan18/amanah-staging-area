@@ -161,6 +161,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [SantriManagementController::class, 'showImportForm'])->name('import.show');
         Route::post('/import', [SantriManagementController::class, 'import'])->name('import.store');
     });
+    Route::get('/jadwal/print/{type}/{id}', [PublicScheduleController::class, 'print'])->name('jadwal.public.print');
 });
 
 require __DIR__ . '/auth.php';

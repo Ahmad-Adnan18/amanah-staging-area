@@ -1,19 +1,27 @@
 <x-app-layout>
+    {{-- [TAMBAHAN] Link ke CSS untuk Tom-Select, agar pilihan lebih modern --}}
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+
     <div class="bg-slate-50 min-h-screen">
-        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
 
             <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
                 <h1 class="text-3xl font-bold tracking-tight text-gray-900">Manajemen Kurikulum Terpadu</h1>
                 <p class="mt-1 text-slate-600">Atur kurikulum per kelas atau kelola template untuk diterapkan ke banyak kelas.</p>
             </div>
 
-            @if (session('success'))
-                <div class="mt-6 bg-green-100 border border-green-200 text-green-800 px-4 py-3 rounded-2xl shadow-sm">
-                    {{ session('success') }}
+            @if (session('success') || session('error'))
+                @php
+                    $type = session('success') ? 'success' : 'error';
+                    $message = session('success') ?? session('error');
+                @endphp
+                <div class="relative rounded-lg border-l-4 p-4 {{ $type === 'success' ? 'bg-green-100 border-green-400 text-green-700' : 'bg-red-100 border-red-400 text-red-700' }}" role="alert">
+                    <p class="font-bold">{{ $type === 'success' ? 'Berhasil!' : 'Terjadi Kesalahan!' }}</p>
+                    <p class="text-sm">{{ $message }}</p>
                 </div>
             @endif
 
-            <div x-data="{ activeTab: 'per_kelas' }" class="mt-8">
+            <div x-data="{ activeTab: 'per_kelas' }">
                 <div class="border-b border-gray-200">
                     <nav class="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
                         <button @click="activeTab = 'per_kelas'" :class="{ 'border-red-500 text-red-600': activeTab === 'per_kelas', 'border-transparent text-gray-500 hover:text-gray-700': activeTab !== 'per_kelas' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Atur Kurikulum per Kelas</button>
@@ -96,10 +104,8 @@
                         </div>
                     </div>
 
-                    <!-- Tab untuk Manajemen Template -->
                     <div x-show="activeTab === 'template'" x-cloak>
                          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            <!-- Kolom Terapkan Template -->
                             <div>
                                 <form action="{{ route('akademik.kurikulum.apply') }}" method="POST">
                                     @csrf
@@ -117,21 +123,17 @@
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <label class="block text-sm font-medium text-gray-700">2. Pilih Kelas</label>
-                                                    <div class="mt-2 border border-slate-200 rounded-xl p-4 max-h-48 overflow-y-auto grid grid-cols-2 gap-4">
+                                                    <label for="kelas-ids-selector" class="block text-sm font-medium text-gray-700">2. Pilih Satu atau Lebih Kelas</label>
+                                                    <select name="kelas_ids[]" id="kelas-ids-selector" multiple placeholder="Cari dan pilih kelas..." autocomplete="off" class="mt-1">
                                                         @foreach ($kelasList as $kelas)
-                                                        <label class="flex items-center">
-                                                            <input type="checkbox" name="kelas_ids[]" value="{{ $kelas->id }}" class="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500">
-                                                            <div class="ml-3">
-                                                                <span class="text-sm text-gray-700">{{ $kelas->nama_kelas }}</span>
-                                                                {{-- [PERBAIKAN] Menggunakan nullsafe operator untuk keamanan --}}
-                                                                @if($kelas->kurikulumTemplate)
-                                                                    <span class="block text-xs text-green-600">({{ $kelas->kurikulumTemplate?->nama_template }})</span>
-                                                                @endif
-                                                            </div>
-                                                        </label>
+                                                        <option value="{{ $kelas->id }}">
+                                                            {{ $kelas->nama_kelas }}
+                                                            @if($kelas->kurikulumTemplate)
+                                                                (Template: {{ $kelas->kurikulumTemplate->nama_template }})
+                                                            @endif
+                                                        </option>
                                                         @endforeach
-                                                    </div>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -143,7 +145,7 @@
                                         </div>
                                     </div>
                                 </form>
-                            </div>
+                            </div>  
                             <!-- Kolom Manajemen Template -->
                             <div>
                                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
@@ -182,5 +184,14 @@
             </div>
         </div>
     </div>
+    
+    {{-- [TAMBAHAN] Script untuk menjalankan Tom-Select --}}
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            new TomSelect('#kelas-ids-selector', {
+                plugins: ['remove_button'],
+            });
+        });
+    </script>
 </x-app-layout>
-

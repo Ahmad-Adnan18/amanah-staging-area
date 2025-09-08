@@ -49,7 +49,7 @@
                                                                 <div class="font-semibold text-slate-900">{{ $schedule->subject->nama_pelajaran ?? 'N/A' }}</div>
                                                                 <div class="mt-1">{{ $schedule->teacher->name ?? 'N/A' }}</div>
                                                             </div>
-                                                           {{-- <div class="text-slate-400 italic mt-2 text-right">{{ $schedule->room->name ?? 'N/A' }}</div>--}}
+                                                           <div class="text-slate-400 italic mt-2 text-right">{{ $schedule->room->name ?? 'N/A' }}</div>
                                                         </div>
                                                     @else
                                                         {{-- Slot Kosong --}}
