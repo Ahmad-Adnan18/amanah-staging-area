@@ -18,34 +18,42 @@
 </head>
 <body x-data="{ sidebarOpen: false }" class="font-sans antialiased">
     <div class="min-h-screen bg-slate-50">
+        {{-- Memuat file navigasi hibrida yang baru --}}
         @include('layouts.navigation')
 
+        {{-- Konten utama akan bergeser ke kanan di desktop untuk memberi ruang pada sidebar --}}
         <div class="transition-all duration-300 ease-in-out md:ml-64">
+            
+            <!-- 
+            ======================================================================
+            PERUBAHAN: Header Mobile Lama Dihapus
+            ======================================================================
+            Header ini tidak lagi diperlukan karena fungsinya sudah digantikan 
+            oleh Bottom Navigation Bar. Ini membuat UI lebih bersih di mobile.
+            ======================================================================
+            -->
 
-            <header class="sticky top-0 z-10 flex items-center justify-between bg-white/80 p-4 shadow-md backdrop-blur-sm md:hidden">
-                <a href="{{ route('dashboard') }}">
-                    <img src="{{ asset('images/logo-kunka-merah.png') }}" alt="Logo Pondok" class="block h-9 w-auto">
-                </a>
-
-                <button @click.stop="sidebarOpen = !sidebarOpen" class="text-slate-500 focus:outline-none">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
-            </header>
-
+            <!-- Page Content -->
             <main>
                 {{ $slot }}
+                
+                <!-- 
+                ======================================================================
+                PENTING: Spacer untuk Konten (dari Canvas Anda)
+                ======================================================================
+                Div ini memastikan konten paling bawah tidak tertutup oleh 
+                Bottom Navigation Bar di tampilan mobile.
+                ======================================================================
+                -->
+                <div class="h-16 md:hidden"></div>
             </main>
         </div>
     </div>
     @stack('scripts')
     
-    {{-- [PERBAIKAN] Memuat skrip Livewire TERLEBIH DAHULU --}}
-    @livewireScripts
     
-    {{-- Baru kemudian memuat skrip utama aplikasi dan plugin Alpine --}}
     @vite(['resources/js/app.js'])
+
     <script src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-    
 </body>
 </html>
-

@@ -26,10 +26,6 @@
                             <h1 class="text-3xl font-bold tracking-tight text-gray-900">{{ $greeting }}, {{ Auth::user()->name }}!</h1>
                             <p class="mt-1 text-slate-600">Ini ringkasan aktivitas pondok untuk hari ini, {{ $today }}.</p>
                         </div>
-                        <a href="{{ route('admin.santri-management.index') }}" class="flex-shrink-0 w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
-                            <span>Buat Izin Baru</span>
-                        </a>
                     </div>
                 </div>
                 
