@@ -3,23 +3,42 @@
 namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Http\Controllers\Controller;
-use App\Models\TeacherUnavailability;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use App\Models\TeacherUnavailability; // Pastikan model ini di-import
 
 class TeacherAvailabilityController extends Controller
 {
-    public function index(): View
+    /**
+     * [PERBAIKAN UTAMA] Method index diubah total untuk mendukung:
+     * 1. Pencarian (Search)
+     * 2. Paginasi (data dibagi per halaman)
+     * 3. Penghitungan efisien dengan withCount()
+     */
+    public function index(Request $request): View
     {
-        $teachers = User::where('role', '!=', 'wali_santri')->orderBy('name')->get();
+        // Memulai query untuk User yang bukan wali santri
+        $query = User::query()->where('role', '!=', 'wali_santri');
 
-        // [PERBAIKAN] Ambil semua ID guru yang sudah memiliki aturan.
-        // Ini cara yang efisien untuk memeriksa status di halaman view.
-        $unavailabilities = TeacherUnavailability::all()->pluck('teacher_id')->unique();
+        // Jika ada input pencarian, filter berdasarkan nama
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
 
-        return view('admin.master-data.teacher-availability.index', compact('teachers', 'unavailabilities'));
+        // Ini adalah baris kunci:
+        // - withCount('unavailabilities'): Secara efisien menghitung jumlah relasi 'unavailabilities'
+        //   dan menyimpannya dalam properti baru bernama 'unavailabilities_count'.
+        // - orderBy('name'): Mengurutkan berdasarkan nama.
+        // - paginate(15): Membagi hasil menjadi halaman-halaman (15 data per halaman).
+        $teachers = $query->withCount('unavailabilities')
+                         ->orderBy('name')
+                         ->paginate(15)
+                         ->withQueryString(); // Agar filter pencarian tidak hilang saat pindah halaman
+
+        // Kirim data 'teachers' yang sudah berisi 'unavailabilities_count' ke view
+        return view('admin.master-data.teacher-availability.index', compact('teachers'));
     }
 
     public function edit(User $teacher): View
@@ -63,4 +82,3 @@ class TeacherAvailabilityController extends Controller
             ->with('success', 'Ketersediaan untuk ' . $teacher->name . ' berhasil diperbarui.');
     }
 }
-

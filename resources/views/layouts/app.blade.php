@@ -14,7 +14,7 @@
 
     @vite(['resources/css/app.css'])
     
-    @livewireStyles
+    
 </head>
 <body x-data="{ sidebarOpen: false }" class="font-sans antialiased">
     <div class="min-h-screen bg-slate-50">
@@ -23,28 +23,11 @@
 
         {{-- Konten utama akan bergeser ke kanan di desktop untuk memberi ruang pada sidebar --}}
         <div class="transition-all duration-300 ease-in-out md:ml-64">
-            
-            <!-- 
-            ======================================================================
-            PERUBAHAN: Header Mobile Lama Dihapus
-            ======================================================================
-            Header ini tidak lagi diperlukan karena fungsinya sudah digantikan 
-            oleh Bottom Navigation Bar. Ini membuat UI lebih bersih di mobile.
-            ======================================================================
-            -->
-
             <!-- Page Content -->
             <main>
                 {{ $slot }}
                 
-                <!-- 
-                ======================================================================
-                PENTING: Spacer untuk Konten (dari Canvas Anda)
-                ======================================================================
-                Div ini memastikan konten paling bawah tidak tertutup oleh 
-                Bottom Navigation Bar di tampilan mobile.
-                ======================================================================
-                -->
+                <!-- Spacer untuk Konten agar tidak tertutup Bottom Nav Bar -->
                 <div class="h-16 md:hidden"></div>
             </main>
         </div>
@@ -54,6 +37,8 @@
     
     @vite(['resources/js/app.js'])
 
+    {{-- Penambahan 'defer' membuat script dieksekusi setelah HTML selesai di-parse --}}
     <script src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>
+

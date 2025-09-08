@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -9,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -55,12 +56,13 @@ class User extends Authenticatable
         return $this->hasOne(Santri::class, 'wali_id');
     }
 
+    /**
+     * Relasi ke JabatanUser: Setiap user bisa memiliki banyak jabatan.
+     */
     public function jabatans(): HasMany
     {
         return $this->hasMany(JabatanUser::class);
     }
-
-    // --- FUNGSI BARU UNTUK PENJADWALAN ---
 
     /**
      * Scope a query to only include users that are teachers.
@@ -75,15 +77,17 @@ class User extends Authenticatable
      */
     public function schedules(): HasMany
     {
-        return $this->hasMany(Schedule::class);
+        return $this->hasMany(Schedule::class, 'teacher_id', 'id');
     }
 
     /**
      * Get the unavailability records for the teacher.
+     * Nama relasi ini sekarang digunakan di Controller.
+     * [PENYESUAIAN] Menambahkan 'id' sebagai local key untuk memastikan relasi eksplisit.
      */
     public function unavailabilities(): HasMany
     {
-        return $this->hasMany(TeacherUnavailability::class);
+        return $this->hasMany(TeacherUnavailability::class, 'teacher_id', 'id');
     }
 }
 
