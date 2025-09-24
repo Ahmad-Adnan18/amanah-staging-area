@@ -14,10 +14,18 @@ class Kelas extends Model
 
     protected $table = 'kelas';
 
-    // [PERUBAHAN] Tambahkan 'room_id' agar bisa diisi secara massal
-    protected $fillable = ['nama_kelas', 'kurikulum_template_id', 'room_id'];
+    /**
+     * [PENYESUAIAN]
+     * Menambahkan semua kolom yang bisa diisi dari form dan controller.
+     */
+    protected $fillable = [
+        'nama_kelas',
+        'tingkatan',
+        'room_id',
+        'is_active_for_scheduling',
+        'kurikulum_template_id', 
+    ];
 
-    // [RELASI BARU] Mendefinisikan hubungan ke model Room
     public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class, 'room_id');
@@ -33,13 +41,13 @@ class Kelas extends Model
         return $this->hasMany(JabatanUser::class);
     }
     
+    /**
+     * Relasi ke mata pelajaran yang diajarkan di kelas ini (alokasi final).
+     */
     public function mataPelajarans(): BelongsToMany
     {
-        return $this->belongsToMany(MataPelajaran::class, 'kelas_mata_pelajaran')->withPivot('user_id');
+        return $this->belongsToMany(MataPelajaran::class, 'kelas_mata_pelajaran')->withPivot('teacher_id');
     }
 
-    public function kurikulumTemplate(): BelongsTo
-    {
-        return $this->belongsTo(KurikulumTemplate::class);
-    }
 }
+

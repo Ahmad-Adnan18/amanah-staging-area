@@ -10,14 +10,24 @@ class TeacherUnavailability extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'day_of_week', 'time_slot'];
+    /**
+     * [PENYESUAIAN] Mengganti 'user_id' menjadi 'teacher_id' agar sesuai dengan
+     * skema database yang baru dan perubahan sistem.
+     */
+    protected $fillable = [
+        'teacher_id', 
+        'day_of_week', 
+        'time_slot'
+    ];
 
     /**
-     * Get the user (teacher) that owns the unavailability.
+     * Mendefinisikan hubungan ke model Teacher.
      */
-    public function user(): BelongsTo
+    public function teacher(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        // Relasi ini sekarang akan mencari foreign key 'teacher_id' secara otomatis,
+        // yang sudah cocok dengan properti $fillable di atas.
+        return $this->belongsTo(Teacher::class);
     }
 }
 

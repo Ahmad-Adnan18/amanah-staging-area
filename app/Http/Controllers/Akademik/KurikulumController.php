@@ -8,15 +8,29 @@ use App\Models\KurikulumTemplate;
 use App\Models\MataPelajaran;
 use Illuminate\Http\Request;
 
+/**
+ * KurikulumController sekarang hanya bertanggung jawab untuk:
+ * 1. Mengelola template kurikulum (paket mata pelajaran).
+ * 2. Menerapkan template tersebut ke satu atau lebih kelas.
+ *
+ * Logika untuk alokasi guru spesifik per mata pelajaran telah dipindahkan
+ * sepenuhnya ke KelasController.
+ */
 class KurikulumController extends Controller
 {
+    /**
+     * Menampilkan halaman utama manajemen kurikulum.
+     */
     public function index()
     {
         $templates = KurikulumTemplate::withCount('mataPelajarans')->orderBy('nama_template')->get();
-        $kelasList = Kelas::with('kurikulumTemplate')->orderBy('nama_kelas')->get();
+        $kelasList = Kelas::orderBy('nama_kelas')->get();
         return view('akademik.kurikulum.index', compact('templates', 'kelasList'));
     }
 
+    /**
+     * Menyimpan template kurikulum baru.
+     */
     public function storeTemplate(Request $request)
     {
         $request->validate(['nama_template' => 'required|string|max:255|unique:kurikulum_templates']);
@@ -24,22 +38,38 @@ class KurikulumController extends Controller
         return back()->with('success', 'Template kurikulum berhasil dibuat.');
     }
 
+    /**
+     * [PENYESUAIAN LENGKAP]
+     * Menyiapkan semua data yang dibutuhkan untuk view edit-template yang interaktif.
+     */
     public function editTemplate(KurikulumTemplate $template)
-{
-    $allMataPelajaran = MataPelajaran::orderBy('tingkatan')
-                          ->orderBy('nama_pelajaran')
-                          ->get();
-    
-    // [PERBAIKAN] Convert Collection ke array
-    $assignedMapelIds = $template->mataPelajarans->pluck('id')->toArray();
-    
-    return view('akademik.kurikulum.edit-template', compact(
-        'template', 
-        'allMataPelajaran', 
-        'assignedMapelIds'
-    ));
-}
+    {
+        $allMataPelajaran = MataPelajaran::orderBy('tingkatan')
+                                      ->orderBy('nama_pelajaran')
+                                      ->get();
+        
+        // Mengambil daftar tingkatan unik yang ada di database untuk filter dinamis
+        $tingkatans = $allMataPelajaran->pluck('tingkatan')->unique()->sort();
 
+        // Mengelompokkan mapel berdasarkan tingkatan untuk ditampilkan di view
+        $groupedMapel = $allMataPelajaran->groupBy('tingkatan');
+
+        // Mengambil ID mapel yang sudah terpasang di template ini
+        $assignedMapelIds = $template->mataPelajarans->pluck('id')->toArray();
+        
+        // Mengirim semua data yang dibutuhkan oleh view
+        return view('akademik.kurikulum.edit-template', compact(
+            'template', 
+            'allMataPelajaran', 
+            'assignedMapelIds',
+            'groupedMapel', // Data untuk Alpine.js
+            'tingkatans'    // Data untuk filter dinamis
+        ));
+    }
+
+    /**
+     * Mengupdate daftar mata pelajaran dalam sebuah template.
+     */
     public function updateTemplate(Request $request, KurikulumTemplate $template)
     {
         $request->validate(['mata_pelajaran_ids' => 'nullable|array']);
@@ -47,12 +77,18 @@ class KurikulumController extends Controller
         return redirect()->route('akademik.kurikulum.index')->with('success', 'Template kurikulum berhasil diperbarui.');
     }
 
+    /**
+     * Menghapus template kurikulum.
+     */
     public function destroyTemplate(KurikulumTemplate $template)
     {
         $template->delete();
         return back()->with('success', 'Template kurikulum berhasil dihapus.');
     }
 
+    /**
+     * Menerapkan sebuah template (paket mata pelajaran) ke kelas yang dipilih.
+     */
     public function applyTemplate(Request $request)
     {
         $request->validate([
@@ -62,64 +98,16 @@ class KurikulumController extends Controller
         ]);
 
         $template = KurikulumTemplate::findOrFail($request->template_id);
+        $mapelIds = $template->mataPelajarans->pluck('id');
 
         foreach ($request->kelas_ids as $kelasId) {
             $kelas = Kelas::find($kelasId);
             $kelas->kurikulumTemplate()->associate($template);
             $kelas->save();
-            $kelas->mataPelajarans()->sync($template->mataPelajarans->pluck('id'));
+            $kelas->mataPelajarans()->syncWithoutDetaching($mapelIds);
         }
 
-        return back()->with('success', 'Template kurikulum berhasil diterapkan.');
-    }
-
-    public function getMapelJson(Kelas $kelas)
-    {
-        // [PERBAIKAN] Ambil tingkatan dari nama kelas (asumsi format: "Kelas 1 A" -> tingkatan "1")
-        $tingkatan = preg_replace('/[^0-9]/', '', $kelas->nama_kelas);
-        $tingkatan = $tingkatan ?: 'Umum';
-
-        // Filter mata pelajaran berdasarkan tingkatan kelas
-        $mapelForClass = $kelas->mataPelajarans()
-            ->where('tingkatan', $tingkatan)
-            ->orWhere('tingkatan', 'Umum')
-            ->with('teachers')
-            ->get();
-
-        $response = $mapelForClass->map(function ($mapel) {
-            return [
-                'id' => $mapel->id,
-                'nama_pelajaran' => $mapel->nama_pelajaran,
-                'tingkatan' => $mapel->tingkatan, // Tambahkan info tingkatan
-                'assigned' => true,
-                'assigned_teacher_id' => $mapel->pivot->user_id,
-                'teachers' => $mapel->teachers->map(fn($teacher) => ['id' => $teacher->id, 'name' => $teacher->name]),
-            ];
-        });
-
-        return response()->json($response);
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'kelas_id' => 'required|exists:kelas,id',
-            'kurikulum' => 'nullable|array',
-        ]);
-
-        $kelas = Kelas::findOrFail($request->kelas_id);
-        $syncData = [];
-
-        if ($request->has('kurikulum')) {
-            foreach ($request->kurikulum as $mapelId => $details) {
-                if (isset($details['assigned']) && $details['assigned']) {
-                    $syncData[$mapelId] = ['user_id' => $details['teacher_id'] ?? null];
-                }
-            }
-        }
-
-        $kelas->mataPelajarans()->sync($syncData);
-
-        return back()->with('success', 'Kurikulum untuk kelas ' . $kelas->nama_kelas . ' berhasil diperbarui.');
+        return back()->with('success', 'Template kurikulum berhasil diterapkan ke kelas yang dipilih.');
     }
 }
+

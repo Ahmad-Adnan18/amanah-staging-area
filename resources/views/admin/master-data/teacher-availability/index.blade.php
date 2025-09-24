@@ -11,7 +11,7 @@
                     </div>
                 </div>
 
-                <!-- [SARAN 1] Penambahan Fitur Pencarian -->
+                <!-- Fitur Pencarian -->
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4">
                     <form action="{{ route('admin.teacher-availability.index') }}" method="GET">
                         <label for="search" class="sr-only">Cari Guru</label>
@@ -38,9 +38,7 @@
                                     <div>
                                         <p class="text-sm sm:text-base font-semibold text-gray-900 group-hover:text-red-700">{{ $teacher->name }}</p>
 
-                                        <!-- [SARAN 2] Status diubah menjadi "Badge" yang lebih jelas -->
                                         @if($teacher->unavailabilities_count > 0)
-                                        {{-- Tampilan jika SUDAH diatur --}}
                                         <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-800">
                                             Sudah Diatur
                                         </span>
@@ -48,7 +46,6 @@
                                             {{ $teacher->unavailabilities_count }} Sesi Diblokir
                                         </p>
                                         @else
-                                        {{-- Tampilan jika BELUM diatur --}}
                                         <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
                                             Belum Diatur
                                         </span>
@@ -56,7 +53,6 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-4">
-                                    <!-- [SARAN 3] Ringkasan Ketersediaan Ditampilkan -->
                                     <div class="hidden sm:block text-right">
                                         <p class="text-sm font-medium text-slate-900">{{ $teacher->unavailabilities_count ?? 0 }} Sesi Diblokir</p>
                                         <p class="text-xs text-slate-500">Tidak Bersedia Mengajar</p>
@@ -69,7 +65,7 @@
                         </li>
                         @empty
                         <li class="px-6 py-12 text-center text-slate-500">
-                            Tidak ada data pengajar yang cocok dengan pencarian.
+                            Tidak ada data guru yang cocok dengan pencarian.
                         </li>
                         @endforelse
                     </ul>

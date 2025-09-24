@@ -112,24 +112,44 @@
                             <thead class="bg-slate-50">
                                 <tr>
                                     <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase">Nama Kelas</th>
-                                    <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase">Ruangan Induk</th> <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase">Status Jadwal</th> <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase">Jumlah Santri</th>
+                                    <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase">Penanggung Jawab</th>
+                                    <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase">Ruangan Induk</th>
+                                    <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase">Status Jadwal</th>
+                                    <th class="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase">Jumlah Santri</th>
                                     <th class="relative px-6 py-3.5"><span class="sr-only">Aksi</span></th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-slate-200">
                                 @forelse ($kelas_list as $kelas)
                                 <tr class="hover:bg-slate-50">
-                                    <td class="px-6 py-4 font-medium text-slate-900">{{ $kelas->nama_kelas }}</td>
-                                    <td class="px-6 py-4 text-slate-500">{{ $kelas->room->name ?? 'N/A' }}</td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 font-medium text-slate-900 align-top">
+                                        {{ $kelas->nama_kelas }}
+                                        <div class="text-xs text-slate-500 font-normal">Tingkatan: {{ $kelas->tingkatan ?? 'N/A' }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500 align-top">
+                                        @if($kelas->penanggungJawab->isNotEmpty())
+                                            <ul class="text-xs space-y-1">
+                                            @foreach($kelas->penanggungJawab as $pj)
+                                                <li>
+                                                    <span class="font-semibold text-slate-600">{{ $pj->jabatan->nama_jabatan ?? 'N/A' }}:</span>
+                                                    <span>{{ $pj->user->name ?? 'N/A' }}</span>
+                                                </li>
+                                            @endforeach
+                                            </ul>
+                                        @else
+                                            <span class="text-slate-400 text-xs">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500 align-top">{{ $kelas->room->name ?? 'N/A' }}</td>
+                                    <td class="px-6 py-4 align-top">
                                         @if($kelas->is_active_for_scheduling)
                                             <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">Aktif</span>
                                         @else
                                             <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">Nonaktif</span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 text-slate-500">{{ $kelas->santris_count }} santri</td>
-                                    <td class="px-6 py-4 text-right space-x-4">
+                                    <td class="px-6 py-4 text-slate-500 align-top">{{ $kelas->santris_count }} santri</td>
+                                    <td class="px-6 py-4 text-right space-x-4 align-top">
                                         <a href="{{ route('pengajaran.santris.index', $kelas) }}" class="font-medium text-red-600 hover:text-red-800">Lihat Santri</a>
                                         @can('update', $kelas)
                                         <a href="{{ route('pengajaran.kelas.edit', $kelas) }}" class="font-medium text-slate-600 hover:text-slate-900">Edit</a>
@@ -143,11 +163,12 @@
                                     </td>
                                 </tr>
                                 @empty
-                                <tr><td colspan="5" class="px-6 py-12 text-center text-slate-500">Belum ada data kelas.</td></tr>
+                                <tr><td colspan="6" class="px-6 py-12 text-center text-slate-500">Belum ada data kelas.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
+                    
                     <div class="md:hidden p-4 space-y-4">
                         @forelse ($kelas_list as $kelas)
                         <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
@@ -160,8 +181,21 @@
                                 <a href="{{ route('pengajaran.kelas.edit', $kelas) }}" class="text-slate-500 hover:text-slate-800"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg></a>
                                 @endcan
                             </div>
-                            <div class="mt-2 text-sm space-y-1">
+                            <div class="mt-2 text-sm space-y-2">
+                                <p class="text-slate-600"><strong>Tingkatan:</strong> {{ $kelas->tingkatan ?? 'N/A' }}</p>
                                 <p class="text-slate-600"><strong>Ruangan:</strong> {{ $kelas->room->name ?? 'N/A' }}</p>
+                                <div class="text-slate-600">
+                                    <p class="font-bold">Penanggung Jawab:</p>
+                                    @if($kelas->penanggungJawab->isNotEmpty())
+                                        <ul class="list-disc list-inside ml-2">
+                                        @foreach($kelas->penanggungJawab as $pj)
+                                            <li>{{ $pj->jabatan->nama_jabatan ?? 'N/A' }}: {{ $pj->user->name ?? 'N/A' }}</li>
+                                        @endforeach
+                                        </ul>
+                                    @else
+                                        -
+                                    @endif
+                                </div>
                                 <p class="text-slate-600 flex items-center gap-2"><strong>Status Jadwal:</strong> 
                                     @if($kelas->is_active_for_scheduling)
                                         <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">Aktif</span>

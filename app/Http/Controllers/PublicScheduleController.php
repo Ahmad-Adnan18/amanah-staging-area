@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Kelas;
 use App\Models\Schedule;
-use App\Models\User;
+use App\Models\Teacher; // [PERUBAHAN] Menggunakan model Teacher
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Barryvdh\DomPDF\Facade\Pdf;
-// [DIHAPUS] use ArPHP\I18n\Arabic; tidak lagi digunakan
 
 class PublicScheduleController extends Controller
 {
@@ -17,17 +16,22 @@ class PublicScheduleController extends Controller
      */
     public function index(): View
     {
-        // ... (Kode di method ini tidak berubah) ...
         $classes = Kelas::where('is_active_for_scheduling', true)->orderBy('nama_kelas')->get();
-        $teachers = User::where('role', '!=', 'wali_santri')->orderBy('name')->get();
+        
+        // [PERUBAHAN] Mengambil data dari model Teacher, bukan User
+        $teachers = Teacher::orderBy('name')->get();
+
         $schedules = Schedule::with(['subject', 'teacher', 'room', 'kelas'])->get();
+        
         $scheduleData = [
             'byClass' => $this->formatScheduleForJs($schedules, 'kelas_id'),
             'byTeacher' => $this->formatScheduleForJs($schedules, 'teacher_id'),
             'teachingHours' => $this->calculateTeachingHours($schedules),
         ];
+        
         $days = [1 => 'Sabtu', 2 => 'Ahad', 3 => 'Senin', 4 => 'Selasa', 5 => 'Rabu', 6 => 'Kamis'];
         $timeSlots = range(1, 7);
+        
         return view('jadwal.public.index', compact('classes', 'teachers', 'scheduleData', 'days', 'timeSlots'));
     }
 
@@ -36,7 +40,6 @@ class PublicScheduleController extends Controller
      */
     private function formatScheduleForJs($schedules, $key)
     {
-        // ... (Kode di method ini tidak berubah) ...
         $formatted = [];
         foreach ($schedules as $schedule) {
             if ($schedule->{$key}) {
@@ -56,7 +59,6 @@ class PublicScheduleController extends Controller
      */
     private function calculateTeachingHours($schedules)
     {
-        // ... (Kode di method ini tidak berubah) ...
         $teachingHours = [];
         foreach ($schedules as $schedule) {
             $teacherId = $schedule->teacher_id;
@@ -79,11 +81,10 @@ class PublicScheduleController extends Controller
      */
     public function getTeachingHours($teacherId)
     {
-        // ... (Kode di method ini tidak berubah) ...
         $schedules = Schedule::where('teacher_id', $teacherId)->get();
         $teachingHours = ['sabtu' => 0, 'ahad' => 0, 'senin' => 0, 'selasa' => 0, 'rabu' => 0, 'kamis' => 0, 'total' => 0];
+        $dayMap = [1 => 'sabtu', 2 => 'ahad', 3 => 'senin', 4 => 'selasa', 5 => 'rabu', 6 => 'kamis'];
         foreach ($schedules as $schedule) {
-            $dayMap = [1 => 'sabtu', 2 => 'ahad', 3 => 'senin', 4 => 'selasa', 5 => 'rabu', 6 => 'kamis'];
             if (isset($dayMap[$schedule->day_of_week])) {
                 $dayName = $dayMap[$schedule->day_of_week];
                 $teachingHours[$dayName]++;
@@ -98,8 +99,6 @@ class PublicScheduleController extends Controller
      */
     public function print($type, $id)
     {
-        // [DIHAPUS] Semua kode yang berhubungan dengan ArPHP\I18n\Arabic dihapus dari sini.
-
         $days = [1 => 'Sabtu', 2 => 'Ahad', 3 => 'Senin', 4 => 'Selasa', 5 => 'Rabu', 6 => 'Kamis'];
         $timeSlots = range(1, 7);
         $viewName = 'jadwal.public.print';
@@ -117,7 +116,8 @@ class PublicScheduleController extends Controller
             $data['type'] = 'kelas';
 
         } elseif ($type == 'guru') {
-            $teacher = User::findOrFail($id);
+            // [PERUBAHAN] Mengambil data dari model Teacher, bukan User
+            $teacher = Teacher::findOrFail($id);
             $schedulesCollection = Schedule::where('teacher_id', $id)->with(['subject', 'kelas', 'room'])->get();
             $schedules = $schedulesCollection->groupBy(['day_of_week', 'time_slot']);
             
@@ -145,4 +145,3 @@ class PublicScheduleController extends Controller
         return $pdf->stream('jadwal-' . $type . '-' . $id . '.pdf');
     }
 }
-

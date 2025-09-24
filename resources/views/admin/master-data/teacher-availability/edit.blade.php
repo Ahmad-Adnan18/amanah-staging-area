@@ -41,7 +41,6 @@
                                     <td class="px-4 py-3 font-semibold text-slate-700">{{ $slot }}</td>
                                     @foreach ($days as $dayIndex => $dayName)
                                         <td class="px-4 py-3">
-                                            {{-- [PERBAIKAN] Mengubah nama input dan variabel --}}
                                             <input type="checkbox" name="unavailable_slots[]" 
                                                    value="{{ $dayIndex }}-{{ $slot }}"
                                                    class="h-6 w-6 rounded border-gray-300 text-red-600 focus:ring-red-500"
@@ -58,4 +57,3 @@
         </div>
     </div>
 </x-app-layout>
-

@@ -8,7 +8,9 @@ use App\Models\User;
 use App\Models\Santri;
 use App\Models\Jabatan;
 use App\Models\JabatanUser;
-use App\Models\Room; // [PERUBAHAN] Menambahkan model Room
+use App\Models\Room;
+use App\Models\MataPelajaran;
+use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Artisan;
@@ -23,8 +25,11 @@ class KelasController extends Controller
     {
         $this->authorize('viewAny', Kelas::class);
         
-        // [PERUBAHAN] Menambahkan eager loading untuk relasi 'room' agar efisien
-        $kelas_list = Kelas::withCount('santris')->with('room')->latest()->paginate(50);
+        // [PENYESUAIAN] Eager load relasi penanggungJawab beserta user dan jabatannya
+        $kelas_list = Kelas::withCount('santris')
+            ->with(['room', 'penanggungJawab.user', 'penanggungJawab.jabatan'])
+            ->latest()
+            ->paginate(50);
         
         $hasilPencarianSantri = collect();
 
@@ -43,23 +48,23 @@ class KelasController extends Controller
     {
         $this->authorize('create', Kelas::class);
         
-        // [PERUBAHAN] Mengambil daftar ruangan untuk dikirim ke view
         $rooms = Room::orderBy('name')->get();
+        // [PENYESUAIAN] Mengambil tingkatan dinamis dari mata pelajaran
+        $tingkatans = MataPelajaran::select('tingkatan')->distinct()->orderBy('tingkatan')->pluck('tingkatan');
 
-        return view('pengajaran.kelas.create', compact('rooms'));
+        return view('pengajaran.kelas.create', compact('rooms', 'tingkatans'));
     }
 
     public function store(Request $request)
     {
         $this->authorize('create', Kelas::class);
 
-        // [PERUBAHAN] Menambahkan validasi untuk room_id
         $validatedData = $request->validate([
             'nama_kelas' => 'required|string|max:255|unique:kelas,nama_kelas',
+            'tingkatan' => 'required|string|max:255',
             'room_id' => 'nullable|exists:rooms,id',
         ]);
 
-        // 'is_active_for_scheduling' akan otomatis terisi nilai default (0) dari database
         Kelas::create($validatedData);
 
         return redirect()->route('pengajaran.kelas.index')->with('success', 'Kelas berhasil ditambahkan.');
@@ -69,31 +74,58 @@ class KelasController extends Controller
     {
         $this->authorize('update', $kela);
 
-        // Data untuk form penunjukan jabatan
+        // Data untuk form jabatan
         $users = User::whereIn('role', ['pengajaran', 'pengasuhan', 'kesehatan', 'ustadz_umum', 'admin'])->orderBy('name')->get();
         $jabatans = Jabatan::orderBy('nama_jabatan')->get();
         $penanggungJawab = $kela->penanggungJawab()->with('user', 'jabatan')->get();
 
-        // [PERUBAHAN] Mengambil daftar ruangan untuk dikirim ke view edit
+        // Data untuk form detail kelas
         $rooms = Room::orderBy('name')->get();
+        $tingkatans = MataPelajaran::select('tingkatan')->distinct()->orderBy('tingkatan')->pluck('tingkatan');
 
-        return view('pengajaran.kelas.edit', compact('kela', 'users', 'jabatans', 'penanggungJawab', 'rooms'));
+        // Data untuk Alokasi Guru Mengajar
+        $allMataPelajarans = MataPelajaran::where('tingkatan', $kela->tingkatan)
+            ->with('teachers') // Eager load kandidat guru untuk setiap mapel
+            ->orderBy('nama_pelajaran')
+            ->get();
+            
+        $assignedSubjects = $kela->mataPelajarans->pluck('pivot.teacher_id', 'id');
+
+        return view('pengajaran.kelas.edit', compact('kela', 'users', 'jabatans', 'penanggungJawab', 'rooms', 'tingkatans', 'allMataPelajarans', 'assignedSubjects'));
     }
 
     public function update(Request $request, Kelas $kela)
     {
         $this->authorize('update', $kela);
 
-        // [PERUBAHAN] Menambahkan validasi untuk room_id dan status penjadwalan
         $validatedData = $request->validate([
             'nama_kelas' => 'required|string|max:255|unique:kelas,nama_kelas,' . $kela->id,
+            'tingkatan' => 'required|string|max:255',
             'room_id' => 'nullable|exists:rooms,id',
             'is_active_for_scheduling' => 'required|boolean',
         ]);
 
         $kela->update($validatedData);
 
-        return redirect()->route('pengajaran.kelas.index')->with('success', 'Detail kelas berhasil diperbarui.');
+        return redirect()->route('pengajaran.kelas.edit', $kela)->with('success', 'Detail kelas berhasil diperbarui.');
+    }
+
+    public function assignSubjects(Request $request, Kelas $kela)
+    {
+        $this->authorize('update', $kela);
+
+        $syncData = [];
+        if ($request->has('subjects')) {
+            foreach ($request->subjects as $mapelId => $teacherId) {
+                if (!empty($teacherId)) {
+                    $syncData[$mapelId] = ['teacher_id' => $teacherId];
+                }
+            }
+        }
+
+        $kela->mataPelajarans()->sync($syncData);
+
+        return redirect()->back()->with('success', 'Alokasi guru mengajar berhasil disimpan.');
     }
 
     public function assignJabatan(Request $request, Kelas $kelas)
@@ -111,9 +143,10 @@ class KelasController extends Controller
                 'user_id' => $request->user_id,
                 'kelas_id' => $kelas->id,
                 'jabatan_id' => $request->jabatan_id,
-                'tahun_ajaran' => $request->tahun_ajaran,
             ],
-            []
+            [
+                'tahun_ajaran' => $request->tahun_ajaran,
+            ]
         );
 
         return redirect()->back()->with('success', 'Penanggung jawab berhasil ditambahkan.');
@@ -133,6 +166,7 @@ class KelasController extends Controller
         return redirect()->route('pengajaran.kelas.index')->with('success', 'Kelas berhasil dihapus.');
     }
 
+    // ... sisa method lainnya tidak berubah ...
     public function getSantrisJson(Kelas $kelas)
     {
         $santris = $kelas->santris()->select('id', 'nama')->orderBy('nama')->get();
@@ -152,3 +186,4 @@ class KelasController extends Controller
         return Excel::download(new WaliCodesExport, 'daftar-kode-registrasi-wali.xlsx');
     }
 }
+

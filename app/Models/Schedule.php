@@ -17,31 +17,40 @@ class Schedule extends Model
         'room_id',
         'day_of_week',
         'time_slot',
-        'version_id',
     ];
 
     /**
      * Relasi ke model Kelas.
-     * Nama fungsi ini (kelas) harus cocok dengan yang dipanggil di Controller.
      */
     public function kelas(): BelongsTo
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
+    /**
+     * Relasi ke model MataPelajaran.
+     */
     public function subject(): BelongsTo
     {
         return $this->belongsTo(MataPelajaran::class, 'mata_pelajaran_id');
     }
 
+    /**
+     * [PENYESUAIAN WAJIB]
+     * Mengubah relasi 'teacher' agar menunjuk ke model Teacher yang baru.
+     * Ini akan secara otomatis memperbaiki tampilan di halaman Lihat Jadwal dan Tukar Jadwal.
+     */
     public function teacher(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'teacher_id');
+        // Ganti User::class menjadi Teacher::class
+        return $this->belongsTo(Teacher::class, 'teacher_id');
     }
 
+    /**
+     * Relasi ke model Room.
+     */
     public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
     }
 }
-

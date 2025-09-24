@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Pengajaran;
 
 use App\Http\Controllers\Controller;
 use App\Models\MataPelajaran;
-use App\Models\User;
+use App\Models\Teacher; // GANTI: Menggunakan model Teacher
 use App\Models\BlockedTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,34 +13,30 @@ class MataPelajaranController extends Controller
 {
     public function index(Request $request)
     {
-        // Query dasar
+        // Query dasar tetap sama, relasi 'teachers' akan merujuk ke model Teacher yang sudah diperbarui
         $query = MataPelajaran::with('teachers');
 
-        // Filter berdasarkan tingkatan
         if ($request->has('tingkatan') && $request->tingkatan != '') {
             $query->where('tingkatan', $request->tingkatan);
         }
 
-        // Pagination
         $mataPelajarans = $query->orderBy('tingkatan')->orderBy('nama_pelajaran')->paginate(15);
 
-        // [LOGIKA BARU] Menghitung total JP yang sudah dialokasikan per tingkatan
         $jpPerTingkat = MataPelajaran::select('tingkatan', DB::raw('SUM(duration_jp) as total_jp'))
             ->groupBy('tingkatan')
             ->pluck('total_jp', 'tingkatan');
 
-        // Menghitung jam terblokir
         $blockedSlotsCount = BlockedTime::count();
-        $kapasitasTotal = 6 * 7; // 6 hari x 7 jam
+        $kapasitasTotal = 6 * 7;
         $jamEfektif = $kapasitasTotal - $blockedSlotsCount;
 
         return view('pengajaran.mata-pelajaran.index', compact('mataPelajarans', 'jpPerTingkat', 'jamEfektif'));
     }
 
-    // Metode create, store, edit, update, destroy tidak berubah secara signifikan
     public function create()
     {
-        $teachers = User::where('role', '!=', 'wali_santri')->orderBy('name')->get();
+        // GANTI: Mengambil data dari model Teacher, bukan User
+        $teachers = Teacher::orderBy('name')->get();
         return view('pengajaran.mata-pelajaran.create', compact('teachers'));
     }
 
@@ -52,7 +48,8 @@ class MataPelajaranController extends Controller
             'kategori' => 'required|string|max:255',
             'duration_jp' => 'required|integer|min:1',
             'teacher_ids' => 'nullable|array',
-            'teacher_ids.*' => 'exists:users,id',
+            // GANTI: Validasi 'exists' sekarang ke tabel 'teachers'
+            'teacher_ids.*' => 'exists:teachers,id',
         ]);
         
         $mataPelajaran = MataPelajaran::create([
@@ -72,7 +69,8 @@ class MataPelajaranController extends Controller
 
     public function edit(MataPelajaran $mataPelajaran)
     {
-        $teachers = User::where('role', '!=', 'wali_santri')->orderBy('name')->get();
+        // GANTI: Mengambil data dari model Teacher, bukan User
+        $teachers = Teacher::orderBy('name')->get();
         return view('pengajaran.mata-pelajaran.edit', compact('mataPelajaran', 'teachers'));
     }
 
@@ -84,7 +82,8 @@ class MataPelajaranController extends Controller
             'kategori' => 'required|string|max:255',
             'duration_jp' => 'required|integer|min:1',
             'teacher_ids' => 'nullable|array',
-            'teacher_ids.*' => 'exists:users,id',
+            // GANTI: Validasi 'exists' sekarang ke tabel 'teachers'
+            'teacher_ids.*' => 'exists:teachers,id',
         ]);
 
         $mataPelajaran->update([
@@ -95,6 +94,7 @@ class MataPelajaranController extends Controller
             'requires_special_room' => $request->has('requires_special_room'),
         ]);
 
+        // GANTI: Menggunakan sync untuk memperbarui relasi dengan guru
         $mataPelajaran->teachers()->sync($request->teacher_ids ?? []);
 
         return redirect()->route('pengajaran.mata-pelajaran.index')->with('success', 'Mata pelajaran berhasil diperbarui.');
@@ -102,8 +102,9 @@ class MataPelajaranController extends Controller
 
     public function destroy(MataPelajaran $mataPelajaran)
     {
+        // Pastikan relasi juga terhapus
+        $mataPelajaran->teachers()->detach();
         $mataPelajaran->delete();
         return redirect()->route('pengajaran.mata-pelajaran.index')->with('success', 'Mata pelajaran berhasil dihapus.');
     }
 }
-

@@ -1,10 +1,10 @@
 <x-app-layout>
-    {{-- [TAMBAHAN] Alpine.js akan kita gunakan untuk membuat halaman lebih interaktif --}}
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {{-- Alpine.js untuk membuat halaman lebih interaktif --}}
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <div class="bg-slate-50 min-h-screen">
         <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            {{-- [PERUBAHAN] Membungkus semua konten dalam komponen Alpine.js --}}
+            {{-- Membungkus semua konten dalam komponen Alpine.js --}}
             <div x-data="kurikulumTemplateManager()">
 
                 <div class="space-y-8">
@@ -22,11 +22,12 @@
                                     class="px-3 py-1 rounded-full text-xs font-medium transition-colors">
                                 Semua
                             </button>
-                            @foreach(['1', '2', '3', '4', '5', '6', 'Umum'] as $tingkat)
+                            {{-- [PENYESUAIAN] Looping filter dari data dinamis --}}
+                            @foreach($tingkatans as $tingkat)
                                 <button @click="activeFilter = '{{ $tingkat }}'"
                                         :class="activeFilter === '{{ $tingkat }}' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'"
                                         class="px-3 py-1 rounded-full text-xs font-medium transition-colors">
-                                    {{ $tingkat == 'Umum' ? 'Umum' : 'Kelas ' . $tingkat }}
+                                    {{ $tingkat == 'Umum' ? 'Umum' : 'Tingkat ' . $tingkat }}
                                 </button>
                             @endforeach
                         </div>
@@ -37,20 +38,13 @@
                         @method('PUT')
                         <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
                             <div class="p-6 min-h-[300px] max-h-[65vh] overflow-y-auto space-y-6">
-                                @php
-                                    $mapelList = $allMataPelajaran ?? collect();
-                                    $groupedMapel = $mapelList->groupBy('tingkatan');
-                                @endphp
-                                
                                 @forelse ($groupedMapel as $tingkatan => $mataPelajarans)
                                     <div x-show="activeFilter === 'all' || activeFilter === '{{ $tingkatan }}'" x-transition>
                                         <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-3">
                                             <h3 class="text-lg font-semibold text-slate-800">
-                                                {{ $tingkatan == 'Umum' ? 'Mata Pelajaran Umum' : 'Kelas ' . $tingkatan }}
-                                                {{-- [FITUR BARU] Indikator jumlah terpilih --}}
+                                                {{ $tingkatan == 'Umum' ? 'Mata Pelajaran Umum' : 'Tingkat ' . $tingkatan }}
                                                 <span class="text-sm font-normal text-slate-500" x-text="`(${getSelectionCount('{{ $tingkatan }}')}/${getMapelCount('{{ $tingkatan }}')} terpilih)`"></span>
                                             </h3>
-                                            {{-- [FITUR BARU] Tombol Pilih/Lepas Semua --}}
                                             <div class="flex items-center space-x-3 text-xs font-medium mt-2 sm:mt-0">
                                                 <button type="button" @click="toggleAll('{{ $tingkatan }}', true)" class="text-red-600 hover:text-red-800">Pilih Semua</button>
                                                 <span class="text-slate-300">|</span>
@@ -80,6 +74,7 @@
                             </div>
                         </div>
 
+                        {{-- Tombol simpan yang "melayang" --}}
                         <div class="sticky bottom-0 z-10 py-4 mt-8">
                             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                                 <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200 px-6 py-4 flex justify-end gap-4">
@@ -102,7 +97,7 @@
         function kurikulumTemplateManager() {
             return {
                 activeFilter: 'all',
-                selectedMapelIds: @json($assignedMapelIds),
+                selectedMapelIds: @json(array_map('strval', $assignedMapelIds)), // Convert IDs to string for reliable comparison in JS
                 mapelCounts: @json($groupedMapel->map->count()),
 
                 getMapelCount(tingkatan) {
@@ -113,7 +108,8 @@
                     const mapelElements = document.querySelectorAll(`input[data-tingkatan="${tingkatan}"]`);
                     let count = 0;
                     mapelElements.forEach(el => {
-                        if (this.selectedMapelIds.includes(el.value)) {
+                        // Ensure comparison is consistent (string vs string)
+                        if (this.selectedMapelIds.includes(String(el.value))) {
                             count++;
                         }
                     });
@@ -123,7 +119,7 @@
                 toggleAll(tingkatan, select) {
                     const mapelElements = document.querySelectorAll(`input[data-tingkatan="${tingkatan}"]`);
                     mapelElements.forEach(el => {
-                        const mapelId = el.value;
+                        const mapelId = String(el.value); // Ensure it's a string
                         const index = this.selectedMapelIds.indexOf(mapelId);
 
                         if (select && index === -1) {

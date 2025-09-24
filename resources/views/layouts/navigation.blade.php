@@ -25,8 +25,8 @@ Anda bisa langsung mengganti seluruh blok navigasi lama Anda dengan kode ini.
 
     <!-- Link Navigasi -->
     <nav class="flex-1 space-y-1 overflow-y-auto px-4 py-6" x-data="{
-        isAkademikOpen: {{ request()->routeIs(['pengajaran.kelas.*', 'admin.santri-management.*', 'akademik.placement.*', 'pengajaran.mata-pelajaran.*', 'akademik.kurikulum.*', 'akademik.nilai.*', 'admin.rooms.*', 'laporan.*']) ? 'true' : 'false' }},
-        isPenjadwalanOpen: {{ request()->routeIs(['admin.rules.*', 'admin.teacher-availability.*', 'admin.generator.*', 'admin.schedule.view.*']) ? 'true' : 'false' }},
+        isAkademikOpen: {{ request()->routeIs(['pengajaran.kelas.*', 'admin.santri-management.*', 'akademik.placement.*', 'pengajaran.mata-pelajaran.*', 'akademik.kurikulum.*', 'akademik.nilai.*', 'admin.rooms.*', 'admin.teachers.*', 'laporan.*']) ? 'true' : 'false' }},
+        isPenjadwalanOpen: {{ request()->routeIs(['admin.rules.*', 'admin.teacher-availability.*', 'admin.generator.*', 'admin.schedule.view.*', 'admin.schedule.swap.*']) ? 'true' : 'false' }},
         isAdministrasiOpen: {{ request()->routeIs(['admin.users.*', 'pengajaran.jabatan.*']) ? 'true' : 'false' }}
     }">
         @php
@@ -76,10 +76,10 @@ Anda bisa langsung mengganti seluruh blok navigasi lama Anda dengan kode ini.
                 <a href="{{ route('laporan.index') }}" class="{{ $childBase }} {{ request()->routeIs('laporan.*') ? $childActive : $childInactive }}">Laporan</a>
                 @endif
                 @if(in_array(Auth::user()->role, ['admin','pengajaran']))
+                <a href="{{ route('admin.teachers.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.teachers.*') ? $childActive : $childInactive }}">Manajemen Guru</a>
                 <a href="{{ route('pengajaran.mata-pelajaran.index') }}" class="{{ $childBase }} {{ request()->routeIs('pengajaran.mata-pelajaran.*') ? $childActive : $childInactive }}">Mata Pelajaran</a>
                 <a href="{{ route('admin.rooms.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.rooms.*') ? $childActive : $childInactive }}">Manajemen Ruangan</a>
                 <a href="{{ route('akademik.placement.index') }}" class="{{ $childBase }} {{ request()->routeIs('akademik.placement.*') ? $childActive : $childInactive }}">Penempatan Kelas</a>
-                <a href="{{ route('akademik.kurikulum.index') }}" class="{{ $childBase }} {{ request()->routeIs('akademik.kurikulum.*') ? $childActive : $childInactive }}">Atur Kurikulum</a>
                 <a href="{{ route('akademik.nilai.index') }}" class="{{ $childBase }} {{ request()->routeIs('akademik.nilai.*') ? $childActive : $childInactive }}">Input Nilai</a>
                 @endif
             </div>
@@ -93,8 +93,8 @@ Anda bisa langsung mengganti seluruh blok navigasi lama Anda dengan kode ini.
                 <svg class="h-5 w-5 transform transition-transform" :class="{'rotate-180': isPenjadwalanOpen}" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
             </button>
             <div x-show="isPenjadwalanOpen" x-collapse class="mt-1 space-y-1 pl-4">
-                <a href="{{ route('admin.rules.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.rules.*') ? $childActive : $childInactive }}">Aturan Penjadwalan</a>
                 <a href="{{ route('admin.teacher-availability.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.teacher-availability.*') ? $childActive : $childInactive }}">Ketersediaan Guru</a>
+                <a href="{{ route('admin.rules.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.rules.*') ? $childActive : $childInactive }}">Aturan Penjadwalan</a>
                 <a href="{{ route('admin.generator.show') }}" class="{{ $childBase }} {{ request()->routeIs('admin.generator.*') ? $childActive : $childInactive }}">Generate Jadwal</a>
                 <a href="{{ route('admin.schedule.view.grid') }}" class="{{ $childBase }} {{ request()->routeIs('admin.schedule.view.*') ? $childActive : $childInactive }}">Lihat Jadwal (Admin)</a>
                 <a href="{{ route('admin.schedule.swap.show') }}" class="{{ $childBase }} {{ request()->routeIs('admin.schedule.swap.*') ? $childActive : $childInactive }}">Tukar Jadwal Manual</a>
@@ -112,7 +112,7 @@ Anda bisa langsung mengganti seluruh blok navigasi lama Anda dengan kode ini.
             <div x-show="isAdministrasiOpen" x-collapse class="mt-1 space-y-1 pl-4">
                 <a href="{{ route('admin.users.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.users.*') ? $childActive : $childInactive }}">Manajemen User</a>
                 <a href="{{ route('pengajaran.jabatan.index') }}" class="{{ $childBase }} {{ request()->routeIs('pengajaran.jabatan.*') ? $childActive : $childInactive }}">Manajemen Jabatan</a>
-                <a href="{{ route('laporan.index') }}" class="{{ $childBase }} {{ request()->routeIs('laporan.*') ? $childActive : $childInactive }}">Laporan</a>
+                {{-- <a href="{{ route('laporan.index') }}" class="{{ $childBase }} {{ request()->routeIs('laporan.*') ? $childActive : $childInactive }}">Laporan</a> --}}
             </div>
         </div>
         @endif

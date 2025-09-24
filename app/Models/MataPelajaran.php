@@ -10,6 +10,14 @@ class MataPelajaran extends Model
 {
     use HasFactory;
 
+    /**
+     * Nama tabel di database.
+     */
+    protected $table = 'mata_pelajarans';
+
+    /**
+     * Kolom yang bisa diisi secara massal.
+     */
     protected $fillable = [
         'nama_pelajaran',
         'tingkatan',
@@ -18,19 +26,15 @@ class MataPelajaran extends Model
         'requires_special_room',
     ];
 
-    public function kelas(): BelongsToMany
-    {
-        return $this->belongsToMany(Kelas::class, 'kelas_mata_pelajaran');
-    }
-
-    public function kurikulumTemplates(): BelongsToMany
-    {
-        return $this->belongsToMany(KurikulumTemplate::class, 'kurikulum_template_mata_pelajaran');
-    }
-
+    /**
+     * [RELASI BARU]
+     * Relasi ke kandidat guru yang BISA mengajar mata pelajaran ini.
+     * Ini adalah "jembatan" yang hilang.
+     */
     public function teachers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'mata_pelajaran_user');
+        // Eloquent akan mencari tabel pivot 'mata_pelajaran_teacher' secara otomatis
+        return $this->belongsToMany(Teacher::class, 'mata_pelajaran_teacher');
     }
 }
 
