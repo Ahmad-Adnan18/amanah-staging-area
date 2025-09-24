@@ -27,6 +27,7 @@ class NilaiController extends Controller
 
         $kelasList = Kelas::orderBy('nama_kelas')->get();
         $santris = collect();
+        $selectedMataPelajaran = null;
 
         if ($request->filled(['kelas_id', 'mata_pelajaran_id', 'semester', 'tahun_ajaran', 'jenis_penilaian'])) {
             $santris = Santri::where('kelas_id', $request->kelas_id)
@@ -39,9 +40,11 @@ class NilaiController extends Controller
                 ])
                 ->orderBy('nama')
                 ->get();
+            
+            $selectedMataPelajaran = MataPelajaran::find($request->mata_pelajaran_id);
         }
 
-        return view('akademik.nilai.index', compact('kelasList', 'santris'));
+        return view('akademik.nilai.index', compact('kelasList', 'santris', 'selectedMataPelajaran'));
     }
 
     /**
@@ -105,5 +108,26 @@ class NilaiController extends Controller
         $fileName = "Leger {$filters['jenis_penilaian']} - {$mataPelajaran->nama_pelajaran} - {$kelas->nama_kelas}.xlsx";
 
         return Excel::download(new LegerNilaiExport($filters, $kelas, $mataPelajaran), $fileName);
+    }
+
+    /**
+     * [FUNGSI BARU]
+     * API endpoint untuk mengambil daftar mata pelajaran berdasarkan tingkatan kelas.
+     * Ini akan dipanggil oleh JavaScript di halaman input nilai.
+     */
+    public function getMataPelajaranByKelas(Kelas $kelas)
+    {
+        $this->authorize('viewAny', Nilai::class);
+
+        if (!$kelas->tingkatan) {
+            return response()->json([]);
+        }
+
+        $mataPelajarans = MataPelajaran::where('tingkatan', $kelas->tingkatan)
+                                        ->orWhere('tingkatan', 'Umum')
+                                        ->orderBy('nama_pelajaran')
+                                        ->get(['id', 'nama_pelajaran']);
+
+        return response()->json($mataPelajarans);
     }
 }

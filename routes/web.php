@@ -145,6 +145,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/nilai/export', [NilaiController::class, 'exportLeger'])->name('nilai.export');
         Route::get('/placement', [PlacementController::class, 'index'])->name('placement.index');
         Route::post('/placement', [PlacementController::class, 'place'])->name('placement.place');
+         Route::get('/nilai/get-mapel-by-kelas/{kelas}', [NilaiController::class, 'getMataPelajaranByKelas'])->name('nilai.get-mapel-by-kelas');
     });
 
     // --- RUTE BARU UNTUK KEASRAMAAN ---
