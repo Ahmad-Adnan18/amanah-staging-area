@@ -60,11 +60,6 @@
                     
                     {{-- [MOBILE] Tombol-tombol dibuat vertikal dan full-width di mobile --}}
                     <div class="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                        <div class="isolate inline-flex rounded-md shadow-sm w-full">
-                            <button @click="viewMode = 'table'" type="button" :class="{ 'bg-slate-200 text-slate-800': viewMode === 'table', 'bg-white text-gray-700 hover:bg-slate-50': viewMode !== 'table' }" class="relative w-full inline-flex items-center justify-center rounded-l-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 focus:z-10">Tabel</button>
-                            <button @click="viewMode = 'card'" type="button" :class="{ 'bg-slate-200 text-slate-800': viewMode === 'card', 'bg-white text-gray-700 hover:bg-slate-50': viewMode !== 'card' }" class="relative w-full -ml-px inline-flex items-center justify-center rounded-r-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 focus:z-10">Kartu</button>
-                        </div>
-
                         <a :href="printUrl" target="_blank" class="inline-flex items-center gap-2 justify-center rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                                 <path fill-rule="evenodd" d="M5 2.75C5 1.784 5.784 1 6.75 1h6.5c.966 0 1.75.784 1.75 1.75v3.552c.377.046.752.097 1.128.152A2.25 2.25 0 0118 8.678v4.588A2.25 2.25 0 0115.75 15.5h-3.48a3.748 3.748 0 01-1.048.06c-.34.023-.681.042-1.022.06h-3.48A2.25 2.25 0 012 13.266V8.678c0-.986.62-1.84 1.52-2.174a41.34 41.34 0 011.128-.152V2.75zM6.5 2.5a.25.25 0 00-.25.25v3.5c0 .138.112.25.25.25h6.5a.25.25 0 00.25-.25v-3.5a.25.25 0 00-.25-.25h-6.5zM3.5 8.678v4.588c0 .138.112.25.25.25h2.25v-2.5a.75.75 0 01.75-.75h6.5a.75.75 0 01.75.75v2.5h2.25a.25.25 0 00.25-.25V8.678a.75.75 0 00-.507-.704 41.52 41.52 0 00-1.216-.173.75.75 0 00-.727.69v.252a.75.75 0 01-.75-.75h-6.5a.75.75 0 01-.75-.75v-.252a.75.75 0 00-.727-.69 41.52 41.52 0 00-1.216.173A.75.75 0 003.5 8.678z" clip-rule="evenodd" /></svg>
@@ -73,42 +68,6 @@
                     </div>
                 </div>
 
-                {{-- Tampilan Jadwal sebagai TABEL --}}
-                <div x-show="viewMode === 'table'" x-cloak>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full border-collapse">
-                            <thead class="bg-slate-50">
-                                <tr>
-                                    <th class="px-3 py-3 text-left text-sm font-semibold text-slate-900 border border-slate-200 w-28">Jam Ke-</th>
-                                    @foreach ($days as $dayName)
-                                    <th class="px-3 py-3 text-center text-sm font-semibold text-slate-900 border border-slate-200">{{ $dayName }}</th>
-                                    @endforeach
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white">
-                                @foreach ($timeSlots as $timeSlot)
-                                <tr>
-                                    <td class="px-3 py-3 text-sm font-medium text-slate-900 border border-slate-200 bg-slate-50 text-center">{{ $timeSlot }}</td>
-                                    @foreach ($days as $dayKey => $dayName)
-                                    <td class="px-2 py-2 text-sm text-slate-500 border border-slate-200 align-top h-24">
-                                        <template x-if="scheduleToShow[{{ $dayKey }}] && scheduleToShow[{{ $dayKey }}][{{ $timeSlot }}]">
-                                            <div class="p-2 bg-amber-50 border border-amber-200 rounded-lg text-left h-full flex flex-col justify-between text-xs">
-                                                <div>
-                                                    <div class="font-semibold text-slate-900" x-text="scheduleToShow[{{ $dayKey }}][{{ $timeSlot }}].subject"></div>
-                                                    <div class="mt-1" x-show="activeTab === 'kelas'" x-text="scheduleToShow[{{ $dayKey }}][{{ $timeSlot }}].teacher"></div>
-                                                    <div class="mt-1" x-show="activeTab === 'guru'" x-text="scheduleToShow[{{ $dayKey }}][{{ $timeSlot }}].class"></div>
-                                                </div>
-                                                <div class="text-slate-400 italic mt-2 text-right" x-text="scheduleToShow[{{ $dayKey }}][{{ $timeSlot }}].room"></div>
-                                            </div>
-                                        </template>
-                                    </td>
-                                    @endforeach
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
 
                 {{-- Tampilan KARTU khusus untuk GURU --}}
                 <div x-show="viewMode === 'card' && activeTab === 'guru'" x-cloak>
@@ -247,7 +206,7 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('scheduleViewer', () => ({
                 activeTab: 'kelas',
-                viewMode: 'table',
+                viewMode: 'card',
                 selectedClass: '',
                 selectedTeacher: '',
                 schedules: @json($scheduleData),

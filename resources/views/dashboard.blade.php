@@ -10,10 +10,7 @@
                 </div>
 
                 @if ($isTeacher)
-                    {{-- ============================================= --}}
-                    {{-- TAMPILAN UNTUK GURU                        --}}
-                    {{-- ============================================= --}}
-
+                    {{-- TAMPILAN UNTUK GURU --}}
                     <!-- Kartu Jadwal Hari Ini -->
                     <div class="bg-red-700 text-white rounded-2xl shadow-lg p-6">
                         <h2 class="text-2xl font-bold">Jadwal Hari Ini</h2>
@@ -57,7 +54,7 @@
                     </div>
                 @endif
 
-                <!-- [PENYESUAIAN] Kartu Statistik sekarang ditampilkan untuk SEMUA staf, termasuk guru -->
+                <!-- Kartu Statistik -->
                 <div>
                     <h2 class="text-2xl font-bold text-slate-800 mb-4 mt-12">Statistik Pondok Hari Ini</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -79,14 +76,14 @@
                     </div>
                 </div>
 
-                <!-- Menu Akses Cepat -->
+                <!-- [PERUBAHAN] Menu Akses Cepat dengan Ikon Baru -->
                 <div>
                     <h2 class="text-2xl font-bold text-slate-800 mb-4 mt-12">Menu Akses Cepat</h2>
                     <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
                         @php
                             $menuItems = [
                                 ['route' => 'admin.santri-management.index', 'roles' => null, 'icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.084-1.28-.24-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.084-1.28.24-1.857m10.416-5.408a3 3 0 11-5.832 0 3 3 0 015.832 0z', 'label' => 'Data Santri'],
-                                ['route' => 'pengajaran.kelas.index', 'roles' => ['admin', 'pengajaran'], 'icon' => 'M10 20l4-16m4 4l-4 16M4 12h16', 'label' => 'Data Kelas'],
+                                ['route' => 'pengajaran.kelas.index', 'roles' => null, 'icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4', 'label' => 'Data Kelas'],
                                 ['route' => 'perizinan.index', 'roles' => null, 'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4', 'label' => 'Perizinan'],
                                 ['route' => 'pelanggaran.index', 'roles' => null, 'icon' => 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z', 'label' => 'Pelanggaran'],
                                 ['route' => 'admin.teachers.index', 'roles' => ['admin', 'pengajaran'], 'icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197M15 21a6 6 0 004.777-9.417M15 14.074c-3.146 0-5.777-2.52-5.777-5.646 0-3.127 2.63-5.647 5.777-5.647 3.146 0 5.777 2.52 5.777 5.647 0 3.127-2.63 5.647-5.777-5.647z', 'label' => 'Data Guru'],
