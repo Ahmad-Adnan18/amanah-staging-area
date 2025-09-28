@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Http\Controllers\Controller;
-use App\Models\Teacher; // Pastikan model Teacher sudah dibuat
-use App\Imports\TeachersImport; // Pastikan kelas import sudah dibuat
+use App\Models\Teacher;
+use App\Models\User; // [PENYESUAIAN] Mengimpor model User
+use App\Imports\TeachersImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -15,28 +16,34 @@ class TeacherController extends Controller
      */
     public function index()
     {
-        // Mengambil semua data guru, diurutkan berdasarkan nama
         $teachers = Teacher::orderBy('name')->paginate(50);
         return view('admin.master-data.teachers.index', compact('teachers'));
     }
 
     /**
-     * Menampilkan form untuk membuat guru baru.
+     * [PENYESUAIAN] Menampilkan form untuk membuat guru baru dan mengirimkan
+     * daftar user yang bisa dihubungkan.
      */
     public function create()
     {
-        return view('admin.master-data.teachers.create');
+        // Mengambil semua user yang bukan wali santri DAN belum terhubung dengan guru lain.
+        $users = User::where('role', '!=', 'wali_santri')
+                     ->whereDoesntHave('teacher')
+                     ->orderBy('name')
+                     ->get();
+
+        return view('admin.master-data.teachers.create', compact('users'));
     }
 
     /**
-     * Menyimpan data guru baru ke database.
+     * [PENYESUAIAN] Menyimpan data guru baru ke database, termasuk user_id jika ada.
      */
     public function store(Request $request)
     {
-        // Validasi input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'teacher_code' => 'nullable|string|max:10|unique:teachers,teacher_code',
+            'user_id' => 'nullable|exists:users,id|unique:teachers,user_id' // Validasi untuk user_id
         ]);
 
         Teacher::create($validated);
@@ -45,22 +52,32 @@ class TeacherController extends Controller
     }
 
     /**
-     * Menampilkan form untuk mengedit data guru.
+     * [PENYESUAIAN] Menampilkan form untuk mengedit data guru dan mengirimkan
+     * daftar user yang bisa dihubungkan.
      */
     public function edit(Teacher $teacher)
     {
-        return view('admin.master-data.teachers.edit', compact('teacher'));
+        // Ambil semua user yang bukan wali santri DAN belum terhubung dengan guru lain,
+        // ATAU user yang saat ini sudah terhubung dengan guru yang diedit.
+        $users = User::where('role', '!=', 'wali_santri')
+                     ->whereDoesntHave('teacher')
+                     ->orWhere('id', $teacher->user_id)
+                     ->orderBy('name')
+                     ->get();
+                     
+        return view('admin.master-data.teachers.edit', compact('teacher', 'users'));
     }
 
     /**
-     * Mengupdate data guru di database.
+     * [PENYESUAIAN] Mengupdate data guru di database, termasuk user_id jika ada.
      */
     public function update(Request $request, Teacher $teacher)
     {
-        // Validasi input, pastikan 'unique' mengabaikan data saat ini
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'teacher_code' => 'nullable|string|max:10|unique:teachers,teacher_code,' . $teacher->id,
+            // Validasi user_id, pastikan unik kecuali untuk user_id yang saat ini sudah terpasang
+            'user_id' => 'nullable|exists:users,id|unique:teachers,user_id,' . $teacher->id . ',id,user_id,' . ($request->user_id ?? 'NULL')
         ]);
 
         $teacher->update($validated);
@@ -73,13 +90,7 @@ class TeacherController extends Controller
      */
     public function destroy(Teacher $teacher)
     {
-        // Tambahkan pengecekan jika guru masih terikat jadwal (opsional tapi disarankan)
-        // if ($teacher->schedules()->exists()) {
-        //     return redirect()->back()->with('error', 'Guru tidak bisa dihapus karena masih memiliki jadwal mengajar.');
-        // }
-
         $teacher->delete();
-
         return redirect()->route('admin.teachers.index')->with('success', 'Data guru berhasil dihapus.');
     }
 
@@ -88,26 +99,14 @@ class TeacherController extends Controller
      */
     public function import(Request $request)
     {
-        // 1. Validasi file yang di-upload
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls|max:2048', // Hanya izinkan file excel
-        ]);
-
+        $request->validate(['file' => 'required|mimes:xlsx,xls|max:2048']);
+        
         try {
-            // 2. Proses impor menggunakan Maatwebsite/Excel
             Excel::import(new TeachersImport, $request->file('file'));
-            
-            // 3. Kembalikan dengan pesan sukses
             return redirect()->route('admin.teachers.index')->with('success', 'Data guru berhasil diimpor dari Excel.');
-
-        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-            // Tangkap error validasi dari dalam file Excel
-            $failures = $e->failures();
-            // Anda bisa format pesan error di sini untuk ditampilkan ke user
-            return redirect()->route('admin.teachers.index')->with('error', 'Terjadi error saat validasi data Excel.');
         } catch (\Exception $e) {
-            // Tangkap error umum lainnya
             return redirect()->route('admin.teachers.index')->with('error', 'Terjadi kesalahan saat mengimpor file: ' . $e->getMessage());
         }
     }
 }
+

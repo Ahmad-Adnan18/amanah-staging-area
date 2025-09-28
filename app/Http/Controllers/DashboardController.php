@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Perizinan;
 use App\Models\Pelanggaran;
 use App\Models\Santri;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -15,7 +17,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // Logika untuk Wali Santri
+        // Logika untuk Wali Santri (tidak berubah)
         if ($user->role === 'wali_santri') {
             $santri = $user->santri()->with(['kelas', 'perizinans', 'pelanggarans'])->first();
             if (!$santri) {
@@ -24,44 +26,50 @@ class DashboardController extends Controller
             return view('wali.dashboard', compact('santri'));
         }
 
-        // --- Logika untuk Dashboard Admin/Ustadz ---
+        // --- Logika BARU untuk Dashboard Staf (Guru & Admin) ---
 
-        // Data Statistik Utama
-        $totalSantri = Santri::count();
-        // [PERBAIKAN] Menghapus 'where('status', 'aktif')' karena tidak ada di tabel santri
-        $totalSantriPutra = Santri::where('jenis_kelamin', 'Putra')->count();
-        $totalSantriPutri = Santri::where('jenis_kelamin', 'Putri')->count();
-        $totalIzinAktif = Perizinan::where('status', 'aktif')->count();
-        $totalSakit = Perizinan::where('status', 'aktif')->where('kategori', 'Kesehatan')->count();
-        $santriPulangHariIni = Perizinan::where('status', 'aktif')->where('jenis_izin', 'like', '%Pulang%')->whereDate('tanggal_mulai', today())->count();
+        // 1. Siapkan data statistik yang akan dilihat oleh SEMUA staf
+        $viewData = [
+            'isTeacher' => false,
+            'totalSantri' => Santri::count(),
+            'totalSantriPutra' => Santri::where('jenis_kelamin', 'Putra')->count(),
+            'totalSantriPutri' => Santri::where('jenis_kelamin', 'Putri')->count(),
+            'totalIzinAktif' => Perizinan::where('status', 'aktif')->count(),
+            'jumlahTerlambat' => Perizinan::where('status', 'aktif')->whereDate('tanggal_akhir', '<', today())->count(),
+        ];
 
-        // Menghitung santri yang terlambat kembali
-        $jumlahTerlambat = Perizinan::where('status', 'aktif')
-            ->whereNotNull('tanggal_akhir')
-            ->whereDate('tanggal_akhir', '<', today())
-            ->count();
+        // 2. Cek apakah user adalah seorang guru
+        $teacher = $user->teacher;
 
-        // Data untuk Tabel
-        $perizinanAktif = Perizinan::with('santri.kelas')->where('status', 'aktif')->latest()->take(5)->get();
-        $pelanggaranTerbaru = Pelanggaran::with('santri.kelas')->latest()->take(5)->get();
+        // 3. Jika user adalah guru, tambahkan data jadwal ke $viewData
+        if ($teacher) {
+            $viewData['isTeacher'] = true;
+            $viewData['teacher'] = $teacher;
 
-        // Data untuk Grafik
-        $izinData = Perizinan::where('status', 'aktif')->select('jenis_izin', DB::raw('count(*) as total'))->groupBy('jenis_izin')->pluck('total', 'jenis_izin');
-        $chartLabels = $izinData->keys();
-        $chartData = $izinData->values();
+            $dayMap = [ 6 => 1, 0 => 2, 1 => 3, 2 => 4, 3 => 5, 4 => 6 ]; // Sabtu -> Kamis
+            $todayAppDay = $dayMap[Carbon::now()->dayOfWeek] ?? null;
 
-        return view('dashboard', compact(
-            'totalSantri',
-            'totalSantriPutra', // <-- Kirim data baru
-            'totalSantriPutri', // <-- Kirim data baru
-            'totalIzinAktif',
-            'santriPulangHariIni',
-            'totalSakit',
-            'jumlahTerlambat',
-            'perizinanAktif',
-            'pelanggaranTerbaru',
-            'chartLabels',
-            'chartData'
-        ));
+            $todaysSchedules = collect();
+            if ($todayAppDay) {
+                $todaysSchedules = Schedule::where('teacher_id', $teacher->id)
+                    ->where('day_of_week', $todayAppDay)
+                    ->with(['subject', 'kelas', 'room'])
+                    ->orderBy('time_slot')
+                    ->get()
+                    ->keyBy('time_slot');
+            }
+
+            $scheduleSlots = [];
+            for ($i = 1; $i <= 7; $i++) {
+                $scheduleSlots[$i] = $todaysSchedules->get($i);
+            }
+
+            $viewData['scheduleSlots'] = $scheduleSlots;
+            $viewData['todayDateString'] = Carbon::now()->translatedFormat('l, d F Y');
+        }
+
+        // 4. Kirim semua data yang sudah terkumpul ke view
+        return view('dashboard', $viewData);
     }
 }
+

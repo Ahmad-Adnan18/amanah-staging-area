@@ -29,9 +29,25 @@
                             <div>
                                 <label for="teacher_code" class="block text-sm font-medium text-gray-700">Kode Guru (Opsional)</label>
                                 <input type="text" name="teacher_code" id="teacher_code" value="{{ old('teacher_code') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
-                                <p class="text-xs text-slate-500 mt-1">Gunakan kode unik, contoh: 'AZ', 'FY', 'BD'. Kosongkan untuk generate otomatis jika diperlukan.</p>
+                                <p class="text-xs text-slate-500 mt-1">Gunakan kode unik, contoh: 'AZ', 'FY', 'BD'.</p>
                                 <x-input-error class="mt-2" :messages="$errors->get('teacher_code')" />
                             </div>
+
+                            <!-- [TAMBAHAN] Dropdown untuk menghubungkan ke Akun User -->
+                            <div>
+                                <label for="user_id" class="block text-sm font-medium text-gray-700">Hubungkan ke Akun Login (Opsional)</label>
+                                <select name="user_id" id="user_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
+                                    <option value="">-- Tidak Dihubungkan --</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}" @selected(old('user_id') == $user->id)>
+                                            {{ $user->name }} ({{ $user->email }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <p class="text-xs text-slate-500 mt-1">Pilih akun jika guru ini perlu login dan melihat dashboard pribadinya.</p>
+                                <x-input-error class="mt-2" :messages="$errors->get('user_id')" />
+                            </div>
+
                         </div>
                         <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-4">
                             <a href="{{ route('admin.teachers.index') }}" class="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
@@ -47,3 +63,4 @@
         </div>
     </div>
 </x-app-layout>
+

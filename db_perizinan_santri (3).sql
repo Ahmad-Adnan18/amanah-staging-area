@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 31, 2025 at 05:12 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Waktu pembuatan: 25 Sep 2025 pada 02.14
+-- Versi server: 10.4.32-MariaDB
+-- Versi PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `blocked_times`
+-- Struktur dari tabel `blocked_times`
 --
 
 CREATE TABLE `blocked_times` (
@@ -37,7 +37,7 @@ CREATE TABLE `blocked_times` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `blocked_times`
+-- Dumping data untuk tabel `blocked_times`
 --
 
 INSERT INTO `blocked_times` (`id`, `day_of_week`, `time_slot`, `reason`, `created_at`, `updated_at`) VALUES
@@ -47,7 +47,7 @@ INSERT INTO `blocked_times` (`id`, `day_of_week`, `time_slot`, `reason`, `create
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cache`
+-- Struktur dari tabel `cache`
 --
 
 CREATE TABLE `cache` (
@@ -59,7 +59,7 @@ CREATE TABLE `cache` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cache_locks`
+-- Struktur dari tabel `cache_locks`
 --
 
 CREATE TABLE `cache_locks` (
@@ -71,7 +71,7 @@ CREATE TABLE `cache_locks` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `catatan_harians`
+-- Struktur dari tabel `catatan_harians`
 --
 
 CREATE TABLE `catatan_harians` (
@@ -85,7 +85,7 @@ CREATE TABLE `catatan_harians` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `catatan_harians`
+-- Dumping data untuk tabel `catatan_harians`
 --
 
 INSERT INTO `catatan_harians` (`id`, `santri_id`, `tanggal`, `catatan`, `dicatat_oleh_id`, `created_at`, `updated_at`) VALUES
@@ -94,7 +94,7 @@ INSERT INTO `catatan_harians` (`id`, `santri_id`, `tanggal`, `catatan`, `dicatat
 -- --------------------------------------------------------
 
 --
--- Table structure for table `failed_jobs`
+-- Struktur dari tabel `failed_jobs`
 --
 
 CREATE TABLE `failed_jobs` (
@@ -110,7 +110,7 @@ CREATE TABLE `failed_jobs` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `hour_priorities`
+-- Struktur dari tabel `hour_priorities`
 --
 
 CREATE TABLE `hour_priorities` (
@@ -124,7 +124,7 @@ CREATE TABLE `hour_priorities` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `hour_priorities`
+-- Dumping data untuk tabel `hour_priorities`
 --
 
 INSERT INTO `hour_priorities` (`id`, `subject_category`, `day_of_week`, `time_slot`, `is_allowed`, `created_at`, `updated_at`) VALUES
@@ -135,7 +135,7 @@ INSERT INTO `hour_priorities` (`id`, `subject_category`, `day_of_week`, `time_sl
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jabatans`
+-- Struktur dari tabel `jabatans`
 --
 
 CREATE TABLE `jabatans` (
@@ -146,7 +146,7 @@ CREATE TABLE `jabatans` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `jabatans`
+-- Dumping data untuk tabel `jabatans`
 --
 
 INSERT INTO `jabatans` (`id`, `nama_jabatan`, `created_at`, `updated_at`) VALUES
@@ -156,7 +156,7 @@ INSERT INTO `jabatans` (`id`, `nama_jabatan`, `created_at`, `updated_at`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jabatan_user`
+-- Struktur dari tabel `jabatan_user`
 --
 
 CREATE TABLE `jabatan_user` (
@@ -170,21 +170,21 @@ CREATE TABLE `jabatan_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `jabatan_user`
+-- Dumping data untuk tabel `jabatan_user`
 --
 
 INSERT INTO `jabatan_user` (`id`, `user_id`, `kelas_id`, `jabatan_id`, `tahun_ajaran`, `created_at`, `updated_at`) VALUES
-(4, 1, 12, 2, '2025/2026', '2025-08-26 23:36:49', '2025-08-26 23:36:49'),
-(5, 2, 12, 1, '2025/2026', '2025-08-27 00:07:11', '2025-08-27 00:07:11'),
 (6, 7, 18, 1, '2025/2026', '2025-08-27 23:18:56', '2025-08-27 23:18:56'),
 (7, 12, 5, 2, '2025/2026', '2025-08-28 01:52:28', '2025-08-28 01:52:28'),
 (8, 5, 9, 1, '2025/2026', '2025-08-28 01:53:55', '2025-08-28 01:53:55'),
-(9, 13, 6, 2, '2025/2026', '2025-08-28 02:06:45', '2025-08-28 02:06:45');
+(9, 13, 6, 2, '2025/2026', '2025-08-28 02:06:45', '2025-08-28 02:06:45'),
+(11, 1, 15, 1, '2025/2026', '2025-09-23 20:44:10', '2025-09-23 20:44:10'),
+(13, 1, 17, 1, '2025/2026', '2025-09-23 20:46:42', '2025-09-23 20:46:42');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jobs`
+-- Struktur dari tabel `jobs`
 --
 
 CREATE TABLE `jobs` (
@@ -200,7 +200,7 @@ CREATE TABLE `jobs` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `job_batches`
+-- Struktur dari tabel `job_batches`
 --
 
 CREATE TABLE `job_batches` (
@@ -219,130 +219,75 @@ CREATE TABLE `job_batches` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kelas`
+-- Struktur dari tabel `kelas`
 --
 
 CREATE TABLE `kelas` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `nama_kelas` varchar(255) NOT NULL,
+  `tingkatan` varchar(255) DEFAULT NULL,
   `total_jp_sehari` int(11) NOT NULL DEFAULT 7,
   `is_active_for_scheduling` tinyint(1) NOT NULL DEFAULT 1,
   `level` int(11) DEFAULT NULL COMMENT 'Tingkat kelas, cth: 7, 8, 9',
   `parallel_name` varchar(255) DEFAULT NULL COMMENT 'Nama paralel, cth: A, B, Putra A',
   `kurikulum_template_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `room_id` bigint(20) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `kelas`
+-- Dumping data untuk tabel `kelas`
 --
 
-INSERT INTO `kelas` (`id`, `nama_kelas`, `total_jp_sehari`, `is_active_for_scheduling`, `level`, `parallel_name`, `kurikulum_template_id`, `created_at`, `updated_at`) VALUES
-(3, '1A', 7, 1, NULL, NULL, 1, '2025-08-24 09:32:21', '2025-08-27 02:00:09'),
-(4, '1B', 7, 1, NULL, NULL, 1, '2025-08-24 09:34:09', '2025-08-27 02:00:09'),
-(5, '1C', 7, 1, NULL, NULL, 1, '2025-08-24 09:34:16', '2025-08-27 02:00:09'),
-(6, '2A', 7, 1, NULL, NULL, 2, '2025-08-24 09:34:34', '2025-08-27 02:11:23'),
-(7, '2B', 7, 1, NULL, NULL, 2, '2025-08-24 09:34:38', '2025-08-27 02:11:23'),
-(8, '2C', 7, 1, NULL, NULL, 2, '2025-08-24 09:34:43', '2025-08-27 02:11:23'),
-(9, '3A', 7, 1, NULL, NULL, 4, '2025-08-24 09:34:51', '2025-08-27 02:14:22'),
-(10, '3B', 7, 1, NULL, NULL, 4, '2025-08-24 09:35:01', '2025-08-27 02:14:22'),
-(12, '4A', 7, 1, NULL, NULL, 5, '2025-08-24 09:35:37', '2025-08-27 02:16:01'),
-(13, '4B', 7, 1, NULL, NULL, 5, '2025-08-24 09:35:44', '2025-08-27 02:16:01'),
-(14, '5A', 7, 1, NULL, NULL, 6, '2025-08-24 09:35:51', '2025-08-30 22:57:50'),
-(15, '5B', 7, 1, NULL, NULL, 6, '2025-08-24 09:35:58', '2025-08-30 22:57:50'),
-(16, '6A', 7, 1, NULL, NULL, 3, '2025-08-24 09:36:04', '2025-08-27 02:12:18'),
-(17, '6B', 7, 1, NULL, NULL, 3, '2025-08-24 09:36:10', '2025-08-27 02:12:18'),
-(18, '4Int', 7, 1, NULL, NULL, 5, '2025-08-26 10:19:07', '2025-08-30 22:57:18');
+INSERT INTO `kelas` (`id`, `nama_kelas`, `tingkatan`, `total_jp_sehari`, `is_active_for_scheduling`, `level`, `parallel_name`, `kurikulum_template_id`, `room_id`, `created_at`, `updated_at`) VALUES
+(3, '1A', '1', 7, 1, NULL, NULL, 1, 9, '2025-08-24 09:32:21', '2025-09-23 21:44:43'),
+(4, '1B', '1', 7, 1, NULL, NULL, 1, 10, '2025-08-24 09:34:09', '2025-09-23 21:44:58'),
+(5, '1C', '1', 7, 1, NULL, NULL, 1, 8, '2025-08-24 09:34:16', '2025-09-23 21:26:08'),
+(6, '2A', '2', 7, 1, NULL, NULL, 2, 11, '2025-08-24 09:34:34', '2025-09-23 21:45:13'),
+(7, '2B', '2', 7, 1, NULL, NULL, 2, 12, '2025-08-24 09:34:38', '2025-09-23 21:45:39'),
+(8, '2C', '2', 7, 1, NULL, NULL, 2, 13, '2025-08-24 09:34:43', '2025-09-23 21:45:54'),
+(9, '3A', '5', 7, 1, NULL, NULL, 4, 13, '2025-08-24 09:34:51', '2025-09-23 21:46:10'),
+(10, '3B', '5', 7, 1, NULL, NULL, 4, 14, '2025-08-24 09:35:01', '2025-09-23 21:46:23'),
+(12, '4A', '5', 7, 1, NULL, NULL, 5, 15, '2025-08-24 09:35:37', '2025-09-23 21:46:38'),
+(13, '4B', '5', 7, 1, NULL, NULL, 5, 3, '2025-08-24 09:35:44', '2025-09-23 21:46:53'),
+(14, '5A', '5', 7, 1, NULL, NULL, 6, 2, '2025-08-24 09:35:51', '2025-09-23 21:47:06'),
+(15, '5B', '5', 7, 1, NULL, NULL, 6, 17, '2025-08-24 09:35:58', '2025-09-23 20:43:48'),
+(16, '6A', '6', 7, 1, NULL, NULL, 3, 18, '2025-08-24 09:36:04', '2025-09-23 21:17:46'),
+(17, '6B', '6', 7, 1, NULL, NULL, 3, 16, '2025-08-24 09:36:10', '2025-09-23 20:42:45'),
+(18, '4Int', '5', 7, 1, NULL, NULL, 5, 4, '2025-08-26 10:19:07', '2025-09-23 21:47:21');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kelas_mata_pelajaran`
+-- Struktur dari tabel `kelas_mata_pelajaran`
 --
 
 CREATE TABLE `kelas_mata_pelajaran` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `kelas_id` bigint(20) UNSIGNED NOT NULL,
   `mata_pelajaran_id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `duration_jp` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `teacher_id` bigint(20) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `kelas_mata_pelajaran`
+-- Dumping data untuk tabel `kelas_mata_pelajaran`
 --
 
-INSERT INTO `kelas_mata_pelajaran` (`id`, `kelas_id`, `mata_pelajaran_id`, `user_id`, `duration_jp`, `created_at`, `updated_at`) VALUES
-(1, 3, 4, 11, 1, NULL, NULL),
-(2, 3, 1, 12, 1, NULL, NULL),
-(3, 17, 2, NULL, 1, NULL, NULL),
-(4, 16, 2, NULL, 1, NULL, NULL),
-(5, 4, 4, 15, 1, NULL, NULL),
-(6, 4, 1, 12, 1, NULL, NULL),
-(7, 5, 4, NULL, 1, NULL, NULL),
-(8, 5, 1, NULL, 1, NULL, NULL),
-(9, 6, 4, NULL, 1, NULL, NULL),
-(10, 6, 1, NULL, 1, NULL, NULL),
-(11, 6, 3, NULL, 1, NULL, NULL),
-(12, 7, 4, NULL, 1, NULL, NULL),
-(13, 7, 1, NULL, 1, NULL, NULL),
-(14, 7, 3, NULL, 1, NULL, NULL),
-(15, 8, 4, NULL, 1, NULL, NULL),
-(16, 8, 1, NULL, 1, NULL, NULL),
-(17, 8, 3, NULL, 1, NULL, NULL),
-(18, 16, 4, NULL, 1, NULL, NULL),
-(19, 16, 1, NULL, 1, NULL, NULL),
-(20, 16, 3, NULL, 1, NULL, NULL),
-(21, 17, 4, NULL, 1, NULL, NULL),
-(22, 17, 1, NULL, 1, NULL, NULL),
-(23, 17, 3, NULL, 1, NULL, NULL),
-(24, 9, 4, NULL, 1, NULL, NULL),
-(25, 9, 1, NULL, 1, NULL, NULL),
-(26, 9, 3, NULL, 1, NULL, NULL),
-(27, 10, 4, NULL, 1, NULL, NULL),
-(28, 10, 1, NULL, 1, NULL, NULL),
-(29, 10, 3, NULL, 1, NULL, NULL),
-(30, 3, 5, 18, 1, NULL, NULL),
-(31, 4, 5, 18, 1, NULL, NULL),
-(32, 5, 5, NULL, 1, NULL, NULL),
-(33, 12, 5, NULL, 1, NULL, NULL),
-(34, 12, 4, NULL, 1, NULL, NULL),
-(35, 12, 1, NULL, 1, NULL, NULL),
-(36, 12, 3, NULL, 1, NULL, NULL),
-(37, 13, 5, NULL, 1, NULL, NULL),
-(38, 13, 4, NULL, 1, NULL, NULL),
-(39, 13, 1, NULL, 1, NULL, NULL),
-(40, 13, 3, NULL, 1, NULL, NULL),
-(41, 18, 5, NULL, 1, NULL, NULL),
-(42, 18, 4, NULL, 1, NULL, NULL),
-(43, 18, 1, NULL, 1, NULL, NULL),
-(44, 18, 3, NULL, 1, NULL, NULL),
-(45, 14, 4, NULL, 1, NULL, NULL),
-(46, 14, 1, NULL, 1, NULL, NULL),
-(47, 14, 3, NULL, 1, NULL, NULL),
-(48, 15, 4, NULL, 1, NULL, NULL),
-(49, 15, 1, NULL, 1, NULL, NULL),
-(50, 15, 3, NULL, 1, NULL, NULL),
-(51, 6, 6, NULL, 1, NULL, NULL),
-(52, 6, 7, NULL, 1, NULL, NULL),
-(53, 7, 6, NULL, 1, NULL, NULL),
-(54, 7, 7, NULL, 1, NULL, NULL),
-(55, 8, 6, NULL, 1, NULL, NULL),
-(56, 8, 7, NULL, 1, NULL, NULL),
-(57, 3, 7, NULL, 1, NULL, NULL),
-(58, 4, 7, NULL, 1, NULL, NULL),
-(59, 5, 7, NULL, 1, NULL, NULL),
-(60, 3, 6, NULL, 1, NULL, NULL),
-(61, 4, 6, NULL, 1, NULL, NULL),
-(62, 5, 6, NULL, 1, NULL, NULL);
+INSERT INTO `kelas_mata_pelajaran` (`id`, `kelas_id`, `mata_pelajaran_id`, `teacher_id`, `created_at`, `updated_at`) VALUES
+(1, 17, 2, 1, NULL, NULL),
+(2, 17, 1, 1, NULL, NULL),
+(3, 16, 1, 1, NULL, NULL),
+(4, 16, 2, 1, NULL, NULL),
+(5, 4, 5, 2, NULL, NULL),
+(6, 5, 5, 2, NULL, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kurikulum_templates`
+-- Struktur dari tabel `kurikulum_templates`
 --
 
 CREATE TABLE `kurikulum_templates` (
@@ -353,7 +298,7 @@ CREATE TABLE `kurikulum_templates` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `kurikulum_templates`
+-- Dumping data untuk tabel `kurikulum_templates`
 --
 
 INSERT INTO `kurikulum_templates` (`id`, `nama_template`, `created_at`, `updated_at`) VALUES
@@ -367,51 +312,7 @@ INSERT INTO `kurikulum_templates` (`id`, `nama_template`, `created_at`, `updated
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kurikulum_template_mata_pelajaran`
---
-
-CREATE TABLE `kurikulum_template_mata_pelajaran` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `kurikulum_template_id` bigint(20) UNSIGNED NOT NULL,
-  `mata_pelajaran_id` bigint(20) UNSIGNED NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `kurikulum_template_mata_pelajaran`
---
-
-INSERT INTO `kurikulum_template_mata_pelajaran` (`id`, `kurikulum_template_id`, `mata_pelajaran_id`, `created_at`, `updated_at`) VALUES
-(1, 1, 4, NULL, NULL),
-(2, 1, 1, NULL, NULL),
-(3, 2, 4, NULL, NULL),
-(4, 2, 1, NULL, NULL),
-(5, 2, 3, NULL, NULL),
-(6, 3, 4, NULL, NULL),
-(7, 3, 1, NULL, NULL),
-(8, 3, 2, NULL, NULL),
-(9, 3, 3, NULL, NULL),
-(10, 4, 4, NULL, NULL),
-(11, 4, 1, NULL, NULL),
-(12, 4, 3, NULL, NULL),
-(13, 1, 5, NULL, NULL),
-(14, 5, 5, NULL, NULL),
-(15, 5, 4, NULL, NULL),
-(16, 5, 1, NULL, NULL),
-(17, 5, 3, NULL, NULL),
-(18, 6, 4, NULL, NULL),
-(19, 6, 1, NULL, NULL),
-(20, 6, 3, NULL, NULL),
-(21, 2, 6, NULL, NULL),
-(22, 2, 7, NULL, NULL),
-(23, 1, 7, NULL, NULL),
-(24, 1, 6, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mata_pelajarans`
+-- Struktur dari tabel `mata_pelajarans`
 --
 
 CREATE TABLE `mata_pelajarans` (
@@ -426,15 +327,15 @@ CREATE TABLE `mata_pelajarans` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `mata_pelajarans`
+-- Dumping data untuk tabel `mata_pelajarans`
 --
 
 INSERT INTO `mata_pelajarans` (`id`, `nama_pelajaran`, `tingkatan`, `duration_jp`, `requires_special_room`, `kategori`, `created_at`, `updated_at`) VALUES
-(1, 'Matematika', '5', 2, 0, 'Umum', '2025-08-25 02:09:41', '2025-08-31 04:28:04'),
-(2, 'Faraidh', '6', 2, 0, 'Diniyah', '2025-08-25 02:09:52', '2025-08-31 05:02:55'),
+(1, 'Matematika', '6', 2, 0, 'Umum', '2025-08-25 02:09:41', '2025-09-23 20:31:47'),
+(2, 'Faraidh', '6', 1, 0, 'Diniyah', '2025-08-25 02:09:52', '2025-09-23 21:55:39'),
 (3, 'Nahwu', '2', 2, 0, 'Diniyah', '2025-08-26 22:20:04', '2025-08-31 05:03:04'),
 (4, 'English Lesson', '1', 3, 0, 'Umum', '2025-08-26 22:21:08', '2025-08-31 04:28:04'),
-(5, 'Bahasa Indonesia', '1', 1, 0, 'Umum', '2025-08-27 02:14:44', '2025-08-31 04:28:04'),
+(5, 'Bahasa Indonesia', '1', 1, 0, 'Umum', '2025-08-27 02:14:44', '2025-09-23 21:25:52'),
 (6, 'TIK', '1', 1, 1, 'Umum', '2025-08-31 01:44:50', '2025-08-31 04:28:04'),
 (7, 'Mahfudzot', '1', 2, 0, 'Diniyah', '2025-08-31 01:48:53', '2025-08-31 04:28:04'),
 (8, 'Matematika', '5', 2, 0, 'Umum', '2025-08-31 04:11:26', '2025-08-31 04:28:04');
@@ -442,7 +343,30 @@ INSERT INTO `mata_pelajarans` (`id`, `nama_pelajaran`, `tingkatan`, `duration_jp
 -- --------------------------------------------------------
 
 --
--- Table structure for table `mata_pelajaran_user`
+-- Struktur dari tabel `mata_pelajaran_teacher`
+--
+
+CREATE TABLE `mata_pelajaran_teacher` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `mata_pelajaran_id` bigint(20) UNSIGNED NOT NULL,
+  `teacher_id` bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data untuk tabel `mata_pelajaran_teacher`
+--
+
+INSERT INTO `mata_pelajaran_teacher` (`id`, `mata_pelajaran_id`, `teacher_id`, `created_at`, `updated_at`) VALUES
+(1, 2, 1, NULL, NULL),
+(2, 1, 1, NULL, NULL),
+(3, 5, 2, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `mata_pelajaran_user`
 --
 
 CREATE TABLE `mata_pelajaran_user` (
@@ -451,27 +375,23 @@ CREATE TABLE `mata_pelajaran_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `mata_pelajaran_user`
+-- Dumping data untuk tabel `mata_pelajaran_user`
 --
 
 INSERT INTO `mata_pelajaran_user` (`user_id`, `mata_pelajaran_id`) VALUES
 (1, 1),
 (1, 2),
 (1, 5),
-(5, 2),
 (6, 4),
 (6, 6),
 (10, 3),
 (10, 5),
 (11, 4),
-(12, 1),
 (12, 8),
 (13, 7),
 (15, 4),
 (16, 4),
 (17, 3),
-(18, 1),
-(18, 2),
 (18, 5),
 (19, 3),
 (21, 3);
@@ -479,7 +399,7 @@ INSERT INTO `mata_pelajaran_user` (`user_id`, `mata_pelajaran_id`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `migrations`
+-- Struktur dari tabel `migrations`
 --
 
 CREATE TABLE `migrations` (
@@ -489,7 +409,7 @@ CREATE TABLE `migrations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `migrations`
+-- Dumping data untuk tabel `migrations`
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
@@ -532,12 +452,21 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (37, '2025_08_31_092251_add_teacher_id_to_kelas_mata_pelajaran_table', 21),
 (38, '2025_08_31_104416_add_duration_jp_to_kelas_mata_pelajaran_table', 22),
 (39, '2025_08_31_083948_ensure_kategori_column_name_in_mata_pelajarans_table', 23),
-(40, '2025_08_31_110519_add_tingkatan_to_mata_pelajarans_table', 23);
+(40, '2025_08_31_110519_add_tingkatan_to_mata_pelajarans_table', 23),
+(41, '2025_09_03_150846_add_room_id_to_kelas_table', 24),
+(42, '2025_09_04_065219_remove_room_id_from_kelas_table', 24),
+(43, '2025_09_04_145545_add_room_id_to_kelas_table', 24),
+(44, '2025_09_16_122301_create_teachers_table', 24),
+(46, '2025_09_24_022455_create_teachers_table', 25),
+(47, '2025_09_24_025326_create_kelas_mata_pelajaran_table', 26),
+(48, '2025_09_24_033055_create_mata_pelajaran_teacher_table', 27),
+(49, '2025_09_24_034218_add_tingkatan_to_kelas_table', 28),
+(50, '2025_09_24_041631_modify_teacher_id_in_kelas_mata_pelajaran_table', 29);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `nilais`
+-- Struktur dari tabel `nilais`
 --
 
 CREATE TABLE `nilais` (
@@ -557,7 +486,7 @@ CREATE TABLE `nilais` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `nilais`
+-- Dumping data untuk tabel `nilais`
 --
 
 INSERT INTO `nilais` (`id`, `santri_id`, `kelas_id`, `mata_pelajaran_id`, `nilai_tugas`, `nilai_uts`, `nilai_uas`, `semester`, `tahun_ajaran`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
@@ -703,7 +632,7 @@ INSERT INTO `nilais` (`id`, `santri_id`, `kelas_id`, `mata_pelajaran_id`, `nilai
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pelanggarans`
+-- Struktur dari tabel `pelanggarans`
 --
 
 CREATE TABLE `pelanggarans` (
@@ -718,7 +647,7 @@ CREATE TABLE `pelanggarans` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `pelanggarans`
+-- Dumping data untuk tabel `pelanggarans`
 --
 
 INSERT INTO `pelanggarans` (`id`, `santri_id`, `jenis_pelanggaran`, `tanggal_kejadian`, `keterangan`, `dicatat_oleh`, `created_at`, `updated_at`) VALUES
@@ -728,7 +657,7 @@ INSERT INTO `pelanggarans` (`id`, `santri_id`, `jenis_pelanggaran`, `tanggal_kej
 -- --------------------------------------------------------
 
 --
--- Table structure for table `perizinans`
+-- Struktur dari tabel `perizinans`
 --
 
 CREATE TABLE `perizinans` (
@@ -747,7 +676,7 @@ CREATE TABLE `perizinans` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `perizinans`
+-- Dumping data untuk tabel `perizinans`
 --
 
 INSERT INTO `perizinans` (`id`, `santri_id`, `jenis_izin`, `kategori`, `keterangan`, `tanggal_mulai`, `tanggal_akhir`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
@@ -762,7 +691,7 @@ INSERT INTO `perizinans` (`id`, `santri_id`, `jenis_izin`, `kategori`, `keterang
 -- --------------------------------------------------------
 
 --
--- Table structure for table `prestasis`
+-- Struktur dari tabel `prestasis`
 --
 
 CREATE TABLE `prestasis` (
@@ -778,7 +707,7 @@ CREATE TABLE `prestasis` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `prestasis`
+-- Dumping data untuk tabel `prestasis`
 --
 
 INSERT INTO `prestasis` (`id`, `santri_id`, `nama_prestasi`, `poin`, `tanggal`, `keterangan`, `dicatat_oleh_id`, `created_at`, `updated_at`) VALUES
@@ -787,7 +716,7 @@ INSERT INTO `prestasis` (`id`, `santri_id`, `nama_prestasi`, `poin`, `tanggal`, 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rooms`
+-- Struktur dari tabel `rooms`
 --
 
 CREATE TABLE `rooms` (
@@ -799,7 +728,7 @@ CREATE TABLE `rooms` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `rooms`
+-- Dumping data untuk tabel `rooms`
 --
 
 INSERT INTO `rooms` (`id`, `name`, `type`, `created_at`, `updated_at`) VALUES
@@ -825,7 +754,7 @@ INSERT INTO `rooms` (`id`, `name`, `type`, `created_at`, `updated_at`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `santris`
+-- Struktur dari tabel `santris`
 --
 
 CREATE TABLE `santris` (
@@ -843,7 +772,7 @@ CREATE TABLE `santris` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `santris`
+-- Dumping data untuk tabel `santris`
 --
 
 INSERT INTO `santris` (`id`, `wali_id`, `kode_registrasi_wali`, `nis`, `nama`, `jenis_kelamin`, `rayon`, `kelas_id`, `foto`, `created_at`, `updated_at`) VALUES
@@ -1042,7 +971,7 @@ INSERT INTO `santris` (`id`, `wali_id`, `kode_registrasi_wali`, `nis`, `nama`, `
 (223, NULL, 'WALI-IKX9UAQO', NULL, 'An-Nisa Maulida Hamzah ', 'Putri', NULL, 18, NULL, '2025-08-26 10:20:33', '2025-08-26 10:28:05'),
 (224, NULL, 'WALI-IQKYMBSN', NULL, 'Lidya Rahmawal Jepa', 'Putri', NULL, 18, NULL, '2025-08-26 10:20:33', '2025-08-26 10:28:05'),
 (225, NULL, 'WALI-DLXI9PV9', NULL, 'Sakila Aulia', 'Putri', NULL, 18, NULL, '2025-08-26 10:20:33', '2025-08-26 10:28:05'),
-(226, NULL, 'WALI-I7ASKRIK', NULL, 'Adnan Faruq Albantani', 'Putra', NULL, 12, NULL, '2025-08-26 10:21:49', '2025-08-26 10:28:05'),
+(226, NULL, 'WALI-I7ASKRIK', '6746746', 'Adnan Faruq Albantani', 'Putra', NULL, 12, NULL, '2025-08-26 10:21:49', '2025-09-24 03:46:49'),
 (227, NULL, 'WALI-LHIINIGY', NULL, 'Daffa Dhiya\'ulhaq', 'Putra', NULL, 12, NULL, '2025-08-26 10:21:49', '2025-08-26 10:28:05'),
 (228, NULL, 'WALI-XUPJP4C5', NULL, 'Faisal Abda\'u', 'Putra', NULL, 12, NULL, '2025-08-26 10:21:49', '2025-08-26 10:28:05'),
 (229, NULL, 'WALI-7TUMXTRG', NULL, 'Gian Nara Paramudya Pratama', 'Putra', NULL, 12, NULL, '2025-08-26 10:21:49', '2025-08-26 10:28:05'),
@@ -1087,7 +1016,7 @@ INSERT INTO `santris` (`id`, `wali_id`, `kode_registrasi_wali`, `nis`, `nama`, `
 (268, NULL, 'WALI-5RFHMQA6', NULL, 'Qonita Maulida', 'Putri', NULL, 13, NULL, '2025-08-26 10:22:55', '2025-08-26 10:28:05'),
 (269, NULL, 'WALI-SKHHDDLZ', NULL, 'Salwa Salsabila Afifah', 'Putri', NULL, 13, NULL, '2025-08-26 10:22:55', '2025-08-26 10:28:05'),
 (270, NULL, 'WALI-SQ33SXY3', NULL, 'Siti Nur Fadillah', 'Putri', NULL, 13, NULL, '2025-08-26 10:22:55', '2025-08-26 10:28:05'),
-(346, NULL, 'WALI-7QQZNJVR', NULL, 'Ahmad Mahrus Albi', 'Putra', NULL, 14, NULL, '2025-08-26 10:27:13', '2025-08-26 10:28:05'),
+(346, 22, 'WALI-7QQZNJVR', NULL, 'Ahmad Mahrus Albi', 'Putra', NULL, 14, NULL, '2025-08-26 10:27:13', '2025-09-17 05:33:42'),
 (347, NULL, 'WALI-EJ3PUJRY', NULL, 'Alfan Rheza Amirudin', 'Putra', NULL, 14, NULL, '2025-08-26 10:27:13', '2025-08-26 10:28:05'),
 (348, NULL, 'WALI-D6J0AR0R', NULL, 'Angga Saputra Agustian', 'Putra', NULL, 14, NULL, '2025-08-26 10:27:13', '2025-08-26 10:28:06'),
 (349, NULL, 'WALI-94ZDGH35', NULL, 'Bagas Aqso Alvaro', 'Putra', NULL, 14, NULL, '2025-08-26 10:27:13', '2025-08-26 10:28:06'),
@@ -1186,7 +1115,7 @@ INSERT INTO `santris` (`id`, `wali_id`, `kode_registrasi_wali`, `nis`, `nama`, `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `schedules`
+-- Struktur dari tabel `schedules`
 --
 
 CREATE TABLE `schedules` (
@@ -1204,142 +1133,46 @@ CREATE TABLE `schedules` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `schedules`
+-- Dumping data untuk tabel `schedules`
 --
 
 INSERT INTO `schedules` (`id`, `kelas_id`, `mata_pelajaran_id`, `teacher_id`, `room_id`, `day_of_week`, `time_slot`, `version_id`, `is_published`, `created_at`, `updated_at`) VALUES
-(1018, 3, 4, 11, 9, 6, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1019, 4, 5, 18, 12, 6, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1020, 8, 3, 10, 18, 6, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1021, 3, 1, 12, 10, 6, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1022, 6, 4, 16, 7, 6, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1023, 8, 4, 6, 9, 6, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1024, 13, 4, 15, 14, 6, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1025, 16, 4, 11, 2, 6, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1026, 3, 7, 13, 14, 6, 6, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1027, 9, 3, 21, 9, 6, 6, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1028, 18, 4, 11, 15, 6, 6, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1029, 6, 4, 6, 18, 6, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1030, 13, 1, 1, 11, 6, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1031, 6, 7, 13, 2, 6, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1032, 13, 5, 10, 16, 6, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1033, 18, 4, 16, 18, 6, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1034, 12, 1, 12, 17, 6, 4, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1035, 16, 3, 10, 2, 6, 4, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1036, 16, 4, 15, 15, 6, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1037, 17, 1, 12, 8, 6, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1038, 18, 5, 1, 11, 6, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1039, 3, 4, 11, 10, 5, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1040, 4, 4, 15, 7, 5, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1041, 9, 4, 16, 4, 5, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1042, 3, 4, 11, 7, 5, 4, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1043, 4, 7, 13, 2, 5, 4, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1044, 4, 4, 15, 5, 5, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1045, 6, 6, 6, 1, 5, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1046, 8, 1, 18, 11, 5, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1047, 15, 4, 16, 6, 5, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1048, 4, 6, 6, 1, 5, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1049, 8, 4, 15, 14, 5, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1050, 10, 1, 1, 17, 5, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1051, 13, 3, 17, 6, 5, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1052, 18, 1, 12, 4, 5, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1053, 5, 5, 18, 5, 5, 6, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1054, 7, 7, 13, 12, 5, 6, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1055, 5, 7, 13, 15, 5, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1056, 6, 3, 19, 14, 5, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1057, 7, 4, 15, 9, 5, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1058, 8, 3, 17, 13, 5, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1059, 13, 3, 21, 10, 5, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1060, 14, 4, 11, 5, 5, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1061, 9, 1, 12, 13, 5, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1062, 3, 1, 12, 14, 3, 4, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1063, 18, 3, 10, 2, 3, 4, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1064, 4, 1, 12, 9, 3, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1065, 12, 3, 17, 13, 3, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1066, 15, 3, 10, 10, 3, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1067, 16, 4, 15, 7, 3, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1068, 17, 2, 1, 11, 3, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1069, 5, 7, 13, 4, 3, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1070, 6, 1, 1, 10, 3, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1071, 18, 1, 12, 16, 3, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1072, 9, 4, 6, 15, 3, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1073, 10, 3, 19, 18, 3, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1074, 12, 4, 16, 2, 3, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1075, 16, 2, 18, 4, 3, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1076, 17, 4, 11, 9, 3, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1077, 9, 1, 12, 7, 3, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1078, 12, 3, 10, 17, 3, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1079, 13, 1, 18, 16, 3, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1080, 14, 3, 17, 3, 3, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1081, 15, 3, 21, 18, 3, 6, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1082, 18, 3, 17, 8, 3, 6, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1083, 3, 5, 18, 11, 1, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1084, 4, 1, 12, 9, 1, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1085, 7, 4, 16, 16, 1, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1086, 12, 5, 10, 4, 1, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1087, 14, 4, 11, 18, 1, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1088, 17, 3, 21, 15, 1, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1089, 4, 4, 15, 12, 1, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1090, 12, 4, 6, 8, 1, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1091, 14, 1, 12, 17, 1, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1092, 4, 7, 13, 11, 1, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1093, 7, 6, 6, 1, 1, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1094, 5, 1, 18, 16, 1, 6, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1095, 7, 1, 12, 4, 1, 6, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1096, 10, 3, 10, 18, 1, 6, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1097, 7, 7, 13, 10, 1, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1098, 8, 6, 6, 1, 1, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1099, 9, 3, 10, 15, 1, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1100, 16, 1, 18, 11, 1, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1101, 9, 4, 6, 15, 1, 4, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1102, 10, 1, 18, 3, 1, 4, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1103, 14, 1, 12, 5, 1, 4, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1104, 3, 7, 13, 5, 4, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1105, 7, 1, 18, 14, 4, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1106, 16, 1, 12, 6, 4, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1107, 3, 6, 6, 1, 4, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1108, 6, 1, 18, 12, 4, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1109, 12, 1, 12, 9, 4, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1110, 14, 4, 16, 6, 4, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1111, 17, 4, 15, 14, 4, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1112, 5, 4, 15, 13, 4, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1113, 7, 4, 6, 2, 4, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1114, 8, 4, 16, 12, 4, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1115, 10, 4, 11, 6, 4, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1116, 17, 3, 19, 7, 4, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1117, 5, 1, 1, 6, 4, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1118, 6, 4, 15, 7, 4, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1119, 7, 3, 19, 11, 4, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1120, 5, 6, 6, 1, 4, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1121, 7, 3, 17, 5, 4, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1122, 8, 7, 13, 3, 4, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1123, 6, 3, 17, 2, 4, 6, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1124, 10, 4, 15, 17, 4, 6, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1125, 8, 7, 13, 5, 4, 4, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1126, 16, 2, 1, 18, 4, 4, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1127, 17, 4, 6, 15, 4, 4, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1128, 5, 4, 15, 13, 2, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1129, 17, 2, 18, 6, 2, 1, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1130, 5, 4, 11, 8, 2, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1131, 6, 7, 13, 3, 2, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1132, 18, 4, 16, 13, 2, 2, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1133, 8, 1, 18, 5, 2, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1134, 10, 4, 16, 2, 2, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1135, 13, 4, 6, 8, 2, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1136, 15, 1, 12, 11, 2, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1137, 17, 1, 1, 13, 2, 7, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1138, 12, 4, 11, 6, 2, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1139, 15, 4, 16, 18, 2, 3, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1140, 13, 4, 11, 3, 2, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1141, 14, 3, 19, 4, 2, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1142, 16, 3, 17, 5, 2, 5, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1143, 15, 4, 11, 4, 2, 6, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49'),
-(1144, 15, 1, 12, 11, 2, 4, NULL, 0, '2025-08-31 05:05:49', '2025-08-31 05:05:49');
+(1189, 4, 5, 2, 10, 3, 3, NULL, 0, NULL, '2025-09-24 03:48:45'),
+(1190, 16, 1, 1, 18, 3, 5, NULL, 0, NULL, NULL),
+(1191, 17, 1, 1, 16, 3, 6, NULL, 0, NULL, NULL),
+(1192, 5, 5, 2, 8, 2, 3, NULL, 0, NULL, '2025-09-24 03:48:45'),
+(1193, 17, 1, 1, 16, 2, 6, NULL, 0, NULL, NULL),
+(1194, 16, 2, 1, 18, 4, 6, NULL, 0, NULL, NULL),
+(1195, 16, 1, 1, 18, 6, 4, NULL, 0, NULL, NULL),
+(1196, 17, 2, 1, 16, 5, 4, NULL, 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `teacher_unavailabilities`
+-- Struktur dari tabel `teachers`
+--
+
+CREATE TABLE `teachers` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `teacher_code` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data untuk tabel `teachers`
+--
+
+INSERT INTO `teachers` (`id`, `name`, `teacher_code`, `created_at`, `updated_at`) VALUES
+(1, 'Ahmad Adnan', 'AZ', '2025-09-23 20:05:56', '2025-09-23 20:07:06'),
+(2, 'Ali muksit', 'NN', '2025-09-23 21:24:53', '2025-09-23 22:36:33'),
+(3, 'Fachril Ramadan', 'FC', '2025-09-23 21:25:01', '2025-09-23 21:25:16');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `teacher_unavailabilities`
 --
 
 CREATE TABLE `teacher_unavailabilities` (
@@ -1352,7 +1185,7 @@ CREATE TABLE `teacher_unavailabilities` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `teacher_unavailabilities`
+-- Dumping data untuk tabel `teacher_unavailabilities`
 --
 
 INSERT INTO `teacher_unavailabilities` (`id`, `teacher_id`, `day_of_week`, `time_slot`, `created_at`, `updated_at`) VALUES
@@ -1371,7 +1204,7 @@ INSERT INTO `teacher_unavailabilities` (`id`, `teacher_id`, `day_of_week`, `time
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Struktur dari tabel `users`
 --
 
 CREATE TABLE `users` (
@@ -1388,11 +1221,11 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `users`
+-- Dumping data untuk tabel `users`
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `role`, `teacher_code`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Ahmad Adnan', 'adnan@gmail.com', NULL, '$2y$12$OaOeZXdMbZUD3fpB3QrZO.l/SKfn7GAvqGNBXdGUUPxahe6IGEcCe', 'admin', NULL, 'A38M6PYf4aFaGpuX4fj4TphHpaKw3GSyUn7RhsVkfiHnTfarWL9rNnq98sbt', '2025-08-23 17:09:25', '2025-08-23 17:09:25'),
+(1, 'Ahmad Adnan', 'adnan@gmail.com', NULL, '$2y$12$OaOeZXdMbZUD3fpB3QrZO.l/SKfn7GAvqGNBXdGUUPxahe6IGEcCe', 'admin', NULL, 'v5JNgeEOY6qB1uLzkMvQZnLitoFJpiBW8627kqcq7FKKD1tjAoHiRVHZDduV', '2025-08-23 17:09:25', '2025-08-23 17:09:25'),
 (2, 'Nannn', 'nan@gmail.com', NULL, '$2y$12$4ryv04h9F/tybQEk697iAO7rIwCeiZpRfX183DDdVBPTytcXyIMV2', 'admin', NULL, NULL, '2025-08-24 04:01:27', '2025-08-30 20:21:40'),
 (5, 'Noval Izharul', 'noval@gmail.com', NULL, '$2y$12$fuELUHWHJ9t3myzpd4wlcuahRggdf5GCUwO0JNytpuS6W247/sHmu', 'pengasuhan', NULL, NULL, '2025-08-27 17:04:24', '2025-08-27 17:50:09'),
 (6, 'Bapak 11 Meter', 'bapak11meter@gmail.com', NULL, '$2y$12$4uFaKdgNxt.H3TKYpsIAdO7L/zY8bu10/RhrmLX0fR1vcx8dRR8S6', 'ustadz_umum', NULL, NULL, '2025-08-27 17:10:22', '2025-08-27 17:10:22'),
@@ -1410,32 +1243,33 @@ INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `ro
 (18, 'Nisrina Nasywa', 'acauuu29@gmail.com', NULL, '$2y$12$j5WDOtDZrjoA6u2ME6CXWOfkO4YDs84dbG0KfaMeD9xODZhytPHFq', 'ustadz_umum', NULL, NULL, '2025-08-28 05:00:24', '2025-08-28 05:00:24'),
 (19, 'M. Rifky Aditiya Putra', 'mrifkyraditiya75385@gmail.com', NULL, '$2y$12$n8ddVGYdObgip0d062PEku5LG48Poz8uWp9EjcYssb0cOdaiHG4EG', 'ustadz_umum', NULL, NULL, '2025-08-28 13:49:07', '2025-08-28 13:49:07'),
 (20, 'SEKRET', 'fakhrimaulana311@gmail.com', NULL, '$2y$12$7CLDtNHkjym1a4yr0wSYtu3tCKN5s7OZzNEGrrZpxfYCAys8XNCz6', 'admin', NULL, NULL, '2025-08-29 07:21:04', '2025-08-29 07:21:04'),
-(21, 'Khotibul Umam', 'umam76207@gmail.com', NULL, '$2y$12$or91DYZACV4TJMb7yT1/8uXAEOkg.Ds0DdZ5IBDwrKbP/abQu01JK', 'ustadz_umum', NULL, NULL, '2025-08-29 11:46:02', '2025-08-29 11:46:02');
+(21, 'Khotibul Umam', 'umam76207@gmail.com', NULL, '$2y$12$or91DYZACV4TJMb7yT1/8uXAEOkg.Ds0DdZ5IBDwrKbP/abQu01JK', 'ustadz_umum', NULL, NULL, '2025-08-29 11:46:02', '2025-08-29 11:46:02'),
+(22, 'bapak', 'admin@kunka.com', NULL, '$2y$12$qxT.jC88kkwKWQnYKE9IZOBlHBh.ThLjhznd.KEofxNcClQWYwRmu', 'wali_santri', NULL, NULL, '2025-09-17 05:33:42', '2025-09-17 05:33:42');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `blocked_times`
+-- Indeks untuk tabel `blocked_times`
 --
 ALTER TABLE `blocked_times`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `cache`
+-- Indeks untuk tabel `cache`
 --
 ALTER TABLE `cache`
   ADD PRIMARY KEY (`key`);
 
 --
--- Indexes for table `cache_locks`
+-- Indeks untuk tabel `cache_locks`
 --
 ALTER TABLE `cache_locks`
   ADD PRIMARY KEY (`key`);
 
 --
--- Indexes for table `catatan_harians`
+-- Indeks untuk tabel `catatan_harians`
 --
 ALTER TABLE `catatan_harians`
   ADD PRIMARY KEY (`id`),
@@ -1443,27 +1277,27 @@ ALTER TABLE `catatan_harians`
   ADD KEY `catatan_harians_dicatat_oleh_id_foreign` (`dicatat_oleh_id`);
 
 --
--- Indexes for table `failed_jobs`
+-- Indeks untuk tabel `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
 
 --
--- Indexes for table `hour_priorities`
+-- Indeks untuk tabel `hour_priorities`
 --
 ALTER TABLE `hour_priorities`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `jabatans`
+-- Indeks untuk tabel `jabatans`
 --
 ALTER TABLE `jabatans`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `jabatans_nama_jabatan_unique` (`nama_jabatan`);
 
 --
--- Indexes for table `jabatan_user`
+-- Indeks untuk tabel `jabatan_user`
 --
 ALTER TABLE `jabatan_user`
   ADD PRIMARY KEY (`id`),
@@ -1472,71 +1306,72 @@ ALTER TABLE `jabatan_user`
   ADD KEY `jabatan_user_jabatan_id_foreign` (`jabatan_id`);
 
 --
--- Indexes for table `jobs`
+-- Indeks untuk tabel `jobs`
 --
 ALTER TABLE `jobs`
   ADD PRIMARY KEY (`id`),
   ADD KEY `jobs_queue_index` (`queue`);
 
 --
--- Indexes for table `job_batches`
+-- Indeks untuk tabel `job_batches`
 --
 ALTER TABLE `job_batches`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `kelas`
+-- Indeks untuk tabel `kelas`
 --
 ALTER TABLE `kelas`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `kelas_nama_kelas_unique` (`nama_kelas`),
-  ADD KEY `kelas_kurikulum_template_id_foreign` (`kurikulum_template_id`);
+  ADD KEY `kelas_kurikulum_template_id_foreign` (`kurikulum_template_id`),
+  ADD KEY `kelas_room_id_foreign` (`room_id`);
 
 --
--- Indexes for table `kelas_mata_pelajaran`
+-- Indeks untuk tabel `kelas_mata_pelajaran`
 --
 ALTER TABLE `kelas_mata_pelajaran`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `kelas_mata_pelajaran_kelas_id_foreign` (`kelas_id`),
+  ADD UNIQUE KEY `kelas_mata_pelajaran_kelas_id_mata_pelajaran_id_unique` (`kelas_id`,`mata_pelajaran_id`),
   ADD KEY `kelas_mata_pelajaran_mata_pelajaran_id_foreign` (`mata_pelajaran_id`),
-  ADD KEY `kelas_mata_pelajaran_user_id_foreign` (`user_id`);
+  ADD KEY `kelas_mata_pelajaran_teacher_id_foreign` (`teacher_id`);
 
 --
--- Indexes for table `kurikulum_templates`
+-- Indeks untuk tabel `kurikulum_templates`
 --
 ALTER TABLE `kurikulum_templates`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `kurikulum_templates_nama_template_unique` (`nama_template`);
 
 --
--- Indexes for table `kurikulum_template_mata_pelajaran`
---
-ALTER TABLE `kurikulum_template_mata_pelajaran`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `kurikulum_template_mata_pelajaran_kurikulum_template_id_foreign` (`kurikulum_template_id`),
-  ADD KEY `kurikulum_template_mata_pelajaran_mata_pelajaran_id_foreign` (`mata_pelajaran_id`);
-
---
--- Indexes for table `mata_pelajarans`
+-- Indeks untuk tabel `mata_pelajarans`
 --
 ALTER TABLE `mata_pelajarans`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `mata_pelajaran_user`
+-- Indeks untuk tabel `mata_pelajaran_teacher`
+--
+ALTER TABLE `mata_pelajaran_teacher`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `mata_pelajaran_teacher_mata_pelajaran_id_teacher_id_unique` (`mata_pelajaran_id`,`teacher_id`),
+  ADD KEY `mata_pelajaran_teacher_teacher_id_foreign` (`teacher_id`);
+
+--
+-- Indeks untuk tabel `mata_pelajaran_user`
 --
 ALTER TABLE `mata_pelajaran_user`
   ADD PRIMARY KEY (`user_id`,`mata_pelajaran_id`),
   ADD KEY `mata_pelajaran_user_mata_pelajaran_id_foreign` (`mata_pelajaran_id`);
 
 --
--- Indexes for table `migrations`
+-- Indeks untuk tabel `migrations`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `nilais`
+-- Indeks untuk tabel `nilais`
 --
 ALTER TABLE `nilais`
   ADD PRIMARY KEY (`id`),
@@ -1547,14 +1382,14 @@ ALTER TABLE `nilais`
   ADD KEY `nilais_updated_by_foreign` (`updated_by`);
 
 --
--- Indexes for table `pelanggarans`
+-- Indeks untuk tabel `pelanggarans`
 --
 ALTER TABLE `pelanggarans`
   ADD PRIMARY KEY (`id`),
   ADD KEY `pelanggarans_santri_id_foreign` (`santri_id`);
 
 --
--- Indexes for table `perizinans`
+-- Indeks untuk tabel `perizinans`
 --
 ALTER TABLE `perizinans`
   ADD PRIMARY KEY (`id`),
@@ -1563,7 +1398,7 @@ ALTER TABLE `perizinans`
   ADD KEY `perizinans_updated_by_foreign` (`updated_by`);
 
 --
--- Indexes for table `prestasis`
+-- Indeks untuk tabel `prestasis`
 --
 ALTER TABLE `prestasis`
   ADD PRIMARY KEY (`id`),
@@ -1571,13 +1406,13 @@ ALTER TABLE `prestasis`
   ADD KEY `prestasis_dicatat_oleh_id_foreign` (`dicatat_oleh_id`);
 
 --
--- Indexes for table `rooms`
+-- Indeks untuk tabel `rooms`
 --
 ALTER TABLE `rooms`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `santris`
+-- Indeks untuk tabel `santris`
 --
 ALTER TABLE `santris`
   ADD PRIMARY KEY (`id`),
@@ -1587,7 +1422,7 @@ ALTER TABLE `santris`
   ADD KEY `santris_wali_id_foreign` (`wali_id`);
 
 --
--- Indexes for table `schedules`
+-- Indeks untuk tabel `schedules`
 --
 ALTER TABLE `schedules`
   ADD PRIMARY KEY (`id`),
@@ -1597,14 +1432,21 @@ ALTER TABLE `schedules`
   ADD KEY `schedules_mata_pelajaran_id_foreign` (`mata_pelajaran_id`);
 
 --
--- Indexes for table `teacher_unavailabilities`
+-- Indeks untuk tabel `teachers`
+--
+ALTER TABLE `teachers`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `teachers_teacher_code_unique` (`teacher_code`);
+
+--
+-- Indeks untuk tabel `teacher_unavailabilities`
 --
 ALTER TABLE `teacher_unavailabilities`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `teacher_unavailabilities_teacher_id_day_of_week_time_slot_unique` (`teacher_id`,`day_of_week`,`time_slot`);
 
 --
--- Indexes for table `users`
+-- Indeks untuk tabel `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
@@ -1612,154 +1454,160 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `users_teacher_code_unique` (`teacher_code`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT for table `blocked_times`
+-- AUTO_INCREMENT untuk tabel `blocked_times`
 --
 ALTER TABLE `blocked_times`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `catatan_harians`
+-- AUTO_INCREMENT untuk tabel `catatan_harians`
 --
 ALTER TABLE `catatan_harians`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `failed_jobs`
+-- AUTO_INCREMENT untuk tabel `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `hour_priorities`
+-- AUTO_INCREMENT untuk tabel `hour_priorities`
 --
 ALTER TABLE `hour_priorities`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT for table `jabatans`
+-- AUTO_INCREMENT untuk tabel `jabatans`
 --
 ALTER TABLE `jabatans`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `jabatan_user`
+-- AUTO_INCREMENT untuk tabel `jabatan_user`
 --
 ALTER TABLE `jabatan_user`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT for table `jobs`
+-- AUTO_INCREMENT untuk tabel `jobs`
 --
 ALTER TABLE `jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `kelas`
+-- AUTO_INCREMENT untuk tabel `kelas`
 --
 ALTER TABLE `kelas`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- AUTO_INCREMENT for table `kelas_mata_pelajaran`
+-- AUTO_INCREMENT untuk tabel `kelas_mata_pelajaran`
 --
 ALTER TABLE `kelas_mata_pelajaran`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `kurikulum_templates`
+-- AUTO_INCREMENT untuk tabel `kurikulum_templates`
 --
 ALTER TABLE `kurikulum_templates`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `kurikulum_template_mata_pelajaran`
---
-ALTER TABLE `kurikulum_template_mata_pelajaran`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
-
---
--- AUTO_INCREMENT for table `mata_pelajarans`
+-- AUTO_INCREMENT untuk tabel `mata_pelajarans`
 --
 ALTER TABLE `mata_pelajarans`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT for table `migrations`
+-- AUTO_INCREMENT untuk tabel `mata_pelajaran_teacher`
 --
-ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+ALTER TABLE `mata_pelajaran_teacher`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `nilais`
+-- AUTO_INCREMENT untuk tabel `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+
+--
+-- AUTO_INCREMENT untuk tabel `nilais`
 --
 ALTER TABLE `nilais`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
 
 --
--- AUTO_INCREMENT for table `pelanggarans`
+-- AUTO_INCREMENT untuk tabel `pelanggarans`
 --
 ALTER TABLE `pelanggarans`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `perizinans`
+-- AUTO_INCREMENT untuk tabel `perizinans`
 --
 ALTER TABLE `perizinans`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
--- AUTO_INCREMENT for table `prestasis`
+-- AUTO_INCREMENT untuk tabel `prestasis`
 --
 ALTER TABLE `prestasis`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `rooms`
+-- AUTO_INCREMENT untuk tabel `rooms`
 --
 ALTER TABLE `rooms`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- AUTO_INCREMENT for table `santris`
+-- AUTO_INCREMENT untuk tabel `santris`
 --
 ALTER TABLE `santris`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=447;
 
 --
--- AUTO_INCREMENT for table `schedules`
+-- AUTO_INCREMENT untuk tabel `schedules`
 --
 ALTER TABLE `schedules`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1145;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1197;
 
 --
--- AUTO_INCREMENT for table `teacher_unavailabilities`
+-- AUTO_INCREMENT untuk tabel `teachers`
+--
+ALTER TABLE `teachers`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT untuk tabel `teacher_unavailabilities`
 --
 ALTER TABLE `teacher_unavailabilities`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
--- Constraints for dumped tables
+-- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
 
 --
--- Constraints for table `catatan_harians`
+-- Ketidakleluasaan untuk tabel `catatan_harians`
 --
 ALTER TABLE `catatan_harians`
   ADD CONSTRAINT `catatan_harians_dicatat_oleh_id_foreign` FOREIGN KEY (`dicatat_oleh_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `catatan_harians_santri_id_foreign` FOREIGN KEY (`santri_id`) REFERENCES `santris` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `jabatan_user`
+-- Ketidakleluasaan untuk tabel `jabatan_user`
 --
 ALTER TABLE `jabatan_user`
   ADD CONSTRAINT `jabatan_user_jabatan_id_foreign` FOREIGN KEY (`jabatan_id`) REFERENCES `jabatans` (`id`) ON DELETE CASCADE,
@@ -1767,35 +1615,36 @@ ALTER TABLE `jabatan_user`
   ADD CONSTRAINT `jabatan_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `kelas`
+-- Ketidakleluasaan untuk tabel `kelas`
 --
 ALTER TABLE `kelas`
-  ADD CONSTRAINT `kelas_kurikulum_template_id_foreign` FOREIGN KEY (`kurikulum_template_id`) REFERENCES `kurikulum_templates` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `kelas_kurikulum_template_id_foreign` FOREIGN KEY (`kurikulum_template_id`) REFERENCES `kurikulum_templates` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `kelas_room_id_foreign` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE SET NULL;
 
 --
--- Constraints for table `kelas_mata_pelajaran`
+-- Ketidakleluasaan untuk tabel `kelas_mata_pelajaran`
 --
 ALTER TABLE `kelas_mata_pelajaran`
   ADD CONSTRAINT `kelas_mata_pelajaran_kelas_id_foreign` FOREIGN KEY (`kelas_id`) REFERENCES `kelas` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `kelas_mata_pelajaran_mata_pelajaran_id_foreign` FOREIGN KEY (`mata_pelajaran_id`) REFERENCES `mata_pelajarans` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `kelas_mata_pelajaran_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `kelas_mata_pelajaran_teacher_id_foreign` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `kurikulum_template_mata_pelajaran`
+-- Ketidakleluasaan untuk tabel `mata_pelajaran_teacher`
 --
-ALTER TABLE `kurikulum_template_mata_pelajaran`
-  ADD CONSTRAINT `kurikulum_template_mata_pelajaran_kurikulum_template_id_foreign` FOREIGN KEY (`kurikulum_template_id`) REFERENCES `kurikulum_templates` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `kurikulum_template_mata_pelajaran_mata_pelajaran_id_foreign` FOREIGN KEY (`mata_pelajaran_id`) REFERENCES `mata_pelajarans` (`id`) ON DELETE CASCADE;
+ALTER TABLE `mata_pelajaran_teacher`
+  ADD CONSTRAINT `mata_pelajaran_teacher_mata_pelajaran_id_foreign` FOREIGN KEY (`mata_pelajaran_id`) REFERENCES `mata_pelajarans` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `mata_pelajaran_teacher_teacher_id_foreign` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `mata_pelajaran_user`
+-- Ketidakleluasaan untuk tabel `mata_pelajaran_user`
 --
 ALTER TABLE `mata_pelajaran_user`
   ADD CONSTRAINT `mata_pelajaran_user_mata_pelajaran_id_foreign` FOREIGN KEY (`mata_pelajaran_id`) REFERENCES `mata_pelajarans` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `mata_pelajaran_user_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `nilais`
+-- Ketidakleluasaan untuk tabel `nilais`
 --
 ALTER TABLE `nilais`
   ADD CONSTRAINT `nilais_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
@@ -1805,13 +1654,13 @@ ALTER TABLE `nilais`
   ADD CONSTRAINT `nilais_updated_by_foreign` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`);
 
 --
--- Constraints for table `pelanggarans`
+-- Ketidakleluasaan untuk tabel `pelanggarans`
 --
 ALTER TABLE `pelanggarans`
   ADD CONSTRAINT `pelanggarans_santri_id_foreign` FOREIGN KEY (`santri_id`) REFERENCES `santris` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `perizinans`
+-- Ketidakleluasaan untuk tabel `perizinans`
 --
 ALTER TABLE `perizinans`
   ADD CONSTRAINT `perizinans_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
@@ -1819,21 +1668,21 @@ ALTER TABLE `perizinans`
   ADD CONSTRAINT `perizinans_updated_by_foreign` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`);
 
 --
--- Constraints for table `prestasis`
+-- Ketidakleluasaan untuk tabel `prestasis`
 --
 ALTER TABLE `prestasis`
   ADD CONSTRAINT `prestasis_dicatat_oleh_id_foreign` FOREIGN KEY (`dicatat_oleh_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `prestasis_santri_id_foreign` FOREIGN KEY (`santri_id`) REFERENCES `santris` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `santris`
+-- Ketidakleluasaan untuk tabel `santris`
 --
 ALTER TABLE `santris`
   ADD CONSTRAINT `santris_kelas_id_foreign` FOREIGN KEY (`kelas_id`) REFERENCES `kelas` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `santris_wali_id_foreign` FOREIGN KEY (`wali_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
--- Constraints for table `schedules`
+-- Ketidakleluasaan untuk tabel `schedules`
 --
 ALTER TABLE `schedules`
   ADD CONSTRAINT `schedules_kelas_id_foreign` FOREIGN KEY (`kelas_id`) REFERENCES `kelas` (`id`) ON DELETE CASCADE,
@@ -1842,7 +1691,7 @@ ALTER TABLE `schedules`
   ADD CONSTRAINT `schedules_teacher_id_foreign` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `teacher_unavailabilities`
+-- Ketidakleluasaan untuk tabel `teacher_unavailabilities`
 --
 ALTER TABLE `teacher_unavailabilities`
   ADD CONSTRAINT `teacher_unavailabilities_teacher_id_foreign` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;

@@ -11,7 +11,7 @@ class Teacher extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'teacher_code'];
+    protected $fillable = ['name', 'teacher_code','user_id'];
 
     /**
      * Relasi ke mata pelajaran yang bisa diajar oleh guru ini (sebagai kandidat).
@@ -36,6 +36,13 @@ class Teacher extends Model
     public function unavailabilities(): HasMany
     {
         return $this->hasMany(TeacherUnavailability::class);
+    }
+    /**
+     * Sebuah data Teacher bisa terhubung dengan satu akun User.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
 

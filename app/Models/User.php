@@ -89,5 +89,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(TeacherUnavailability::class, 'teacher_id', 'id');
     }
+    /**
+     * Seorang User bisa memiliki satu profil Teacher.
+     */
+    public function teacher()
+    {
+        return $this->hasOne(Teacher::class);
+    }
 }
 

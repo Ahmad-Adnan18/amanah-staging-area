@@ -1,16 +1,14 @@
 <!-- 
 ======================================================================
-KODE NAVIGASI HIBRIDA LENGKAP UNTUK ANDA
+KOMPONEN NAVIGASI HIBRIDA LENGKAP
 ======================================================================
-Anda bisa langsung mengganti seluruh blok navigasi lama Anda dengan kode ini.
-----------------------------------------------------------------------
 -->
 
-<!-- [BAGIAN 1] Overlay Latar Belakang (Kode Asli Anda) -->
+<!-- [BAGIAN 1] Overlay Latar Belakang untuk Sidebar Mobile -->
 <div x-show="sidebarOpen" class="fixed inset-0 z-20 bg-black bg-opacity-50 transition-opacity md:hidden" @click="sidebarOpen = false" x-cloak></div>
 
-<!-- [BAGIAN 2] Sidebar Utama (Kode Asli Anda - Tidak Diubah) -->
-<!-- Di mobile, ini berfungsi sebagai panel "Menu Lengkap" -->
+<!-- [BAGIAN 2] Sidebar Utama -->
+<!-- Di mobile, ini berfungsi sebagai panel "Menu Lengkap" yang tersembunyi -->
 <aside class="fixed inset-y-0 left-0 z-30 flex w-64 transform flex-col bg-white text-gray-900 border-r border-slate-200 transition-transform duration-300 ease-in-out -translate-x-full md:translate-x-0" :class="{ 'translate-x-0': sidebarOpen }" x-cloak>
 
     <!-- Logo dan Nama Aplikasi -->
@@ -23,20 +21,20 @@ Anda bisa langsung mengganti seluruh blok navigasi lama Anda dengan kode ini.
         </a>
     </div>
 
-    <!-- Link Navigasi -->
+    <!-- Link Navigasi Sidebar -->
     <nav class="flex-1 space-y-1 overflow-y-auto px-4 py-6" x-data="{
-        isAkademikOpen: {{ request()->routeIs(['pengajaran.kelas.*', 'admin.santri-management.*', 'akademik.placement.*', 'pengajaran.mata-pelajaran.*', 'akademik.kurikulum.*', 'akademik.nilai.*', 'admin.rooms.*', 'admin.teachers.*', 'laporan.*']) ? 'true' : 'false' }},
+        isAkademikOpen: {{ request()->routeIs(['pengajaran.*', 'admin.santri-management.*', 'akademik.*', 'admin.rooms.*', 'admin.teachers.*', 'laporan.*']) ? 'true' : 'false' }},
         isPenjadwalanOpen: {{ request()->routeIs(['admin.rules.*', 'admin.teacher-availability.*', 'admin.generator.*', 'admin.schedule.view.*', 'admin.schedule.swap.*']) ? 'true' : 'false' }},
-        isAdministrasiOpen: {{ request()->routeIs(['admin.users.*', 'pengajaran.jabatan.*']) ? 'true' : 'false' }}
+        isAdministrasiOpen: {{ request()->routeIs(['admin.users.*']) ? 'true' : 'false' }}
     }">
         @php
-        $baseClasses = 'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200 border-l-4';
-        $activeClasses = 'bg-red-50 text-red-700 font-semibold border-red-600';
-        $inactiveClasses = 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-transparent';
+            $baseClasses = 'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200 border-l-4';
+            $activeClasses = 'bg-red-50 text-red-700 font-semibold border-red-600';
+            $inactiveClasses = 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-transparent';
 
-        $childBase = 'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-all duration-200';
-        $childActive = 'bg-slate-100 text-slate-900 font-medium';
-        $childInactive = 'text-slate-500 hover:bg-slate-100 hover:text-slate-800';
+            $childBase = 'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-all duration-200';
+            $childActive = 'bg-slate-100 text-slate-900 font-medium';
+            $childInactive = 'text-slate-500 hover:bg-slate-100 hover:text-slate-800';
         @endphp
 
         <!-- GRUP: MENU UTAMA -->
@@ -76,7 +74,7 @@ Anda bisa langsung mengganti seluruh blok navigasi lama Anda dengan kode ini.
                 <a href="{{ route('laporan.index') }}" class="{{ $childBase }} {{ request()->routeIs('laporan.*') ? $childActive : $childInactive }}">Laporan</a>
                 @endif
                 @if(in_array(Auth::user()->role, ['admin','pengajaran']))
-                <a href="{{ route('admin.teachers.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.teachers.*') ? $childActive : $childInactive }}">Manajemen Guru</a>
+                <a href="{{ route('admin.teachers.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.teachers.*') ? $childActive : $childInactive }}">Data Guru</a>
                 <a href="{{ route('pengajaran.mata-pelajaran.index') }}" class="{{ $childBase }} {{ request()->routeIs('pengajaran.mata-pelajaran.*') ? $childActive : $childInactive }}">Mata Pelajaran</a>
                 <a href="{{ route('admin.rooms.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.rooms.*') ? $childActive : $childInactive }}">Manajemen Ruangan</a>
                 <a href="{{ route('akademik.placement.index') }}" class="{{ $childBase }} {{ request()->routeIs('akademik.placement.*') ? $childActive : $childInactive }}">Penempatan Kelas</a>
@@ -93,8 +91,8 @@ Anda bisa langsung mengganti seluruh blok navigasi lama Anda dengan kode ini.
                 <svg class="h-5 w-5 transform transition-transform" :class="{'rotate-180': isPenjadwalanOpen}" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
             </button>
             <div x-show="isPenjadwalanOpen" x-collapse class="mt-1 space-y-1 pl-4">
-                <a href="{{ route('admin.teacher-availability.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.teacher-availability.*') ? $childActive : $childInactive }}">Ketersediaan Guru</a>
                 <a href="{{ route('admin.rules.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.rules.*') ? $childActive : $childInactive }}">Aturan Penjadwalan</a>
+                <a href="{{ route('admin.teacher-availability.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.teacher-availability.*') ? $childActive : $childInactive }}">Ketersediaan Guru</a>
                 <a href="{{ route('admin.generator.show') }}" class="{{ $childBase }} {{ request()->routeIs('admin.generator.*') ? $childActive : $childInactive }}">Generate Jadwal</a>
                 <a href="{{ route('admin.schedule.view.grid') }}" class="{{ $childBase }} {{ request()->routeIs('admin.schedule.view.*') ? $childActive : $childInactive }}">Lihat Jadwal (Admin)</a>
                 <a href="{{ route('admin.schedule.swap.show') }}" class="{{ $childBase }} {{ request()->routeIs('admin.schedule.swap.*') ? $childActive : $childInactive }}">Tukar Jadwal Manual</a>
@@ -112,13 +110,12 @@ Anda bisa langsung mengganti seluruh blok navigasi lama Anda dengan kode ini.
             <div x-show="isAdministrasiOpen" x-collapse class="mt-1 space-y-1 pl-4">
                 <a href="{{ route('admin.users.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.users.*') ? $childActive : $childInactive }}">Manajemen User</a>
                 <a href="{{ route('pengajaran.jabatan.index') }}" class="{{ $childBase }} {{ request()->routeIs('pengajaran.jabatan.*') ? $childActive : $childInactive }}">Manajemen Jabatan</a>
-                {{-- <a href="{{ route('laporan.index') }}" class="{{ $childBase }} {{ request()->routeIs('laporan.*') ? $childActive : $childInactive }}">Laporan</a> --}}
             </div>
         </div>
         @endif
     </nav>
 
-    <!-- USER DROPDOWN -->
+    <!-- USER DROPDOWN (di bawah sidebar) -->
     <div class="border-t border-slate-200 p-4">
         <div x-data="{ open: false }" class="relative">
             <button @click="open = !open" class="flex w-full items-center rounded-lg p-2 text-left transition-colors duration-200 hover:bg-slate-100 focus:outline-none">
@@ -150,12 +147,12 @@ Anda bisa langsung mengganti seluruh blok navigasi lama Anda dengan kode ini.
         
         <a href="{{ route('dashboard') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('dashboard') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
             <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-            <span class="text-xs">Dashboard</span>
+            <span class="text-xs">Beranda</span>
         </a>
 
-        <a href="{{ route('perizinan.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('perizinan.*') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-            <span class="text-xs">Izin</span>
+        <a href="{{ route('pengajaran.kelas.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('pengajaran.kelas.*') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l-4 16M4 12h16"></path></svg>
+            <span class="text-xs">Kelas</span>
         </a>
         
         <a href="{{ route('jadwal.public.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('jadwal.public.index') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
@@ -163,16 +160,16 @@ Anda bisa langsung mengganti seluruh blok navigasi lama Anda dengan kode ini.
             <span class="text-xs">Jadwal</span>
         </a>
 
-        <a href="{{ route('pelanggaran.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('pelanggaran.*') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span class="text-xs">Pelanggaran</span>
+        <a href="{{ route('laporan.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('laporan.*') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <span class="text-xs">Laporan</span>
         </a>
 
-        <!-- Tombol ini akan membuka sidebar utama -->
-        <button @click="sidebarOpen = true" type="button" class="inline-flex flex-col items-center justify-center px-5 font-medium text-slate-500 hover:bg-slate-50">
+        <!-- [PERUBAHAN] Mengubah <button> menjadi <a> yang mengarah ke halaman menu baru -->
+        <a href="{{ route('menu.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('menu.index') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
             <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             <span class="text-xs">Menu</span>
-        </button>
+        </a>
 
     </div>
 </footer>

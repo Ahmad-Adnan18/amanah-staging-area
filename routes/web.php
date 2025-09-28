@@ -51,6 +51,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/santri/{santri}/profil/rapor/export-pdf', [SantriProfileController::class, 'exportRaporPdf'])->name('santri.profil.rapor.export.pdf');
     // Rute untuk melihat jadwal publik (per kelas/guru)
     Route::get('/jadwal', [\App\Http\Controllers\PublicScheduleController::class, 'index'])->name('jadwal.public.index');
+    Route::get('/menu', function () {
+        return view('menu');
+    })->name('menu.index');
 
     // --- GRUP RUTE PENGELOLAAN PENGAJARAN ---
     Route::prefix('pengajaran')->name('pengajaran.')->group(function () {
@@ -112,14 +115,14 @@ Route::middleware('auth')->group(function () {
         // Rute untuk Aturan Penjadwalan
         Route::get('configuration/rules', [RuleController::class, 'index'])->name('rules.index');
         Route::post('configuration/rules', [RuleController::class, 'store'])->name('rules.store');
-        
+
         // Rute untuk Generator Jadwal
         Route::get('scheduling/generator', [ScheduleGeneratorController::class, 'show'])->name('generator.show');
         Route::post('scheduling/generator', [ScheduleGeneratorController::class, 'generate'])->name('generator.generate');
-        
+
         // Rute untuk Melihat Jadwal
         Route::get('scheduling/view/grid', [ScheduleViewController::class, 'grid'])->name('schedule.view.grid');
-        
+
         // RUTE BARU UNTUK FITUR TUKAR JADWAL MANUAL
         Route::get('scheduling/swap', [\App\Http\Controllers\Admin\Scheduling\ScheduleSwapController::class, 'showForm'])->name('schedule.swap.show');
         Route::post('scheduling/swap/process', [\App\Http\Controllers\Admin\Scheduling\ScheduleSwapController::class, 'processSwap'])->name('schedule.swap.process');
@@ -145,7 +148,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/nilai/export', [NilaiController::class, 'exportLeger'])->name('nilai.export');
         Route::get('/placement', [PlacementController::class, 'index'])->name('placement.index');
         Route::post('/placement', [PlacementController::class, 'place'])->name('placement.place');
-         Route::get('/nilai/get-mapel-by-kelas/{kelas}', [NilaiController::class, 'getMataPelajaranByKelas'])->name('nilai.get-mapel-by-kelas');
+        Route::get('/nilai/get-mapel-by-kelas/{kelas}', [NilaiController::class, 'getMataPelajaranByKelas'])->name('nilai.get-mapel-by-kelas');
     });
 
     // --- RUTE BARU UNTUK KEASRAMAAN ---
