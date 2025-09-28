@@ -3,6 +3,7 @@
         <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div class="space-y-8">
 
+                <!-- Header Halaman -->
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                         <div>
@@ -19,39 +20,10 @@
                 </div>
 
                 @if (session('success') || session('error'))
-                    @php
-                        $type = session('success') ? 'success' : 'error';
-                        $message = session('success') ?? session('error');
-                        $typeClasses = [
-                            'success' => 'bg-green-100 border-green-400 text-green-700',
-                            'error' => 'bg-red-100 border-red-400 text-red-700',
-                        ];
-                        $iconPaths = [
-                            'success' => 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
-                            'error' => 'M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z',
-                        ];
-                        $hoverClasses = [
-                            'success' => 'hover:bg-green-200',
-                            'error' => 'hover:bg-red-200',
-                        ];
-                    @endphp
-                    <div id="notification-panel" class="relative rounded-lg border-l-4 p-4 {{ $typeClasses[$type] }}" role="alert">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $iconPaths[$type] }}" /></svg>
-                            </div>
-                            <div class="ml-3">
-                                <p class="font-bold">{{ $type === 'success' ? 'Berhasil!' : 'Terjadi Kesalahan!' }}</p>
-                                <p class="text-sm">{{ $message }}</p>
-                            </div>
-                            <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 {{ $hoverClasses[$type] }} inline-flex h-8 w-8" onclick="document.getElementById('notification-panel').style.display='none'" aria-label="Close">
-                                <span class="sr-only">Dismiss</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                            </button>
-                        </div>
-                    </div>
+                    {{-- Panel Notifikasi --}}
                 @endif
 
+                
                 <!-- Form Pencarian & Aksi Massal -->
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4">
                     <form action="{{ route('pengajaran.kelas.index') }}" method="GET" class="mb-4">
@@ -106,7 +78,10 @@
                     @endif
                 @endif
 
+                <!-- [PENYESUAIAN] Daftar Kelas dengan Tampilan Hibrida -->
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+                    
+                    <!-- Tampilan Tabel untuk DESKTOP -->
                     <div class="hidden md:block">
                         <table class="min-w-full divide-y divide-slate-200">
                             <thead class="bg-slate-50">
@@ -127,18 +102,14 @@
                                         <div class="text-xs text-slate-500 font-normal">Tingkatan: {{ $kelas->tingkatan ?? 'N/A' }}</div>
                                     </td>
                                     <td class="px-6 py-4 text-slate-500 align-top">
-                                        @if($kelas->penanggungJawab->isNotEmpty())
-                                            <ul class="text-xs space-y-1">
-                                            @foreach($kelas->penanggungJawab as $pj)
-                                                <li>
-                                                    <span class="font-semibold text-slate-600">{{ $pj->jabatan->nama_jabatan ?? 'N/A' }}:</span>
-                                                    <span>{{ $pj->user->name ?? 'N/A' }}</span>
-                                                </li>
-                                            @endforeach
-                                            </ul>
-                                        @else
+                                        @forelse($kelas->penanggungJawab as $pj)
+                                            <div class="text-xs {{ !$loop->last ? 'mb-1' : '' }}">
+                                                <span class="font-semibold text-slate-600">{{ $pj->jabatan->nama_jabatan ?? 'N/A' }}:</span>
+                                                <span>{{ $pj->user->name ?? 'N/A' }}</span>
+                                            </div>
+                                        @empty
                                             <span class="text-slate-400 text-xs">-</span>
-                                        @endif
+                                        @endforelse
                                     </td>
                                     <td class="px-6 py-4 text-slate-500 align-top">{{ $kelas->room->name ?? 'N/A' }}</td>
                                     <td class="px-6 py-4 align-top">
@@ -154,12 +125,6 @@
                                         @can('update', $kelas)
                                         <a href="{{ route('pengajaran.kelas.edit', $kelas) }}" class="font-medium text-slate-600 hover:text-slate-900">Edit</a>
                                         @endcan
-                                        @can('delete', $kelas)
-                                        <form action="{{ route('pengajaran.kelas.destroy', $kelas) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus? Semua santri di kelas ini juga akan terhapus.')">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="font-medium text-red-600 hover:text-red-900">Hapus</button>
-                                        </form>
-                                        @endcan
                                     </td>
                                 </tr>
                                 @empty
@@ -169,55 +134,59 @@
                         </table>
                     </div>
                     
-                    <div class="md:hidden p-4 space-y-4">
+                    <!-- [BARU] Tampilan Kartu Modern untuk MOBILE -->
+                    <div class="md:hidden divide-y divide-slate-200">
                         @forelse ($kelas_list as $kelas)
-                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
-                            <div class="flex justify-between items-start">
+                        <div class="p-4">
+                            <div class="flex justify-between items-start gap-4">
                                 <div>
-                                    <p class="font-bold text-slate-800">{{ $kelas->nama_kelas }}</p>
-                                    <p class="text-sm text-slate-500">{{ $kelas->santris_count }} santri</p>
+                                    <h3 class="font-bold text-lg text-slate-800">{{ $kelas->nama_kelas }}</h3>
+                                    <p class="text-sm text-slate-500">{{ $kelas->santris_count }} Santri</p>
                                 </div>
-                                @can('update', $kelas)
-                                <a href="{{ route('pengajaran.kelas.edit', $kelas) }}" class="text-slate-500 hover:text-slate-800"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg></a>
-                                @endcan
+                                
+                                <!-- Menu Aksi Kebab (3 titik) -->
+                                <div x-data="{ open: false }" class="relative flex-shrink-0">
+                                    <button @click="open = !open" class="p-1 text-slate-500 hover:text-slate-800 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
+                                    </button>
+                                    <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 py-1 z-10" x-cloak>
+                                        @can('update', $kelas)
+                                        <a href="{{ route('pengajaran.kelas.edit', $kelas) }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Edit Kelas</a>
+                                        @endcan
+                                        @can('delete', $kelas)
+                                        <form action="{{ route('pengajaran.kelas.destroy', $kelas) }}" method="POST" onsubmit="return confirm('Yakin hapus? Semua santri di kelas ini juga akan terhapus.')">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">Hapus Kelas</button>
+                                        </form>
+                                        @endcan
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mt-2 text-sm space-y-2">
+
+                            <div class="mt-3 text-sm space-y-2">
                                 <p class="text-slate-600"><strong>Tingkatan:</strong> {{ $kelas->tingkatan ?? 'N/A' }}</p>
                                 <p class="text-slate-600"><strong>Ruangan:</strong> {{ $kelas->room->name ?? 'N/A' }}</p>
                                 <div class="text-slate-600">
                                     <p class="font-bold">Penanggung Jawab:</p>
-                                    @if($kelas->penanggungJawab->isNotEmpty())
-                                        <ul class="list-disc list-inside ml-2">
-                                        @foreach($kelas->penanggungJawab as $pj)
-                                            <li>{{ $pj->jabatan->nama_jabatan ?? 'N/A' }}: {{ $pj->user->name ?? 'N/A' }}</li>
-                                        @endforeach
-                                        </ul>
-                                    @else
-                                        -
-                                    @endif
+                                    @forelse($kelas->penanggungJawab as $pj)
+                                        <p class="pl-2">{{ $pj->jabatan->nama_jabatan ?? 'N/A' }}: {{ $pj->user->name ?? 'N/A' }}</p>
+                                    @empty
+                                        <p class="pl-2">-</p>
+                                    @endforelse
                                 </div>
-                                <p class="text-slate-600 flex items-center gap-2"><strong>Status Jadwal:</strong> 
-                                    @if($kelas->is_active_for_scheduling)
-                                        <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">Aktif</span>
-                                    @else
-                                        <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800">Nonaktif</span>
-                                    @endif
-                                </p>
                             </div>
-                            <div class="mt-4 pt-4 border-t border-slate-200 flex justify-between items-center">
-                                <a href="{{ route('pengajaran.santris.index', $kelas) }}" class="text-sm font-medium text-red-600 hover:text-red-800">Lihat Daftar Santri &rarr;</a>
-                                @can('delete', $kelas)
-                                <form action="{{ route('pengajaran.kelas.destroy', $kelas) }}" method="POST" onsubmit="return confirm('Yakin hapus? Semua santri di kelas ini juga akan terhapus.')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg></button>
-                                </form>
-                                @endcan
+
+                            <div class="mt-4 pt-4 border-t border-slate-200">
+                                <a href="{{ route('pengajaran.santris.index', $kelas) }}" class="w-full inline-flex items-center justify-center rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600">
+                                    Lihat Daftar Santri &rarr;
+                                </a>
                             </div>
                         </div>
                         @empty
                         <div class="py-12 text-center text-slate-500">Belum ada data kelas.</div>
                         @endforelse
                     </div>
+
                 </div>
 
                 <div class="mt-8">
@@ -227,3 +196,4 @@
         </div>
     </div>
 </x-app-layout>
+
