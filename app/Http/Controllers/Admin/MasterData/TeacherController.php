@@ -4,20 +4,37 @@ namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Http\Controllers\Controller;
 use App\Models\Teacher;
-use App\Models\User; // [PENYESUAIAN] Mengimpor model User
+use App\Models\User;
 use App\Imports\TeachersImport;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; // [MODIFIKASI] Tambahkan Request
 use Maatwebsite\Excel\Facades\Excel;
 
 class TeacherController extends Controller
 {
     /**
-     * Menampilkan daftar semua guru.
+     * Menampilkan daftar semua guru dengan fitur pencarian.
      */
-    public function index()
+    public function index(Request $request) // [MODIFIKASI] Tambahkan Request
     {
-        $teachers = Teacher::orderBy('name')->paginate(50);
-        return view('admin.master-data.teachers.index', compact('teachers'));
+        // Ambil jumlah total guru untuk ditampilkan di statistik
+        $totalTeachers = Teacher::count();
+
+        // Query dasar untuk mengambil data guru
+        $query = Teacher::query();
+
+        // [LOGIKA BARU] Jika ada input pencarian, filter data guru
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('teacher_code', 'like', "%{$search}%");
+            });
+        }
+
+        // Ambil data guru yang sudah difilter, urutkan, dan paginasi
+        $teachers = $query->orderBy('name')->paginate(50)->withQueryString();
+
+        return view('admin.master-data.teachers.index', compact('teachers', 'totalTeachers'));
     }
 
     /**

@@ -221,7 +221,8 @@
                     });
                     this.tomSelectInstances.guru = new TomSelect(this.$refs.guruSelect, {
                         options: this.teachers.map(t => ({ value: t.id, text: t.name })),
-                        onChange: (value) => { this.selectedTeacher = value; }
+                        onChange: (value) => { this.selectedTeacher = value; },
+                        maxOptions: null
                     });
 
                     this.$watch('selectedClass', (val) => {

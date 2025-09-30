@@ -40,9 +40,9 @@ class Schedule extends Model
      * Mengubah relasi 'teacher' agar menunjuk ke model Teacher yang baru.
      * Ini akan secara otomatis memperbaiki tampilan di halaman Lihat Jadwal dan Tukar Jadwal.
      */
-    public function teacher(): BelongsTo
+     public function teacher(): BelongsTo
     {
-        // Ganti User::class menjadi Teacher::class
+        
         return $this->belongsTo(Teacher::class, 'teacher_id');
     }
 
