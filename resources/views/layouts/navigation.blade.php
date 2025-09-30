@@ -139,37 +139,50 @@ KOMPONEN NAVIGASI HIBRIDA LENGKAP
 
 <!-- 
 ======================================================================
-[BAGIAN 3] BARU: Bottom Navigation Bar (Hanya untuk Mobile)
+[BAGIAN 3] Bottom Navigation Bar (Hanya untuk Mobile)
 ====================================================================== 
 -->
 <footer class="fixed bottom-0 left-0 z-10 w-full bg-white border-t border-slate-200 md:hidden">
-    <div class="grid h-16 max-w-lg grid-cols-5 mx-auto">
-        
-        <a href="{{ route('dashboard') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('dashboard') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-            <span class="text-xs">Beranda</span>
-        </a>
+    @if(Auth::user()->role === 'wali_santri')
+        <!-- Bottom Nav Khusus Wali Santri: Hanya Dashboard dan Menu -->
+        <div class="grid h-16 max-w-lg grid-cols-2 mx-auto">
+            <a href="{{ route('dashboard') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('dashboard') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-xs">Beranda</span>
+            </a>
 
-        <a href="{{ route('pengajaran.kelas.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('pengajaran.kelas.*') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l-4 16M4 12h16"></path></svg>
-            <span class="text-xs">Kelas</span>
-        </a>
-        
-        <a href="{{ route('jadwal.public.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('jadwal.public.index') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            <span class="text-xs">Jadwal</span>
-        </a>
+            <a href="{{ route('menu.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('menu.index') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                <span class="text-xs">Menu</span>
+            </a>
+        </div>
+    @else
+        <!-- Bottom Nav Default untuk Role Lain -->
+        <div class="grid h-16 max-w-lg grid-cols-5 mx-auto">
+            <a href="{{ route('dashboard') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('dashboard') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-xs">Beranda</span>
+            </a>
 
-        <a href="{{ route('laporan.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('laporan.*') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-            <span class="text-xs">Laporan</span>
-        </a>
+            <a href="{{ route('pengajaran.kelas.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('pengajaran.kelas.*') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l-4 16M4 12h16"></path></svg>
+                <span class="text-xs">Kelas</span>
+            </a>
+            
+            <a href="{{ route('jadwal.public.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('jadwal.public.index') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                <span class="text-xs">Jadwal</span>
+            </a>
 
-        <!-- [PERUBAHAN] Mengubah <button> menjadi <a> yang mengarah ke halaman menu baru -->
-        <a href="{{ route('menu.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('menu.index') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            <span class="text-xs">Menu</span>
-        </a>
+            <a href="{{ route('laporan.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('laporan.*') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <span class="text-xs">Laporan</span>
+            </a>
 
-    </div>
+            <a href="{{ route('menu.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium {{ request()->routeIs('menu.index') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                <span class="text-xs">Menu</span>
+            </a>
+        </div>
+    @endif
 </footer>

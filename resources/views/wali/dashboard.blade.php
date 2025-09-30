@@ -39,22 +39,10 @@
                                 </p>
                             </div>
                             <div class="mt-4">
-                                <a href="{{ route('santri.profil.show', $santri) }}" class="text-sm font-semibold text-red-600 hover:text-red-800 transition-colors">Lihat Profil, Rapor & Keuangan &rarr;</a>
+                                <a href="{{ route('santri.profil.show', $santri) }}" class="text-sm font-semibold text-red-600 hover:text-red-800 transition-colors">Lihat Profil, Rapor & Catatan &rarr;</a>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- [BARU] Tombol Aksi Utama -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <a href="#" class="w-full text-center bg-red-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-red-700 transition-all flex items-center justify-center gap-2">
-                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M5.25 3A2.25 2.25 0 003 5.25v9.5A2.25 2.25 0 005.25 17h9.5A2.25 2.25 0 0017 14.75v-9.5A2.25 2.25 0 0014.75 3h-9.5zM3.5 6.25a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75zM3.5 10a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75zM11 5.5a.75.75 0 000 1.5h2.5a.75.75 0 000-1.5H11zM11 9.25a.75.75 0 000 1.5h2.5a.75.75 0 000-1.5H11z" /></svg>
-                        Ajukan Izin Baru
-                    </a>
-                     <a href="#" class="w-full text-center bg-white border border-slate-300 text-slate-700 font-semibold py-3 px-4 rounded-lg shadow-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M10 2a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V2.75A.75.75 0 0110 2zM15.196 4.804a.75.75 0 010 1.06l-1.06 1.06a.75.75 0 01-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zM18 10a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0118 10zM15.196 15.196a.75.75 0 01-1.06 0l-1.06-1.06a.75.75 0 011.06-1.06l1.06 1.06a.75.75 0 010 1.06zM10 18a.75.75 0 01-.75-.75v-1.5a.75.75 0 011.5 0v1.5A.75.75 0 0110 18zM4.804 15.196a.75.75 0 010-1.06l1.06-1.06a.75.75 0 011.06 1.06l-1.06 1.06a.75.75 0 01-1.06 0zM2 10a.75.75 0 01-.75-.75v-1.5a.75.75 0 011.5 0v1.5A.75.75 0 012 10zM4.804 4.804a.75.75 0 011.06 0l1.06 1.06a.75.75 0 01-1.06 1.06L4.804 5.864a.75.75 0 010-1.06z" /></svg>
-                        Lihat Jadwal Pelajaran
-                    </a>
                 </div>
 
                 <!-- Ringkasan Izin & Pelanggaran -->

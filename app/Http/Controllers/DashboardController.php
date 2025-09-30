@@ -26,7 +26,7 @@ class DashboardController extends Controller
             return view('wali.dashboard', compact('santri'));
         }
 
-        // --- Logika BARU untuk Dashboard Staf (Guru & Admin) ---
+        // --- Logika untuk Dashboard Staf (Guru & Admin) ---
 
         // 1. Siapkan data statistik yang akan dilihat oleh SEMUA staf
         $viewData = [
@@ -46,8 +46,9 @@ class DashboardController extends Controller
             $viewData['isTeacher'] = true;
             $viewData['teacher'] = $teacher;
 
-            $dayMap = [ 6 => 1, 0 => 2, 1 => 3, 2 => 4, 3 => 5, 4 => 6 ]; // Sabtu -> Kamis
-            $todayAppDay = $dayMap[Carbon::now()->dayOfWeek] ?? null;
+            // Mapping hari: Sabtu (6) -> 1, Minggu (0) -> 2, Senin (1) -> 3, Selasa (2) -> 4, Rabu (3) -> 5, Kamis (4) -> 6
+            $dayMap = [6 => 1, 0 => 2, 1 => 3, 2 => 4, 3 => 5, 4 => 6];
+            $todayAppDay = $dayMap[Carbon::now('Asia/Jakarta')->dayOfWeek] ?? null;
 
             $todaysSchedules = collect();
             if ($todayAppDay) {
@@ -65,11 +66,10 @@ class DashboardController extends Controller
             }
 
             $viewData['scheduleSlots'] = $scheduleSlots;
-            $viewData['todayDateString'] = Carbon::now()->translatedFormat('l, d F Y');
+            $viewData['todayDateString'] = Carbon::now('Asia/Jakarta')->translatedFormat('l, d F Y');
         }
 
         // 4. Kirim semua data yang sudah terkumpul ke view
         return view('dashboard', $viewData);
     }
 }
-

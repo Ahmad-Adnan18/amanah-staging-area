@@ -38,20 +38,40 @@
         .summary-table th, .summary-table td { border: 1px solid #000; padding: 3px; text-align: center; }
         .signature-block { margin-top: 25px; width: 40%; float: right; text-align: center; font-size: 9pt; }
 
+        /* Placeholder gambar */
+        .logo-placeholder {
+            display: inline-block;
+            height: 20pt; /* Sesuaikan dengan ukuran font H1 */
+            width: auto;
+            background-color: #f0f0f0;
+            text-align: center;
+            line-height: 18pt;
+            color: #aaa;
+            font-size: 8pt;
+        }
+
+        .signature-placeholder {
+            display: inline-block;
+            width: 150px;
+            height: 60px;
+            background-color: #f9f9f9;
+            text-align: center;
+            line-height: 60px;
+            color: #aaa;
+            font-size: 8pt;
+        }
     </style>
 </head>
 <body>
 
 @if($type == 'kelas')
     <div style="text-align: center; margin-bottom: 15px;">
-        {{-- [DIUBAH] Gambar diganti dengan Teks H1 --}}
-       {{-- <h1 class="main-title">Jadwal Pelajaran</h1> --}}
         <div class="header-sub">{{ $title }}</div>
     </div>
 @else
     <div style="text-align: center; margin-bottom: 15px;">
-        {{-- [DIUBAH] Gambar diganti dengan Teks H1 --}}
-        <h1 class="main-title">Jadwal Mengajar</h1>
+        <!-- Placeholder gambar pengganti teks Jadwal Mengajar -->
+        <img src="images/logo-mengajar.png" class="logo-placeholder" alt="Logo Jadwal"/>
         <div class="header-sub">Al Ustadz/ah: {{ $teacherName }}</div>
     </div>
 @endif
@@ -118,7 +138,6 @@
     </tr>
 </table>
 
-
 {{-- Tampilkan Rekapitulasi & TTD hanya untuk Guru --}}
 @if($type == 'guru')
     <table class="summary-table">
@@ -144,11 +163,11 @@
         <p>Ciekek Hilir, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
         <p>An. Pemimpin Pondok Pesantren Kun Karima</p>
         <p>Direktur II</p>
-        <div style="height: 50px;"></div>
+        <!-- Placeholder tanda tangan -->
+        <img src="images/logo-tanda-tangan.jpg" class="signature-placeholder" alt="Logo Tanda Tangan"/>
         <p style="font-weight: bold; text-decoration: underline;">Al Ustadz Dzikri Adzkiya Arief, B.A.</p>
     </div>
 @endif
 
 </body>
 </html>
-

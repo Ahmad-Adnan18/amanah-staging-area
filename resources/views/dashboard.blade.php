@@ -5,7 +5,6 @@
             {{-- Salam & Header --}}
             <div class="mb-6 sm:mb-8">
                 <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">Selamat Datang Kembali, {{ Auth::user()->name }}!</h1>
-                
             </div>
 
             {{-- Layout 2 Kolom --}}
@@ -14,26 +13,32 @@
                 {{-- Kolom Utama (Lebih Lebar) --}}
                 <div class="lg:col-span-2 space-y-6 sm:space-y-8">
                     @if ($isTeacher)
-                        {{-- [MODIFIKASI] Kartu Jadwal dibuat lebih modern dan berwarna --}}
+                        {{-- Kartu Jadwal --}}
                         <div class="bg-red-700 rounded-2xl shadow-lg text-white p-4 sm:p-6">
                             <h2 class="text-xl font-bold">Jadwal Mengajar Hari Ini,</h2>
-                            <p class="text-sm opacity-80 mt-1"> {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}.</p>
+                            <p class="text-sm opacity-80 mt-1">{{ $todayDateString }}.</p>
                         </div>
 
                         <div class="space-y-3 -mt-2">
                             @php
                                 $jamMap = [
-                                    1 => ['start' => '07:00', 'end' => '07:45', 'label' => '07:00 - 07:45'], 2 => ['start' => '07:45', 'end' => '08:30', 'label' => '07:45 - 08:30'], 3 => ['start' => '09:00', 'end' => '09:45', 'label' => '09:00 - 09:45'],
-                                    4 => ['start' => '09:45', 'end' => '10:30', 'label' => '09:45 - 10:30'], 5 => ['start' => '11:00', 'end' => '11:45', 'label' => '11:00 - 11:45'], 6 => ['start' => '11:45', 'end' => '12:30', 'label' => '11:45 - 12:30'],
+                                    1 => ['start' => '07:00', 'end' => '07:45', 'label' => '07:00 - 07:45'],
+                                    2 => ['start' => '07:45', 'end' => '08:30', 'label' => '07:45 - 08:30'],
+                                    3 => ['start' => '09:00', 'end' => '09:45', 'label' => '09:00 - 09:45'],
+                                    4 => ['start' => '09:45', 'end' => '10:30', 'label' => '09:45 - 10:30'],
+                                    5 => ['start' => '11:00', 'end' => '11:45', 'label' => '11:00 - 11:45'],
+                                    6 => ['start' => '11:45', 'end' => '12:30', 'label' => '11:45 - 12:30'],
                                     7 => ['start' => '14:15', 'end' => '15:00', 'label' => '14:15 - 15:00'],
                                 ];
                             @endphp
                             @foreach($scheduleSlots as $slot => $schedule)
                                 @php
-                                    $now = now();
-                                    $start = \Carbon\Carbon::parse($jamMap[$slot]['start']);
-                                    $end = \Carbon\Carbon::parse($jamMap[$slot]['end']);
-                                    $isCurrent = $now->between($start, $end);
+                                    $now = \Carbon\Carbon::now('Asia/Jakarta');
+                                    $start = \Carbon\Carbon::today('Asia/Jakarta')->setTimeFromTimeString($jamMap[$slot]['start']);
+                                    $end = \Carbon\Carbon::today('Asia/Jakarta')->setTimeFromTimeString($jamMap[$slot]['end'])->addMinutes(15); // Buffer 15 menit
+                                    $isCurrent = $schedule && $now->between($start, $end);
+                                    // Logging untuk debugging
+                                    \Log::debug("Slot $slot: Start = $start, End = $end, Now = $now, Schedule = " . ($schedule ? 'Exists' : 'Null') . ", IsCurrent = " . ($isCurrent ? 'True' : 'False'));
                                 @endphp
                                 {{-- Kartu Jadwal per Slot --}}
                                 <div class="rounded-2xl flex items-center transition-all duration-300 {{ $isCurrent ? 'bg-white scale-105 shadow-xl border-red-400' : 'bg-white shadow-lg border-transparent' }} border p-3 sm:p-4">
@@ -70,7 +75,6 @@
                         <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-4 @if($isTeacher) mt-8 @endif">Menu Akses Cepat</h2>
                         <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
                             @php
-                                // [MODIFIKASI] Menambahkan 'color' untuk setiap item menu
                                 $menuItems = [
                                     ['route' => 'admin.santri-management.index', 'roles' => null, 'icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.084-1.28-.24-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.084-1.28.24-1.857m10.416-5.408a3 3 0 11-5.832 0 3 3 0 015.832 0z', 'label' => 'Data Santri', 'color' => 'blue'],
                                     ['route' => 'pengajaran.kelas.index', 'roles' => null, 'icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4', 'label' => 'Data Kelas', 'color' => 'indigo'],
@@ -78,7 +82,6 @@
                                     ['route' => 'pelanggaran.index', 'roles' => null, 'icon' => 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z', 'label' => 'Pelanggaran', 'color' => 'amber'],
                                     ['route' => 'admin.teachers.index', 'roles' => ['admin', 'pengajaran'], 'icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197M15 21a6 6 0 004.777-9.417M15 14.074c-3.146 0-5.777-2.52-5.777-5.646 0-3.127 2.63-5.647 5.777-5.647 3.146 0 5.777 2.52 5.777 5.647 0 3.127-2.63 5.647-5.777-5.647z', 'label' => 'Data Guru', 'color' => 'rose'],
                                 ];
-                                // [MODIFIKASI] Mendefinisikan kelas warna Tailwind untuk setiap tema
                                 $colorClasses = [
                                     'blue' => ['bg' => 'bg-blue-100', 'text' => 'text-blue-600', 'hover:bg' => 'hover:bg-blue-50', 'hover:border' => 'hover:border-blue-300', 'group-hover:bg' => 'group-hover:bg-blue-200'],
                                     'indigo' => ['bg' => 'bg-indigo-100', 'text' => 'text-indigo-600', 'hover:bg' => 'hover:bg-indigo-50', 'hover:border' => 'hover:border-indigo-300', 'group-hover:bg' => 'group-hover:bg-indigo-200'],
@@ -118,7 +121,7 @@
                                     <p class="text-xs text-slate-400">{{ $totalSantriPutra }} Putra, {{ $totalSantriPutri }} Putri</p>
                                 </div>
                             </div>
-                             <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-lg border border-slate-200 flex items-start gap-4">
+                            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-lg border border-slate-200 flex items-start gap-4">
                                 <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-yellow-100 text-yellow-600 flex items-center justify-center">
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                                 </div>
@@ -127,9 +130,9 @@
                                     <p class="text-2xl sm:text-3xl font-bold text-slate-800 mt-1">{{ $totalIzinAktif }}</p>
                                 </div>
                             </div>
-                             <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-lg border border-slate-200 flex items-start gap-4">
+                            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-lg border border-slate-200 flex items-start gap-4">
                                 <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-red-100 text-red-600 flex items-center justify-center">
-                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 </div>
                                 <div>
                                     <p class="text-sm font-medium text-slate-500">Santri Terlambat Kembali</p>
