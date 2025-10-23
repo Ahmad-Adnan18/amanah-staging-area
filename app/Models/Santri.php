@@ -2,10 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Kelas;
+use App\Models\Nilai;
+use App\Models\Absensi;
+use App\Models\Prestasi;
+use App\Models\Perizinan;
+use App\Models\Pelanggaran;
+use App\Models\CatatanHarian;
+use App\Models\RiwayatPenyakit;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Santri extends Model
 {
@@ -66,5 +74,16 @@ class Santri extends Model
     public function prestasis(): HasMany
     {
         return $this->hasMany(Prestasi::class);
+    }
+
+    public function absensis(): HasMany
+    {
+        return $this->hasMany(Absensi::class);
+    }
+
+    // TAMBAHAN: Relasi Riwayat Penyakit
+    public function riwayatPenyakits(): HasMany
+    {
+        return $this->hasMany(RiwayatPenyakit::class);
     }
 }

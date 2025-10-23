@@ -1,115 +1,178 @@
 <x-app-layout>
-    {{-- Latar belakang halaman --}}
-    <div class="bg-slate-50 min-h-screen">
+    <div class="min-h-screen" style="background: linear-gradient(130deg, #fcfcfc 0%, #f5f7fa 50%, #f0f4f8 100%);">
         <div class="p-4 sm:p-6 lg:p-8">
-            <div class="max-w-4xl mx-auto space-y-6 sm:space-y-8">
+            <div class="max-w-4xl mx-auto space-y-8">
 
-                <!-- Header -->
-                <div>
-                    {{-- [MOBILE] Ukuran teks dioptimalkan untuk layar kecil --}}
-                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-red-700">Portal Wali Santri</h1>
-                    <p class="mt-1 text-slate-600 text-sm sm:text-base">Selamat datang, <span class="font-semibold">{{ Auth::user()->name }}</span>. Berikut adalah ringkasan perkembangan ananda.</p>
+                <!-- Header Modern -->
+                <div class="text-center sm:text-left">
+                    <h1 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-red-600 to-red-800 bg-clip-text text-transparent">
+                        Portal Wali Santri
+                    </h1>
+                    <p class="mt-2 text-slate-600">
+                        Selamat datang, <span class="font-semibold text-slate-800">{{ Auth::user()->name }}</span>.
+                        Berikut ringkasan perkembangan ananda.
+                    </p>
                 </div>
 
-                <!-- Profil Santri -->
-                <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-6">
-                    {{-- [MOBILE] Layout diubah jadi vertikal (flex-col) di mobile, dan horizontal (sm:flex-row) di desktop --}}
-                    <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left">
-                        <div class="flex-shrink-0">
-                            <img class="h-24 w-24 rounded-full object-cover ring-4 ring-red-100" src="{{ $santri->foto ? Storage::url($santri->foto) : 'https://ui-avatars.com/api/?name='.urlencode($santri->nama).'&background=FBBF24&color=fff&size=128' }}" alt="Foto Santri">
-                        </div>
-                        <div class="w-full">
-                            <h2 class="text-2xl font-bold text-gray-900">{{ $santri->nama }}</h2>
-                            
-                            {{-- [MOBILE] Info detail dibuat menjadi daftar vertikal di mobile agar tidak berantakan --}}
-                            <div class="mt-2 text-slate-600 space-y-1 sm:space-y-0 sm:flex sm:items-center sm:gap-x-4 text-sm">
-                                <p class="flex items-center justify-center sm:justify-start gap-1.5">
-                                    <svg class="w-4 h-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-5.5-2.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM10 12a5.99 5.99 0 00-4.793 2.39A6.483 6.483 0 0010 16.5a6.483 6.483 0 004.793-2.11A5.99 5.99 0 0010 12z" clip-rule="evenodd" /></svg>
-                                    <span class="font-semibold">NIS:</span> {{ $santri->nis }}
-                                </p>
-                                <span class="hidden sm:inline text-slate-300">|</span>
-                                <p class="flex items-center justify-center sm:justify-start gap-1.5">
-                                    <svg class="w-4 h-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
-                                    <span class="font-semibold">Kelas:</span> {{ $santri->kelas->nama_kelas ?? 'N/A' }}
-                                </p>
-                                <span class="hidden sm:inline text-slate-300">|</span>
-                                <p class="flex items-center justify-center sm:justify-start gap-1.5">
-                                    <svg class="w-4 h-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.293 2.293a1 1 0 011.414 0l7 7A1 1 0 0117 11h-1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3a1 1 0 00-1-1H9a1 1 0 00-1 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-6H3a1 1 0 01-.707-1.707l7-7z" clip-rule="evenodd" /></svg>
-                                    <span class="font-semibold">Rayon:</span> {{ $santri->rayon }}
-                                </p>
+                <!-- Profil Santri Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden transition-all hover:shadow-md">
+                    <div class="p-5 sm:p-6">
+                        <div class="flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
+                            <!-- Avatar -->
+                            <div class="relative flex-shrink-0">
+                                <img class="h-24 w-24 rounded-full object-cover ring-2 ring-red-100 shadow-sm" src="{{ $santri->foto ? Storage::url($santri->foto) : 'https://ui-avatars.com/api/?name='.urlencode($santri->nama).'&background=FBBF24&color=fff&size=128' }}" alt="Foto {{ $santri->nama }}">
+                                <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-white"></div>
                             </div>
-                            <div class="mt-4">
-                                <a href="{{ route('santri.profil.show', $santri) }}" class="text-sm font-semibold text-red-600 hover:text-red-800 transition-colors">Lihat Profil, Rapor & Catatan &rarr;</a>
+
+                            <!-- Info Santri -->
+                            <div class="flex-grow w-full text-center sm:text-left space-y-3">
+                                <h2 class="text-xl font-bold text-slate-900">{{ $santri->nama }}</h2>
+
+                                <div class="space-y-2 text-sm text-slate-600">
+                                    <div class="flex flex-wrap justify-center sm:justify-start gap-x-4 gap-y-1">
+                                        <div class="flex items-center gap-1.5">
+                                            <svg class="w-4 h-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            <span class="font-medium">NIS:</span> {{ $santri->nis }}
+                                        </div>
+                                        <div class="hidden sm:block w-px h-4 bg-slate-300"></div>
+                                        <div class="flex items-center gap-1.5">
+                                            <svg class="w-4 h-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zM12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                                            </svg>
+                                            <span class="font-medium">Kelas:</span> {{ $santri->kelas->nama_kelas ?? 'N/A' }}
+                                        </div>
+                                        <div class="hidden sm:block w-px h-4 bg-slate-300"></div>
+                                        <div class="flex items-center gap-1.5">
+                                            <svg class="w-4 h-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                            <span class="font-medium">Rayon:</span> {{ $santri->rayon }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pt-2">
+                                    <a href="{{ route('santri.profil.show', $santri) }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-red-600 hover:text-red-800 transition-colors group">
+                                        Lihat Profil Lengkap
+                                        <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                        </svg>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Ringkasan Izin & Pelanggaran -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-                    <!-- Riwayat Perizinan Terbaru -->
-                    <div class="bg-white rounded-2xl shadow-lg border border-slate-200">
-                        <div class="p-4 sm:p-6 border-b border-slate-200">
-                            <h3 class="text-lg font-medium text-gray-900">Riwayat Perizinan Terbaru</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                    <!-- Riwayat Perizinan -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden transition-all hover:shadow-md">
+                        <div class="bg-gradient-to-r from-slate-50 to-slate-100 px-5 py-4 border-b border-slate-200">
+                            <h3 class="font-semibold text-slate-800 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                Riwayat Perizinan Terbaru
+                            </h3>
                         </div>
-                        <ul class="divide-y divide-slate-200">
+                        <div class="divide-y divide-slate-100 max-h-96 overflow-y-auto custom-scrollbar">
                             @forelse ($santri->perizinans->take(5) as $izin)
-                                <li class="p-4 sm:p-4">
-                                    <div class="flex items-center justify-between">
-                                        <p class="font-semibold text-slate-800">{{ $izin->jenis_izin }}</p>
-                                        {{-- [BARU] Status badge berwarna --}}
-                                        <span @class([
-                                            'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
-                                            'bg-green-100 text-green-800' => $izin->status === 'Disetujui',
-                                            'bg-yellow-100 text-yellow-800' => $izin->status === 'Diproses',
-                                            'bg-red-100 text-red-800' => $izin->status === 'Ditolak',
-                                            'bg-blue-100 text-blue-800' => $izin->status === 'Telah Kembali',
-                                            'bg-slate-100 text-slate-800' => !in_array($izin->status, ['Disetujui', 'Diproses', 'Ditolak', 'Telah Kembali']),
-                                        ])>{{ $izin->status }}</span>
+                            <div class="p-4 hover:bg-slate-50 transition-colors">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="font-medium text-slate-900">{{ $izin->jenis_izin }}</p>
+                                        <p class="text-xs text-slate-500 mt-1 line-clamp-2">
+                                            {{ Str::limit($izin->keterangan, 60) }}
+                                        </p>
                                     </div>
-                                    {{-- [BARU] Detail tanggal dan keterangan --}}
-                                    <p class="text-sm text-slate-500 mt-1">
-                                        {{ $izin->tanggal_mulai->format('d M Y') }} s/d {{ $izin->tanggal_kembali->format('d M Y') }}
-                                    </p>
-                                    <p class="text-xs text-slate-400 mt-2">
-                                        Catatan: {{ Str::limit($izin->keterangan, 50) }}
-                                    </p>
-                                </li>
+                                    <span @class([ 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap' , 'bg-green-100 text-green-800'=> $izin->status === 'Disetujui',
+                                        'bg-yellow-100 text-yellow-800' => $izin->status === 'Diproses',
+                                        'bg-red-100 text-red-800' => $izin->status === 'Ditolak',
+                                        'bg-blue-100 text-blue-800' => $izin->status === 'Telah Kembali',
+                                        'bg-slate-100 text-slate-800' => !in_array($izin->status, ['Disetujui', 'Diproses', 'Ditolak', 'Telah Kembali']),
+                                        ])>
+                                        {{ $izin->status }}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-2">
+                                    {{ $izin->tanggal_mulai?->format('d M Y') ?? '–' }}
+                                    @if($izin->tanggal_kembali) s.d {{ $izin->tanggal_kembali->format('d M Y') }} @endif
+                                </p>
+                            </div>
                             @empty
-                                <li class="p-6 text-center text-slate-500 text-sm">
-                                    <svg class="mx-auto h-8 w-8 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>
-                                    <span class="mt-2 block">Belum ada riwayat perizinan.</span>
-                                </li>
+                            <div class="p-8 text-center text-slate-500">
+                                <svg class="mx-auto h-10 w-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                                </svg>
+                                <p class="mt-2 text-sm">Belum ada riwayat perizinan.</p>
+                            </div>
                             @endforelse
-                        </ul>
-                    </div>
-                    <!-- Riwayat Pelanggaran Terbaru -->
-                    <div class="bg-white rounded-2xl shadow-lg border border-slate-200">
-                        <div class="p-4 sm:p-6 border-b border-slate-200">
-                            <h3 class="text-lg font-medium text-gray-900">Riwayat Pelanggaran Terbaru</h3>
                         </div>
-                        <ul class="divide-y divide-slate-200">
-                            @forelse ($santri->pelanggarans->take(5) as $pelanggaran)
-                                <li class="p-4 sm:p-4">
-                                     <div class="flex items-center justify-between">
-                                        <p class="font-semibold text-slate-800">{{ $pelanggaran->jenis_pelanggaran }}</p>
-                                        {{-- [BARU] Poin pelanggaran --}}
-                                        <span class="font-bold text-red-600 text-sm">{{ $pelanggaran->poin }} Poin</span>
-                                    </div>
-                                    <p class="text-sm text-slate-500 mt-1">
-                                        Tanggal: {{ $pelanggaran->tanggal_kejadian->format('d M Y') }}
-                                    </p>
-                                </li>
-                            @empty
-                                 <li class="p-6 text-center text-slate-500 text-sm">
-                                    <svg class="mx-auto h-8 w-8 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    <span class="mt-2 block">Alhamdulillah, tidak ada riwayat pelanggaran.</span>
-                                </li>
-                            @endforelse
-                        </ul>
                     </div>
+
+                    <!-- Riwayat Pelanggaran -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden transition-all hover:shadow-md">
+                        <div class="bg-gradient-to-r from-slate-50 to-slate-100 px-5 py-4 border-b border-slate-200">
+                            <h3 class="font-semibold text-slate-800 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                </svg>
+                                Riwayat Pelanggaran Terbaru
+                            </h3>
+                        </div>
+                        <div class="divide-y divide-slate-100 max-h-96 overflow-y-auto custom-scrollbar">
+                            @forelse ($santri->pelanggarans->take(5) as $pelanggaran)
+                            <div class="p-4 hover:bg-slate-50 transition-colors">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="font-medium text-slate-900">{{ $pelanggaran->jenis_pelanggaran }}</p>
+                                        <p class="text-xs text-slate-500 mt-1">
+                                            {{ $pelanggaran->tanggal_kejadian->format('d M Y') }}
+                                        </p>
+                                    </div>
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-bold text-red-700">
+                                        {{ $pelanggaran->poin }} Poin
+                                    </span>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="p-8 text-center text-slate-500">
+                                <svg class="mx-auto h-10 w-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <p class="mt-2 text-sm">Alhamdulillah, tidak ada riwayat pelanggaran.</p>
+                            </div>
+                            @endforelse
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
+
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f9fafb;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #cbd5e1;
+        }
+
+    </style>
 </x-app-layout>

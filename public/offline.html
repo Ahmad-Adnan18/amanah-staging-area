@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Check your internet connection</title>
+        <!-- Tailwind CSS CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            body {
+                font-family: "Inter", sans-serif;
+            }
+
+            .gradient-background {
+                background: linear-gradient(
+                    172deg,
+                    #1a202c 20%,
+                    #6b46c1 100%
+                ); /* Dark Blue-Gray to Deep Purple */
+                animation: gradient-shift 10s ease infinite;
+                background-size: 200% 200%;
+            }
+
+            .fade-in-out {
+                animation: fade-in-out 2.5s infinite;
+            }
+
+            .data-flow-container {
+                width: 280px; /* Slightly wider for better spacing */
+                height: 60px; /* Adjusted height */
+                position: relative;
+            }
+
+            .device,
+            .server-icon {
+                border: 2px solid white; /* Lighter border for minimalism */
+                border-radius: 6px;
+                position: absolute;
+                top: 0;
+                background-color: rgba(255, 255, 255, 0.1); /* Subtle fill */
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            }
+
+            .device {
+                width: 60px;
+                height: 45px;
+                left: 0;
+            }
+
+            .device::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 40px;
+                height: 5px;
+                background: white;
+                border-radius: 2px;
+            }
+
+            .server-icon {
+                width: 50px;
+                height: 50px;
+                right: 0;
+                border-radius: 50%; /* Server as a circular icon */
+            }
+
+            .connection-line {
+                position: absolute;
+                top: 50%;
+                left: 65px; /* Adjust based on device width */
+                right: 55px; /* Adjust based on server width */
+                height: 2px;
+                background: white;
+                transform: translateY(-50%);
+                overflow: hidden; /* For byte animation */
+            }
+
+            .byte-data {
+                position: absolute;
+                top: 50%;
+                left: -10px; /* Start outside */
+                width: 8px;
+                height: 8px;
+                background: white;
+                border-radius: 50%;
+                transform: translateY(-50%);
+                opacity: 0;
+                animation: byte-animate 3s infinite linear 0.5s;
+                box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+            }
+
+            .byte-data:nth-child(2) {
+                animation-delay: 1.5s;
+            } /* Second byte for continuous flow */
+
+            @keyframes fade-in-out {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.3;
+                }
+            }
+
+            @keyframes byte-animate {
+                0% {
+                    transform: translate(-50%, -50%) translateX(0px);
+                    opacity: 0;
+                }
+                5% {
+                    opacity: 1;
+                }
+                95% {
+                    opacity: 1;
+                }
+                100% {
+                    transform: translate(-50%, -50%)
+                        translateX(calc(280px - 60px - 50px));
+                    opacity: 0;
+                } /* Total width - device width - server width */
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 600px) {
+                .text-3xl {
+                    font-size: 2.25rem;
+                }
+                .data-flow-container {
+                    width: 220px;
+                }
+                .byte-data {
+                    animation: byte-animate-sm 3s infinite linear 0.5s;
+                }
+                @keyframes byte-animate-sm {
+                    0% {
+                        transform: translate(-50%, -50%) translateX(0px);
+                        opacity: 0;
+                    }
+                    5% {
+                        opacity: 1;
+                    }
+                    95% {
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translate(-50%, -50%)
+                            translateX(calc(220px - 60px - 50px));
+                        opacity: 0;
+                    }
+                }
+            }
+        </style>
+    </head>
+
+    <body
+        class="flex items-center justify-center min-h-screen gradient-background text-white p-4"
+    >
+        <div class="flex flex-col items-center space-y-8">
+            <div
+                class="text-4xl sm:text-5xl md:text-6xl font-light fade-in-out tracking-wide text-center"
+            >
+                CONNECTING
+            </div>
+
+            <div class="data-flow-container flex items-center justify-between">
+                <div class="device"></div>
+                <div class="connection-line">
+                    <div class="byte-data"></div>
+                    <div class="byte-data"></div>
+                </div>
+                <div class="server-icon"></div>
+            </div>
+
+            <p class="text-sm text-gray-300 mt-4 text-center">
+                Mencoba menyambungkan ke internet. Mohon tunggu sebentar.
+            </p>
+        </div>
+    </body>
+</html>

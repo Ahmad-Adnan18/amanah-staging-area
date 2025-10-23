@@ -30,18 +30,19 @@
                                     <input type="text" name="nama_pelajaran" id="nama_pelajaran" value="{{ old('nama_pelajaran') }}" required autofocus class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
                                     <x-input-error class="mt-2" :messages="$errors->get('nama_pelajaran')" />
                                 </div>
+                                
+                                {{-- Tingkatan (Dinamis dari database dengan TomSelect) --}}
                                 <div>
                                     <label for="tingkatan" class="block text-sm font-medium text-gray-700">Tingkatan</label>
-                                    <select name="tingkatan" id="tingkatan" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
+                                    <select name="tingkatan" id="tingkatan" required class="mt-1 block w-full">
                                         <option value="">-- Pilih Tingkatan --</option>
-                                        <option value="1" {{ old('tingkatan') == '1' ? 'selected' : '' }}>Kelas 1</option>
-                                        <option value="2" {{ old('tingkatan') == '2' ? 'selected' : '' }}>Kelas 2</option>
-                                        <option value="3" {{ old('tingkatan') == '3' ? 'selected' : '' }}>Kelas 3</option>
-                                        <option value="4" {{ old('tingkatan') == '4' ? 'selected' : '' }}>Kelas 4</option>
-                                        <option value="5" {{ old('tingkatan') == '5' ? 'selected' : '' }}>Kelas 5</option>
-                                        <option value="6" {{ old('tingkatan') == '6' ? 'selected' : '' }}>Kelas 6</option>
-                                        <option value="Umum" {{ old('tingkatan') == 'Umum' ? 'selected' : '' }}>Umum (Semua Kelas)</option>
+                                        @foreach ($tingkatans as $tingkatan)
+                                            <option value="{{ $tingkatan }}" {{ old('tingkatan') == $tingkatan ? 'selected' : '' }}>
+                                                {{ $tingkatan }}
+                                            </option>
+                                        @endforeach
                                     </select>
+                                    <p class="mt-1 text-xs text-gray-500">Pilih tingkatan atau ketik tingkatan baru jika tidak ada di daftar.</p>
                                     <x-input-error class="mt-2" :messages="$errors->get('tingkatan')" />
                                 </div>
                             </div>
@@ -118,9 +119,18 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Tom-Select for teacher_ids
             new TomSelect('#teacher_ids', {
                 plugins: ['remove_button'],
                 create: false,
+            });
+            // Initialize Tom-Select for tingkatan with input support
+            new TomSelect('#tingkatan', {
+                create: true,
+                createFilter: function(input) {
+                    return input.length >= 2; // Sesuai validasi backend (min:2)
+                },
+                placeholder: 'Pilih atau ketik tingkatan...',
             });
         });
     </script>

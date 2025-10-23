@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Pengajaran;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreSantriRequest extends FormRequest
 {

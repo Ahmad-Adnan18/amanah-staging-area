@@ -27,7 +27,7 @@ class SantriProfileController extends Controller
         $santri->load([
             'kelas',
             'perizinans' => function ($query) {
-                $query->latest();
+                $query->withTrashed()->latest(); // 🔥 Tambahkan withTrashed() di sini
             },
             'pelanggarans' => function ($query) {
                 $query->latest();
@@ -41,10 +41,10 @@ class SantriProfileController extends Controller
         if ($santri->jenis_kelamin && $santri->kelas) {
             $jabatanWali = 'Wali Kelas ' . $santri->jenis_kelamin; // Hasil: "Wali Kelas Putra" atau "Wali Kelas Putri"
             $waliKelas = $santri->kelas->penanggungJawab()
-                            ->where('tahun_ajaran', date('Y').'/'.(date('Y')+1)) // Asumsi tahun ajaran saat ini
-                            ->whereHas('jabatan', fn($q) => $q->where('nama_jabatan', $jabatanWali))
-                            ->with('user')
-                            ->first();
+                ->where('tahun_ajaran', date('Y') . '/' . (date('Y') + 1)) // Asumsi tahun ajaran saat ini
+                ->whereHas('jabatan', fn($q) => $q->where('nama_jabatan', $jabatanWali))
+                ->with('user')
+                ->first();
             if ($waliKelas) {
                 $namaWaliKelas = $waliKelas->user->name;
             }
@@ -58,8 +58,64 @@ class SantriProfileController extends Controller
             ->get()
             ->groupBy(['tahun_ajaran', 'semester']);
 
-        return view('santri-profile.show', compact('santri', 'nilaiAkademik','namaWaliKelas'));
+        return view('santri-profile.show', compact('santri', 'nilaiAkademik', 'namaWaliKelas'));
     }
+
+    public function listForPortofolio(Request $request)
+    {
+        $this->authorize('viewAny', Santri::class);
+
+        $query = Santri::with('kelas');
+
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->whereRaw('LOWER(nama) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
+                    ->orWhere('nis', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        $santris = $query->orderBy('nama')->paginate(20)->withQueryString();
+
+        return view('pengajaran.santri.portofolio-list', compact('santris'));
+    }
+
+    public function portofolio(Santri $santri)
+    {
+        $this->authorize('view', $santri);
+
+        // Load semua data yang diperlukan untuk portofolio
+        $santri->load([
+            'perizinans',
+            'pelanggarans',
+            'prestasis.pencatat',
+            'riwayatPenyakits.pencatat',
+            'catatanHarians.pencatat',
+            'kelas'
+        ]);
+
+        return view('pengajaran.santri.portofolio', compact('santri'));
+    }
+
+    public function exportPortofolioPdf(Santri $santri)
+    {
+        $this->authorize('view', $santri);
+
+        $santri->load([
+            'perizinans',
+            'pelanggarans',
+            'prestasis.pencatat',
+            'riwayatPenyakits.pencatat',
+            'catatanHarians.pencatat',
+            'kelas'
+        ]);
+
+        $pdf = PDF::loadView('pengajaran.santri.portofolio-pdf', compact('santri'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download("portofolio-{$santri->nama}-{$santri->nis}.pdf");
+    }
+
 
     /**
      * TAMBAHKAN METHOD INI

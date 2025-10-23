@@ -51,13 +51,13 @@
                                 <x-input-label for="foto" :value="__('Ganti Foto (Opsional)')" />
                                 <div class="flex items-center gap-4 mt-1">
                                     @if ($santri->foto)
-                                        <img src="{{ Storage::url($santri->foto) }}" alt="Foto {{ $santri->nama }}" class="h-16 w-16 object-cover rounded-full ring-2 ring-white ring-offset-2 ring-offset-slate-100">
+                                    <img src="{{ Storage::url($santri->foto) }}" alt="Foto {{ $santri->nama }}" class="h-16 w-16 object-cover rounded-full ring-2 ring-white ring-offset-2 ring-offset-slate-100">
                                     @else
-                                        <span class="inline-block h-16 w-16 overflow-hidden rounded-full bg-slate-100">
-                                            <svg class="h-full w-full text-slate-300 object-contain" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                                            </svg>
-                                        </span>
+                                    <span class="inline-block h-16 w-16 overflow-hidden rounded-full bg-slate-100">
+                                        <svg class="h-full w-full text-slate-300 object-contain" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                                        </svg>
+                                    </span>
                                     @endif
                                     <input id="foto" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 transition-colors duration-200" type="file" name="foto" accept="image/*">
                                 </div>
@@ -65,7 +65,7 @@
                             </div>
 
                             <div class="flex items-center justify-end gap-4 pt-4">
-                                <a href="{{ route('pengajaran.santris.index', ['kelas' => $santri->kelas_id]) }}" class="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Batal</a>
+                                <a href="{{ route('admin.santri-management.index', ['kelas' => $santri->kelas_id]) }}" class="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Batal</a>
                                 <button type="submit" class="inline-flex items-center justify-center rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600">
                                     {{ __('Update Data') }}
                                 </button>

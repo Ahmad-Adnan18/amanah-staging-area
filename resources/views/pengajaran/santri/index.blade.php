@@ -10,7 +10,8 @@
 
                 @can('create', App\Models\Santri::class)
                 <a href="{{ route('pengajaran.santris.create', $kelas) }}" class="inline-flex items-center justify-center gap-2 rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                        <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
                     <span>Tambah Santri ke Kelas Ini</span>
                 </a>
                 @endcan
@@ -62,9 +63,6 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{{ $santri->rayon }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex items-center justify-end space-x-4">
-                                        @can('create', App\Models\Perizinan::class)
-                                        <a href="{{ route('perizinan.create', $santri) }}" class="text-green-600 hover:text-green-900 transition-colors">Buat Izin</a>
-                                        @endcan
                                         @can('update', $santri)
                                         <a href="{{ route('pengajaran.santris.edit', $santri) }}" class="text-slate-600 hover:text-red-700 transition-colors">Edit</a>
                                         @endcan

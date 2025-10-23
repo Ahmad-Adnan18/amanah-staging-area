@@ -44,5 +44,10 @@ class Teacher extends Model
     {
         return $this->belongsTo(User::class,'user_id');
     }
+
+    public function absensis(): HasMany
+    {
+        return $this->hasMany(Absensi::class);
+    }
 }
 

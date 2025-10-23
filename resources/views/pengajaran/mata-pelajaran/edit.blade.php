@@ -4,7 +4,25 @@
 
     <div class="bg-slate-50 min-h-screen">
         <div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            <div class="space-y-8">
+            <div class="space-y-8" x-data="{
+                    showDeleteConfirm: false,
+                    deleteForm: null,
+                    confirmDelete(form) {
+                        this.deleteForm = form;
+                        this.showDeleteConfirm = true;
+                    },
+                    submitDelete() {
+                        if (this.deleteForm) {
+                            this.deleteForm.submit();
+                        }
+                        this.showDeleteConfirm = false;
+                        this.deleteForm = null;
+                    },
+                    cancelDelete() {
+                        this.showDeleteConfirm = false;
+                        this.deleteForm = null;
+                    }
+                 }">
 
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
@@ -17,13 +35,13 @@
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
                     <form action="{{ route('pengajaran.mata-pelajaran.update', $mataPelajaran->id) }}" method="POST" id="edit-form">
                         @csrf
                         @method('PUT')
                         <div class="p-6 space-y-6">
-                            
+
                             {{-- Baris 1: Nama Pelajaran & Tingkatan --}}
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -31,24 +49,25 @@
                                     <input type="text" name="nama_pelajaran" id="nama_pelajaran" value="{{ old('nama_pelajaran', $mataPelajaran->nama_pelajaran) }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
                                     <x-input-error class="mt-2" :messages="$errors->get('nama_pelajaran')" />
                                 </div>
+
+                                {{-- Tingkatan (Dinamis dari database dengan TomSelect) --}}
                                 <div>
                                     <label for="tingkatan" class="block text-sm font-medium text-gray-700">Tingkatan</label>
-                                    <select name="tingkatan" id="tingkatan" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
+                                    <select name="tingkatan" id="tingkatan" required class="mt-1 block w-full">
                                         <option value="">-- Pilih Tingkatan --</option>
-                                        <option value="1" {{ old('tingkatan', $mataPelajaran->tingkatan) == '1' ? 'selected' : '' }}>Kelas 1</option>
-                                        <option value="2" {{ old('tingkatan', '2') == '2' ? 'selected' : '' }}>Kelas 2</option>
-                                        <option value="3" {{ old('tingkatan', '3') == '3' ? 'selected' : '' }}>Kelas 3</option>
-                                        <option value="4" {{ old('tingkatan', '4') == '4' ? 'selected' : '' }}>Kelas 4</option>
-                                        <option value="5" {{ old('tingkatan', '5') == '5' ? 'selected' : '' }}>Kelas 5</option>
-                                        <option value="6" {{ old('tingkatan', '6') == '6' ? 'selected' : '' }}>Kelas 6</option>
-                                        <option value="Umum" {{ old('tingkatan', $mataPelajaran->tingkatan) == 'Umum' ? 'selected' : '' }}>Umum</option>
+                                        @foreach ($tingkatans as $tingkatan)
+                                        <option value="{{ $tingkatan }}" {{ old('tingkatan', $mataPelajaran->tingkatan) == $tingkatan ? 'selected' : '' }}>
+                                            {{ $tingkatan }}
+                                        </option>
+                                        @endforeach
                                     </select>
+                                    <p class="mt-1 text-xs text-gray-500">Pilih tingkatan atau ketik tingkatan baru jika tidak ada di daftar.</p>
                                     <x-input-error class="mt-2" :messages="$errors->get('tingkatan')" />
                                 </div>
                             </div>
-                            
+
                             {{-- Baris 2: Kategori & Durasi --}}
-                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="kategori" class="block text-sm font-medium text-gray-700">Kategori</label>
                                     <select name="kategori" id="kategori" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
@@ -64,7 +83,7 @@
                                 </div>
                             </div>
 
-                            {{-- [PENYESUAIAN UTAMA] Penjelasan Logika Ruangan --}}
+                            {{-- Penjelasan Logika Ruangan --}}
                             <div class="space-y-4 rounded-lg bg-slate-50 p-4 border border-slate-200">
                                 <div class="flex items-start">
                                     <div class="flex items-center h-5">
@@ -84,18 +103,19 @@
                                     </ul>
                                 </div>
                             </div>
-                            
+
                             {{-- Pilihan Guru Pengampu --}}
                             <div>
                                 <label for="teacher_ids" class="block text-sm font-medium text-gray-700">Guru Pengampu</label>
                                 <select name="teacher_ids[]" id="teacher_ids" multiple placeholder="Cari dan pilih guru..." autocomplete="off" class="mt-1">
                                     @php
-                                        $assignedTeacherIds = old('teacher_ids', $mataPelajaran->teachers->pluck('id')->toArray());
+                                    // Get assigned teacher IDs from the old input or the current mataPelajaran
+                                    $assignedTeacherIds = old('teacher_ids', $mataPelajaran->teachers->pluck('id')->toArray());
                                     @endphp
                                     @foreach ($teachers as $teacher)
-                                        <option value="{{ $teacher->id }}" {{ in_array($teacher->id, $assignedTeacherIds) ? 'selected' : '' }}>
-                                            {{ $teacher->name }}
-                                        </option>
+                                    <option value="{{ $teacher->id }}" {{ in_array($teacher->id, $assignedTeacherIds) ? 'selected' : '' }}>
+                                        {{ $teacher->name }}
+                                    </option>
                                     @endforeach
                                 </select>
                                 <p class="mt-2 text-sm text-gray-500">Anda bisa memilih lebih dari satu guru.</p>
@@ -104,23 +124,39 @@
 
                         </div>
                     </form>
-                    
-                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
-                        <div>
-                            <form action="{{ route('pengajaran.mata-pelajaran.destroy', $mataPelajaran->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menghapus mata pelajaran ini? Tindakan ini tidak dapat diurungkan.');">
+
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row-reverse sm:justify-between items-center gap-4">
+                        <div class="flex items-center gap-4 w-full sm:w-auto flex-col sm:flex-row">
+                            <a href="{{ route('pengajaran.mata-pelajaran.index') }}" class="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 w-full sm:w-auto">
+                                Batal
+                            </a>
+                            <button type="submit" form="edit-form" class="inline-flex items-center justify-center rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600 w-full sm:w-auto">
+                                Simpan Perubahan
+                            </button>
+                        </div>
+                        <div class="w-full sm:w-auto">
+                            <form action="{{ route('pengajaran.mata-pelajaran.destroy', $mataPelajaran->id) }}" method="POST" x-ref="deleteForm">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="inline-flex items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-semibold text-red-700 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50">
+                                <button type="button" @click="confirmDelete($refs.deleteForm)" class="inline-flex items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-semibold text-red-700 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50 w-full sm:w-auto">
                                     Hapus Pelajaran
                                 </button>
                             </form>
                         </div>
-                        <div class="flex items-center gap-4">
-                            <a href="{{ route('pengajaran.mata-pelajaran.index') }}" class="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                    </div>
+                </div>
+
+                {{-- Custom Delete Confirmation Pop-up --}}
+                <div x-show="showDeleteConfirm" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" x-cloak>
+                    <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 max-w-sm w-full mx-4">
+                        <h3 class="text-lg font-semibold text-slate-900">Konfirmasi Hapus</h3>
+                        <p class="mt-2 text-sm text-slate-600">Apakah Anda yakin ingin menghapus mata pelajaran <span class="font-semibold">{{ $mataPelajaran->nama_pelajaran }}</span>? Tindakan ini tidak dapat dibatalkan.</p>
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button @click="cancelDelete()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-md hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
                                 Batal
-                            </a>
-                            <button type="submit" form="edit-form" class="inline-flex items-center justify-center rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600">
-                                Simpan Perubahan
+                            </button>
+                            <button @click="submitDelete()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                                Hapus
                             </button>
                         </div>
                     </div>
@@ -131,10 +167,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Tom-Select for teacher_ids
             new TomSelect('#teacher_ids', {
-                plugins: ['remove_button'],
-            });
+                plugins: ['remove_button']
+                , create: false
+            , });
+            // Initialize Tom-Select for tingkatan with input support
+            new TomSelect('#tingkatan', {
+                create: true
+                , createFilter: function(input) {
+                    return input.length >= 2; // Sesuai validasi backend (min:2)
+                }
+                , placeholder: 'Pilih atau ketik tingkatan...'
+            , });
         });
+
     </script>
 </x-app-layout>

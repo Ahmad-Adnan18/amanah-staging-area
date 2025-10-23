@@ -34,7 +34,7 @@ class PelanggaranPolicy
      */
     public function create(User $user): bool
     {
-        return in_array($user->role, ['admin', 'pengasuhan']);
+        return in_array($user->role, ['admin', 'pengasuhan', 'pengajaran']);
     }
 
     /**
@@ -42,7 +42,7 @@ class PelanggaranPolicy
      */
     public function update(User $user, Pelanggaran $pelanggaran): bool
     {
-        return in_array($user->role, ['admin', 'pengasuhan']);
+        return in_array($user->role, ['admin', 'pengasuhan', 'pengajaran']);
     }
 
     /**
@@ -50,6 +50,6 @@ class PelanggaranPolicy
      */
     public function delete(User $user, Pelanggaran $pelanggaran): bool
     {
-        return in_array($user->role, ['admin', 'pengasuhan']);
+        return in_array($user->role, ['admin', 'pengasuhan', 'pengajaran']);
     }
 }

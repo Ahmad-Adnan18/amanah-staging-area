@@ -25,12 +25,12 @@ class SantriController extends Controller
             $searchTerm = $request->search;
             $query->where(function ($q) use ($searchTerm) {
                 $q->whereRaw('LOWER(nama) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
-                  ->orWhere('nis', 'like', "%{$searchTerm}%");
+                    ->orWhere('nis', 'like', "%{$searchTerm}%");
             });
         }
 
         $santris = $query->latest()->paginate(10)->withQueryString();
-        
+
         return view('pengajaran.santri.index', compact('santris', 'kelas'));
     }
 
@@ -57,7 +57,7 @@ class SantriController extends Controller
         $santri = Santri::create($validated);
 
         return redirect()->route('pengajaran.santris.index', ['kelas' => $santri->kelas_id ?? 0])
-                        ->with('success', 'Data santri berhasil ditambahkan.');
+            ->with('success', 'Data santri berhasil ditambahkan.');
     }
 
     public function edit(Santri $santri)
@@ -85,8 +85,8 @@ class SantriController extends Controller
 
         $santri->update($validated);
 
-        return redirect()->route('pengajaran.santris.index', ['kelas' => $santri->kelas_id ?? 0])
-                        ->with('success', 'Data santri berhasil diperbarui.');
+        return redirect()->route('admin.santri-management.index', ['kelas' => $santri->kelas_id ?? 0])
+            ->with('success', 'Data santri berhasil diperbarui.');
     }
 
     public function destroy(Santri $santri)
@@ -97,10 +97,10 @@ class SantriController extends Controller
         if ($santri->foto) {
             Storage::disk('public')->delete($santri->foto);
         }
-        
+
         $santri->delete();
 
         return redirect()->route('pengajaran.santris.index', ['kelas' => $kelas_id ?? 0])
-                        ->with('success', 'Data santri berhasil dihapus.');
+            ->with('success', 'Data santri berhasil dihapus.');
     }
 }

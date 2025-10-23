@@ -24,13 +24,13 @@ class KelasController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewAny', Kelas::class);
-        
+
         // [PENYESUAIAN] Eager load relasi penanggungJawab beserta user dan jabatannya
         $kelas_list = Kelas::withCount('santris')
             ->with(['room', 'penanggungJawab.user', 'penanggungJawab.jabatan'])
             ->latest()
             ->paginate(50);
-        
+
         $hasilPencarianSantri = collect();
 
         if ($request->filled('search')) {
@@ -40,14 +40,14 @@ class KelasController extends Controller
                 ->orWhere('nis', 'like', "%{$searchTerm}%")
                 ->get();
         }
-        
+
         return view('pengajaran.kelas.index', compact('kelas_list', 'hasilPencarianSantri'));
     }
 
     public function create()
     {
         $this->authorize('create', Kelas::class);
-        
+
         $rooms = Room::orderBy('name')->get();
         // [PENYESUAIAN] Mengambil tingkatan dinamis dari mata pelajaran
         $tingkatans = MataPelajaran::select('tingkatan')->distinct()->orderBy('tingkatan')->pluck('tingkatan');
@@ -88,7 +88,7 @@ class KelasController extends Controller
             ->with('teachers') // Eager load kandidat guru untuk setiap mapel
             ->orderBy('nama_pelajaran')
             ->get();
-            
+
         $assignedSubjects = $kela->mataPelajarans->pluck('pivot.teacher_id', 'id');
 
         return view('pengajaran.kelas.edit', compact('kela', 'users', 'jabatans', 'penanggungJawab', 'rooms', 'tingkatans', 'allMataPelajarans', 'assignedSubjects'));
@@ -186,4 +186,3 @@ class KelasController extends Controller
         return Excel::download(new WaliCodesExport, 'daftar-kode-registrasi-wali.xlsx');
     }
 }
-

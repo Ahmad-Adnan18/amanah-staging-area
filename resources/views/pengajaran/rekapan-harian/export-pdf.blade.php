@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Laporan Rekapan Kehadiran</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #333;
+        }
+
+        .header p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .summary {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background-color: #dc2626;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            font-size: 11px;
+        }
+
+        .presentase-baik {
+            background-color: #DCFCE7;
+        }
+
+        .presentase-cukup {
+            background-color: #FEF9C3;
+        }
+
+        .presentase-kurang {
+            background-color: #FEE2E2;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>LAPORAN REKAPAN KEHADIRAN</h1>
+        <p>Pondok Pesantren - Sistem Manajemen Santri</p>
+        <p>{{ $filters['kelas_nama'] }} - {{ $filters['periode_label'] }}</p>
+        <p>Dicetak pada: {{ \Carbon\Carbon::now()->translatedFormat('d F Y H:i') }}</p>
+    </div>
+
+    <div class="summary">
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-value" style="color: #3B82F6;">{{ $summary['total_santri'] }}</div>
+                <div class="summary-label">Total Santri</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" style="color: #10B981;">{{ number_format($summary['rata_rata_presentase'], 1) }}%</div>
+                <div class="summary-label">Rata-rata Kehadiran</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" style="color: #F59E0B;">{{ $summary['total_hari'] }}</div>
+                <div class="summary-label">Total Hari</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" style="color: #8B5CF6;">{{ count($rekapData) }}</div>
+                <div class="summary-label">Santri Tercatat</div>
+            </div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>NIS</th>
+                <th>Nama Santri</th>
+                <th>Total Hadir</th>
+                <th>Total Jam</th>
+                <th>Total Hari</th>
+                <th>Presentase</th>
+                <th>Keterangan</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($rekapData as $index => $data)
+            <tr>
+                <td>{{ $index + 1 }}</td>
+                <td>{{ $data['santri']->nis }}</td>
+                <td>{{ $data['santri']->nama }}</td>
+                <td>{{ $data['total_hadir'] }}</td>
+                <td>{{ $data['total_jam'] }}</td>
+                <td>{{ $data['total_hari'] }}</td>
+                <td class="{{ $data['presentase'] >= 90 ? 'presentase-baik' : ($data['presentase'] >= 75 ? 'presentase-cukup' : 'presentase-kurang') }}">
+                    {{ $data['presentase'] }}%
+                </td>
+                <td class="{{ $data['presentase'] >= 90 ? 'presentase-baik' : ($data['presentase'] >= 75 ? 'presentase-cukup' : 'presentase-kurang') }}">
+                    {{ $data['presentase'] >= 90 ? 'Sangat Baik' : ($data['presentase'] >= 75 ? 'Baik' : 'Perlu Perhatian') }}
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>Generated by Sistem Pondok Pesantren - {{ date('Y') }}</p>
+    </div>
+</body>
+</html>

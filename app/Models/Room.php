@@ -18,4 +18,12 @@ class Room extends Model
     {
         return $this->hasMany(Schedule::class);
     }
+
+    /**
+     * Get the inventory items for the room.
+     */
+    public function inventoryItems()
+    {
+        return $this->hasMany(InventoryItem::class);
+    }
 }

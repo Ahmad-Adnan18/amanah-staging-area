@@ -53,4 +53,9 @@ class Schedule extends Model
     {
         return $this->belongsTo(Room::class);
     }
+
+    public function absensis(): HasMany
+    {
+        return $this->hasMany(Absensi::class);
+    }
 }

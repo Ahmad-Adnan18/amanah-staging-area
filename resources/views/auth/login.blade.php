@@ -10,13 +10,13 @@
             <!-- Konten Branding -->
             <div class="relative z-10 text-center space-y-8">
                 <a href="/">
-                    <img src="{{ asset('images/logo-kunka.png') }}" alt="Logo Kun Karima" class="mx-auto mb-8 h-24 w-auto drop-shadow-lg">
+                    <img src="{{ asset('images/logo-kunka.png') }}" alt="Logo" class="mx-auto mb-8 h-24 w-auto drop-shadow-lg">
                 </a>
                 <h1 class="text-4xl font-bold tracking-tight text-white">
                     Aplikasi Manajemen Akademik & Harian
                 </h1>
                 <p class="mt-4 text-lg text-red-100 max-w-lg mx-auto">
-                    Masuk untuk mengelola data perizinan dan informasi santri Pondok Pesantren Kun Karima.
+                    Masuk untuk mengelola data perizinan dan informasi santri Pondok Pesantren.
                 </p>
             </div>
         </div>
@@ -27,7 +27,7 @@
                 <!-- Logo untuk tampilan mobile -->
                 <div class="lg:hidden text-center">
                     <a href="/">
-                        <img src="{{ asset('images/logo-kunka-merah.png') }}" alt="Logo Kun Karima" class="mx-auto h-20 w-auto">
+                        <img src="{{ asset('images/logo-kunka-merah.png') }}" alt="Logo" class="mx-auto h-20 w-auto">
                     </a>
                 </div>
 
@@ -111,7 +111,7 @@
                 </div>
 
                 <div class="text-center text-sm text-slate-600">
-                    &copy; {{ date('Y') }} Pondok Pesantren Kun Karima. All rights reserved.
+                    &copy; {{ date('Y') }} Pondok Pesantren. All rights reserved.
                     <p class="mt-1 text-slate-600">Created by Ahmad Adnan</p>
                 </div>
             </div>

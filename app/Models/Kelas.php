@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Log;
 
 class Kelas extends Model
 {
@@ -14,16 +15,12 @@ class Kelas extends Model
 
     protected $table = 'kelas';
 
-    /**
-     * [PENYESUAIAN]
-     * Menambahkan semua kolom yang bisa diisi dari form dan controller.
-     */
     protected $fillable = [
         'nama_kelas',
         'tingkatan',
         'room_id',
         'is_active_for_scheduling',
-        'kurikulum_template_id', 
+        'kurikulum_template_id',
     ];
 
     public function room(): BelongsTo
@@ -40,14 +37,14 @@ class Kelas extends Model
     {
         return $this->hasMany(JabatanUser::class);
     }
-    
-    /**
-     * Relasi ke mata pelajaran yang diajarkan di kelas ini (alokasi final).
-     */
+
     public function mataPelajarans(): BelongsToMany
     {
         return $this->belongsToMany(MataPelajaran::class, 'kelas_mata_pelajaran')->withPivot('teacher_id');
     }
 
+    public function absensis(): HasMany
+    {
+        return $this->hasMany(Absensi::class);
+    }
 }
-

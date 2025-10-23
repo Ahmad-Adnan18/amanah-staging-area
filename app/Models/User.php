@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'role',
         'teacher_code', // DITAMBAHKAN untuk penjadwalan
+        'profile_photo',
     ];
 
     /**

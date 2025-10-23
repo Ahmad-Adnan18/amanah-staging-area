@@ -15,12 +15,12 @@ class PublicScheduleController extends Controller
     public function index(): View
     {
         $classes = Kelas::where('is_active_for_scheduling', true)->orderBy('nama_kelas')->get();
-        
+
         // [PERBAIKAN] Ambil data guru langsung dari tabel 'teachers'
         $teachers = Teacher::orderBy('name')->get();
 
         $schedules = Schedule::with(['subject', 'teacher', 'room', 'kelas'])->get();
-        
+
         // [PERBAIKAN PENTING]
         // Pastikan 'byTeacher' dikelompokkan berdasarkan ID dari tabel 'teachers'
         $scheduleData = [
@@ -28,14 +28,17 @@ class PublicScheduleController extends Controller
             'byTeacher' => $this->formatScheduleForJs($schedules, 'teacher_id'),
             'teachingHours' => $this->calculateTeachingHours($schedules),
         ];
-        
+
+        // [NEW] Hitung guru yang libur
+        $teachersDayOff = $this->calculateTeachersDayOff($schedules, $teachers);
+
         $days = [1 => 'Sabtu', 2 => 'Ahad', 3 => 'Senin', 4 => 'Selasa', 5 => 'Rabu', 6 => 'Kamis'];
         $timeSlots = range(1, 7);
-        
+
         // [PERBAIKAN] Data guru untuk dropdown diubah agar value-nya adalah teacher->id
         // Namun, kita tetap menggunakan data $teachers yang sudah diambil di atas.
         // Penyesuaian akan dilakukan di JavaScript.
-        return view('jadwal.public.index', compact('classes', 'teachers', 'scheduleData', 'days', 'timeSlots'));
+        return view('jadwal.public.index', compact('classes', 'teachers', 'scheduleData', 'days', 'timeSlots', 'teachersDayOff'));
     }
 
     private function formatScheduleForJs($schedules, $key)
@@ -46,7 +49,7 @@ class PublicScheduleController extends Controller
             if ($schedule->{$key} && $schedule->teacher) {
                 $formatted[$schedule->{$key}][$schedule->day_of_week][$schedule->time_slot] = [
                     'subject' => $schedule->subject->nama_pelajaran ?? 'N/A',
-                    'teacher' => $schedule->teacher->name ?? 'N/A', 
+                    'teacher' => $schedule->teacher->name ?? 'N/A',
                     'class' => $schedule->kelas->nama_kelas ?? 'N/A',
                     'room' => $schedule->room->name ?? 'N/A',
                 ];
@@ -79,7 +82,7 @@ class PublicScheduleController extends Controller
         $schedules = Schedule::where('teacher_id', $teacherId)->get();
         $teachingHours = ['sabtu' => 0, 'ahad' => 0, 'senin' => 0, 'selasa' => 0, 'rabu' => 0, 'kamis' => 0, 'total' => 0];
         $dayMap = [1 => 'sabtu', 2 => 'ahad', 3 => 'senin', 4 => 'selasa', 5 => 'rabu', 6 => 'kamis'];
-        
+
         foreach ($schedules as $schedule) {
             if (isset($dayMap[$schedule->day_of_week])) {
                 $dayName = $dayMap[$schedule->day_of_week];
@@ -89,7 +92,7 @@ class PublicScheduleController extends Controller
         }
         return response()->json($teachingHours);
     }
-    
+
     public function print($type, $id)
     {
         $days = [1 => 'Sabtu', 2 => 'Ahad', 3 => 'Senin', 4 => 'Selasa', 5 => 'Rabu', 6 => 'Kamis'];
@@ -100,21 +103,21 @@ class PublicScheduleController extends Controller
         if ($type == 'kelas') {
             $kelas = Kelas::findOrFail($id);
             $schedules = Schedule::where('kelas_id', $id)->with(['subject', 'teacher', 'room'])->get()->groupBy(['day_of_week', 'time_slot']);
-            
-            $data['title'] = 'Jadwal Pelajaran Kelas: ' . $kelas->nama_kelas;
+
+            $data['title'] = 'Kelas: ' . $kelas->nama_kelas;
             $data['schedules'] = $schedules;
             $data['type'] = 'kelas';
 
         } elseif ($type == 'guru') {
             // [PERBAIKAN UTAMA] Kembali mencari guru di tabel TEACHERS
-            $teacher = Teacher::findOrFail($id); 
-            
+            $teacher = Teacher::findOrFail($id);
+
             // Cari jadwal berdasarkan ID TEACHER tersebut
             $schedulesCollection = Schedule::where('teacher_id', $teacher->id)->with(['subject', 'kelas', 'room'])->get();
             $schedules = $schedulesCollection->groupBy(['day_of_week', 'time_slot']);
-            
+
             $teachingHours = $this->getTeachingHours($teacher->id)->getData(true);
-            
+
             $data['title'] = 'Jadwal Mengajar: ' . $teacher->name;
             $data['schedules'] = $schedules;
             $data['type'] = 'guru';
@@ -124,8 +127,56 @@ class PublicScheduleController extends Controller
         } else {
             abort(404);
         }
-        
+
         $pdf = Pdf::loadView($viewName, $data)->setPaper('a4', 'landscape');
         return $pdf->stream('jadwal-' . $type . '-' . $id . '.pdf');
+    }
+
+    // [NEW] Hitung guru yang libur per hari berdasarkan jadwal
+    private function calculateTeachersDayOff($schedules, $teachers)
+    {
+        $teachersDayOff = [];
+
+        foreach ($teachers as $teacher) {
+            $teacherSchedules = $schedules->where('teacher_id', $teacher->id);
+            $daysWithSchedule = $teacherSchedules->pluck('day_of_week')->unique()->toArray();
+
+            // Guru libur di hari yang tidak ada jadwal
+            foreach (range(1, 6) as $day) {
+                if (!in_array($day, $daysWithSchedule)) {
+                    $teachersDayOff[$day][] = [
+                        'id' => $teacher->id,
+                        'name' => $teacher->name,
+                        'reason' => 'Tidak ada jadwal mengajar'
+                    ];
+                }
+            }
+        }
+
+        return $teachersDayOff;
+    }
+
+    // [NEW] Method untuk print guru libur
+    public function printGuruLibur($day)
+    {
+        $days = [1 => 'Sabtu', 2 => 'Ahad', 3 => 'Senin', 4 => 'Selasa', 5 => 'Rabu', 6 => 'Kamis'];
+
+        if (!isset($days[$day])) {
+            abort(404);
+        }
+
+        $teachers = Teacher::orderBy('name')->get();
+        $schedules = Schedule::with(['subject', 'teacher', 'room', 'kelas'])->get();
+        $teachersDayOff = $this->calculateTeachersDayOff($schedules, $teachers);
+
+        $data = [
+            'title' => 'Daftar Guru Libur - ' . $days[$day],
+            'guruLibur' => $teachersDayOff[$day] ?? [],
+            'hari' => $days[$day],
+            'tanggal' => now()->format('d/m/Y')
+        ];
+
+        $pdf = Pdf::loadView('jadwal.public.print-guru-libur', $data)->setPaper('a4', 'portrait');
+        return $pdf->stream('guru-libur-' . $days[$day] . '.pdf');
     }
 }

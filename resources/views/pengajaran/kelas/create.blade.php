@@ -9,7 +9,7 @@
                         <p class="mt-1 text-slate-600">Buat kelas baru dan tentukan tingkatan serta ruangan induknya.</p>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
                     <form action="{{ route('pengajaran.kelas.store') }}" method="POST">
                         @csrf
@@ -26,7 +26,7 @@
                                     <option value="">-- Pilih Tingkatan --</option>
                                     {{-- [PENYESUAIAN] Menggunakan daftar tingkatan dinamis --}}
                                     @foreach($tingkatans as $tingkatan)
-                                        <option value="{{ $tingkatan }}" @selected(old('tingkatan') == $tingkatan)>{{ $tingkatan }}</option>
+                                    <option value="{{ $tingkatan }}" @selected(old('tingkatan')==$tingkatan)>{{ $tingkatan }}</option>
                                     @endforeach
                                 </select>
                                 <x-input-error class="mt-2" :messages="$errors->get('tingkatan')" />
@@ -37,7 +37,7 @@
                                 <select name="room_id" id="room_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
                                     <option value="">-- Tidak ada --</option>
                                     @foreach($rooms as $room)
-                                        <option value="{{ $room->id }}" @selected(old('room_id') == $room->id)>{{ $room->name }}</option>
+                                    <option value="{{ $room->id }}" @selected(old('room_id')==$room->id)>{{ $room->name }}</option>
                                     @endforeach
                                 </select>
                                 <x-input-error class="mt-2" :messages="$errors->get('room_id')" />
@@ -53,4 +53,3 @@
         </div>
     </div>
 </x-app-layout>
-

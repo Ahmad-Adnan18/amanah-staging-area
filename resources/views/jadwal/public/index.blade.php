@@ -19,7 +19,7 @@
             <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-6 mb-6 sm:mb-8">
                 {{-- [MOBILE] Ukuran teks diperkecil di layar kecil --}}
                 <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">Lihat Jadwal Pelajaran</h1>
-                <p class="mt-1 text-slate-600 text-sm sm:text-base">Pilih untuk menampilkan jadwal berdasarkan kelas atau guru.</p>
+                <p class="mt-1 text-slate-600 text-sm sm:text-base">Pilih untuk menampilkan jadwal berdasarkan kelas, guru, atau daftar guru libur.</p>
             </div>
 
             {{-- Menu Tab dan Pilihan --}}
@@ -29,6 +29,8 @@
                     <nav class="-mb-px flex space-x-6 sm:space-x-8 px-4 sm:px-6 overflow-x-auto" aria-label="Tabs">
                         <button @click="setActiveTab('kelas')" :class="{ 'border-red-500 text-red-600': activeTab === 'kelas', 'border-transparent text-gray-500 hover:text-gray-700': activeTab !== 'kelas' }" class="flex-shrink-0 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Jadwal per Kelas</button>
                         <button @click="setActiveTab('guru')" :class="{ 'border-red-500 text-red-600': activeTab === 'guru', 'border-transparent text-gray-500 hover:text-gray-700': activeTab !== 'guru' }" class="flex-shrink-0 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Jadwal per Guru</button>
+                        {{-- [NEW] Tab Guru Libur --}}
+                        <button @click="setActiveTab('guru-libur')" :class="{ 'border-red-500 text-red-600': activeTab === 'guru-libur', 'border-transparent text-gray-500 hover:text-gray-700': activeTab !== 'guru-libur' }" class="flex-shrink-0 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Guru Libur</button>
                     </nav>
                 </div>
                 <div class="p-4 sm:p-6">
@@ -40,6 +42,16 @@
                         <label for="guru_select" class="block text-sm font-medium text-gray-700 mb-1">Pilih Guru</label>
                         <select x-ref="guruSelect" id="guru_select" placeholder="Cari dan pilih guru..."></select>
                     </div>
+                    {{-- [NEW] Dropdown Pilih Hari untuk Guru Libur --}}
+                    <div x-show="activeTab === 'guru-libur'" x-cloak>
+                        <label for="hari_select" class="block text-sm font-medium text-gray-700 mb-1">Pilih Hari</label>
+                        <select x-ref="hariSelect" id="hari_select" placeholder="Pilih hari...">
+                            <option value="">Pilih Hari</option>
+                            @foreach($days as $key => $day)
+                                <option value="{{ $key }}">{{ $day }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -48,7 +60,7 @@
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 <h3 class="mt-2 text-lg font-medium text-gray-900">Pilih Jadwal untuk Ditampilkan</h3>
-                <p class="mt-1 text-sm text-gray-500">Silakan pilih kelas atau guru dari menu di atas untuk melihat detail jadwal pelajaran.</p>
+                <p class="mt-1 text-sm text-gray-500">Silakan pilih kelas, guru, atau hari dari menu di atas untuk melihat detail jadwal pelajaran.</p>
             </div>
 
             {{-- Area Konten Jadwal --}}
@@ -67,7 +79,6 @@
                         </a>
                     </div>
                 </div>
-
 
                 {{-- Tampilan KARTU khusus untuk GURU --}}
                 <div x-show="viewMode === 'card' && activeTab === 'guru'" x-cloak>
@@ -198,6 +209,43 @@
                     </div>
                 </div>
 
+                {{-- [NEW] Tampilan untuk GURU LIBUR --}}
+                <div x-show="activeTab === 'guru-libur'" x-cloak>
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold" style="font-family: 'Times New Roman', serif;">جَدْوَلُ الإِجَازَة</h2>
+                        <h3 class="text-xl font-semibold" x-text="scheduleTitle"></h3>
+                    </div>
+
+                    {{-- Daftar Guru Libur --}}
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50">
+                                    <th class="border border-slate-300 px-4 py-2 text-left font-semibold">No</th>
+                                    <th class="border border-slate-300 px-4 py-2 text-left font-semibold">Nama Guru</th>
+                                    <th class="border border-slate-300 px-4 py-2 text-left font-semibold">Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="(guru, index) in guruLiburList" :key="guru.id">
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="border border-slate-300 px-4 py-2" x-text="index + 1"></td>
+                                        <td class="border border-slate-300 px-4 py-2" x-text="guru.name"></td>
+                                        <td class="border border-slate-300 px-4 py-2" x-text="guru.reason"></td>
+                                    </tr>
+                                </template>
+                                <template x-if="guruLiburList.length === 0">
+                                    <tr>
+                                        <td colspan="3" class="border border-slate-300 px-4 py-4 text-center text-gray-500">
+                                            Tidak ada guru yang libur pada hari ini
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -209,9 +257,11 @@
                 viewMode: 'card',
                 selectedClass: '',
                 selectedTeacher: '',
+                selectedDay: '', // [NEW]
                 schedules: @json($scheduleData),
                 classes: @json($classes),
                 teachers: @json($teachers),
+                teachersDayOff: @json($teachersDayOff), // [NEW]
                 tomSelectInstances: {},
 
                 init() {
@@ -224,17 +274,45 @@
                         onChange: (value) => { this.selectedTeacher = value; },
                         maxOptions: null
                     });
+                    
+                    // [NEW] Inisialisasi dropdown hari
+                    this.tomSelectInstances.hari = new TomSelect(this.$refs.hariSelect, {
+                        options: [
+                            {value: 1, text: 'Sabtu'},
+                            {value: 2, text: 'Ahad'}, 
+                            {value: 3, text: 'Senin'},
+                            {value: 4, text: 'Selasa'},
+                            {value: 5, text: 'Rabu'},
+                            {value: 6, text: 'Kamis'}
+                        ],
+                        onChange: (value) => { this.selectedDay = value; }
+                    });
 
                     this.$watch('selectedClass', (val) => {
                         if (val) {
                             this.selectedTeacher = '';
+                            this.selectedDay = '';
                             if (this.tomSelectInstances.guru) this.tomSelectInstances.guru.clear();
+                            if (this.tomSelectInstances.hari) this.tomSelectInstances.hari.clear();
                         }
                     });
+                    
                     this.$watch('selectedTeacher', (val) => {
                         if (val) {
                             this.selectedClass = '';
+                            this.selectedDay = '';
                             if (this.tomSelectInstances.kelas) this.tomSelectInstances.kelas.clear();
+                            if (this.tomSelectInstances.hari) this.tomSelectInstances.hari.clear();
+                        }
+                    });
+                    
+                    // [NEW] Watch untuk hari
+                    this.$watch('selectedDay', (val) => {
+                        if (val) {
+                            this.selectedClass = '';
+                            this.selectedTeacher = '';
+                            if (this.tomSelectInstances.kelas) this.tomSelectInstances.kelas.clear();
+                            if (this.tomSelectInstances.guru) this.tomSelectInstances.guru.clear();
                         }
                     });
                 },
@@ -243,18 +321,40 @@
                     this.activeTab = tab;
                     this.selectedClass = '';
                     this.selectedTeacher = '';
+                    this.selectedDay = ''; // [NEW]
                     if (this.tomSelectInstances.kelas) this.tomSelectInstances.kelas.clear();
                     if (this.tomSelectInstances.guru) this.tomSelectInstances.guru.clear();
+                    if (this.tomSelectInstances.hari) this.tomSelectInstances.hari.clear(); // [NEW]
                 },
 
                 get selectedItem() {
-                    return this.selectedClass || this.selectedTeacher;
+                    return this.selectedClass || this.selectedTeacher || this.selectedDay;
+                },
+
+                // [NEW] Getter untuk daftar guru libur
+                get guruLiburList() {
+                    if (this.selectedDay && this.teachersDayOff[this.selectedDay]) {
+                        return this.teachersDayOff[this.selectedDay];
+                    }
+                    return [];
+                },
+
+                // [NEW] Getter untuk nama hari yang dipilih
+                get selectedDayName() {
+                    const dayMap = {1: 'Sabtu', 2: 'Ahad', 3: 'Senin', 4: 'Selasa', 5: 'Rabu', 6: 'Kamis'};
+                    return dayMap[this.selectedDay] || '';
                 },
 
                 get printUrl() {
                     if (!this.selectedItem) {
                         return '#';
                     }
+                    
+                    if (this.activeTab === 'guru-libur') {
+                        // [NEW] URL untuk print guru libur
+                        return `{{ url('/jadwal/print/guru-libur') }}/${this.selectedDay}`;
+                    }
+                    
                     const type = this.activeTab === 'kelas' ? 'kelas' : 'guru';
                     const id = this.selectedItem;
                     return `{{ url('/jadwal/print') }}/${type}/${id}`;
@@ -268,6 +368,9 @@
                     if (this.activeTab === 'guru' && this.selectedTeacher) {
                         const t = this.teachers.find(tch => tch.id == this.selectedTeacher);
                         return `Jadwal Mengajar: ${t ? t.name : ''}`;
+                    }
+                    if (this.activeTab === 'guru-libur' && this.selectedDay) {
+                        return `Daftar Guru Libur - ${this.selectedDayName}`;
                     }
                     return 'Jadwal Pelajaran';
                 },
@@ -291,4 +394,3 @@
         });
     </script>
 </x-app-layout>
-

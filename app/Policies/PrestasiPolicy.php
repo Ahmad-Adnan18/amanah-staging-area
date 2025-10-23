@@ -19,7 +19,7 @@ class PrestasiPolicy
         // Cek apakah user memiliki jabatan di kelas santri tersebut untuk tahun ajaran saat ini
         return $user->jabatans()
             ->where('kelas_id', $santri->kelas_id)
-            ->where('tahun_ajaran', date('Y').'/'.(date('Y')+1))
+            ->where('tahun_ajaran', date('Y') . '/' . (date('Y') + 1))
             ->exists();
     }
 
@@ -32,11 +32,11 @@ class PrestasiPolicy
     }
 
     /**
-     * Hanya Wali Kelas dari santri tersebut yang bisa membuat catatan prestasi.
+     * Wali Kelas atau pengguna dengan role pengajaran dapat membuat catatan prestasi.
      */
     public function create(User $user, Santri $santri): bool
     {
-        return $this->isWaliKelas($user, $santri);
+        return $this->isWaliKelas($user, $santri) || $user->role === 'pengajaran';
     }
 
     /**
