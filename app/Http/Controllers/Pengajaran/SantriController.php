@@ -85,7 +85,7 @@ class SantriController extends Controller
 
         $santri->update($validated);
 
-        return redirect()->route('admin.santri-management.index', ['kelas' => $santri->kelas_id ?? 0])
+        return redirect()->route('pengajaran.santris.index', ['kelas' => $santri->kelas_id ?? 0])
             ->with('success', 'Data santri berhasil diperbarui.');
     }
 

@@ -19,7 +19,7 @@ class SantriPolicy
         if ($user->role === 'admin') {
             return true;
         }
- 
+
         return null;
     }
 
@@ -56,7 +56,7 @@ class SantriPolicy
      */
     public function update(User $user, Santri $santri): bool
     {
-        return $user->role === 'pengajaran';
+        return in_array($user->role, ['admin', 'pengajaran', 'wali_santri']);
     }
 
     /**
