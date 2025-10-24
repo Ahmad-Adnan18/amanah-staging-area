@@ -17,52 +17,11 @@
                 </div>
 
                 {{-- Panel Notifikasi --}}
-                @if (session('success') || session('error'))
-                    @php
-                        $type = session('success') ? 'success' : 'error';
-                        $message = session('success') ?? session('error');
-                        
-                        $typeClasses = [
-                            'success' => 'bg-green-100 border-green-400 text-green-700',
-                            'error' => 'bg-red-100 border-red-400 text-red-700',
-                        ];
-                        
-                        $iconPaths = [
-                            'success' => 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
-                            'error' => 'M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z',
-                        ];
-                
-                        $hoverClasses = [
-                            'success' => 'hover:bg-green-200',
-                            'error' => 'hover:bg-red-200',
-                        ];
-                    @endphp
-                
-                    <div id="notification-panel" class="relative rounded-lg border-l-4 p-4 {{ $typeClasses[$type] }}" role="alert">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $iconPaths[$type] }}" />
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <p class="font-bold">
-                                    {{ $type === 'success' ? 'Berhasil!' : 'Terjadi Kesalahan!' }}
-                                </p>
-                                <p class="text-sm">{{ $message }}</p>
-                            </div>
-                            <button 
-                                type="button" 
-                                class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 {{ $hoverClasses[$type] }} inline-flex h-8 w-8" 
-                                onclick="document.getElementById('notification-panel').style.display='none'"
-                                aria-label="Close">
-                                <span class="sr-only">Dismiss</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+                @if (session('success'))
+                    <x-alert type="success" :message="session('success')" />
+                @endif
+                @if (session('error'))
+                    <x-alert type="error" :message="session('error')" />
                 @endif
 
                 {{-- Dasbor Alokasi JP --}}

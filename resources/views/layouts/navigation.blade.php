@@ -249,8 +249,13 @@ KOMPONEN NAVIGASI HIBRIDA LENGKAP - PROFESIONAL
 -->
 <footer class="fixed bottom-0 left-0 z-10 w-full bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-lg md:hidden">
     @if(Auth::user()->role === 'wali_santri')
-    <!-- Bottom Nav Khusus Wali Santri: Hanya Dashboard dan Menu -->
-    <div class="grid h-16 max-w-lg grid-cols-2 mx-auto">
+    @php
+    // Cari santri berdasarkan wali_id yang sama dengan user ID
+    $santriWali = \App\Models\Santri::where('wali_id', Auth::id())->first();
+    @endphp
+
+    <!-- Bottom Nav Khusus Wali Santri: Dashboard, Data Santri, dan Menu -->
+    <div class="grid h-16 max-w-lg grid-cols-3 mx-auto">
         <a href="{{ route('dashboard') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium transition-all duration-200 {{ request()->routeIs('dashboard') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
             <div class="relative">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -262,6 +267,31 @@ KOMPONEN NAVIGASI HIBRIDA LENGKAP - PROFESIONAL
             </div>
             <span class="text-xs font-medium">Beranda</span>
         </a>
+
+        @if($santriWali)
+        <!-- Tombol Lengkapi Data Santri untuk Wali Santri -->
+        <a href="{{ route('pengajaran.santris.edit', $santriWali) }}" class="inline-flex flex-col items-center justify-center px-5 font-medium transition-all duration-200 {{ request()->routeIs('pengajaran.santris.edit') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
+            <div class="relative">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                @if(request()->routeIs('pengajaran.santris.edit'))
+                <div class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+                @endif
+            </div>
+            <span class="text-xs font-medium text-center leading-tight">Data Santri</span>
+        </a>
+        @else
+        <!-- Jika tidak ada santri, tampilkan placeholder -->
+        <a href="#" class="inline-flex flex-col items-center justify-center px-5 font-medium text-slate-400 cursor-not-allowed">
+            <div class="relative">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </div>
+            <span class="text-xs font-medium text-center leading-tight">Tidak Ada Santri</span>
+        </a>
+        @endif
 
         <a href="{{ route('menu.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium transition-all duration-200 {{ request()->routeIs('menu.index') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
             <div class="relative">

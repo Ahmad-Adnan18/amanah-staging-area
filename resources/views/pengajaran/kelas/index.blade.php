@@ -78,11 +78,11 @@
                     <p class="mt-1 text-slate-600">Kelola semua kelas, penanggung jawab, dan ruangan induk.</p>
                 </div>
 
-                @if (session('success') || session('error'))
-                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" x-transition class="bg-green-100 border border-green-200 text-green-800 px-4 py-3 rounded-2xl shadow-sm flex justify-between items-center" role="alert">
-                    <p class="text-sm font-medium">{{ session('success') ?? session('error') }}</p>
-                    <button @click="show = false" class="text-green-600 hover:text-green-800">&times;</button>
-                </div>
+                @if (session('success'))
+                    <x-alert type="success" :message="session('success')" />
+                @endif
+                @if (session('error'))
+                    <x-alert type="error" :message="session('error')" />
                 @endif
 
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-6">

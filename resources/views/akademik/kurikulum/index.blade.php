@@ -12,9 +12,7 @@
                 </div>
 
                 @if (session('success'))
-                    <div class="bg-green-100 border border-green-200 text-green-800 px-4 py-3 rounded-2xl shadow-sm" role="alert">
-                        <p class="font-medium">{{ session('success') }}</p>
-                    </div>
+                    <x-alert type="success" :message="session('success')" />
                 @endif
                 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

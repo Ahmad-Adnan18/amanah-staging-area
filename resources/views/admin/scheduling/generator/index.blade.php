@@ -99,37 +99,13 @@
 
                     <!-- Panel Notifikasi (Desain Diperbarui) -->
                     @if (session('success'))
-                    <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-r-lg shadow-sm">
-                        <div class="flex">
-                            <div class="flex-shrink-0"><svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg></div>
-                            <div class="ml-3">
-                                <p class="text-sm text-green-700">{{ session('success') }}</p>
-                            </div>
-                        </div>
-                    </div>
+                        <x-alert type="success" :message="session('success')" />
                     @endif
                     @if (session('warning'))
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg shadow-sm">
-                        <div class="flex">
-                            <div class="flex-shrink-0"><svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M8.257 3.099c.636-1.21 2.27-1.21 2.906 0l4.25 8.117a1.75 1.75 0 01-1.453 2.534H5.453a1.75 1.75 0 01-1.453-2.534l4.25-8.117zM9 9a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1zm1 4a1 1 0 10-2 0v.01a1 1 0 102 0V13z" clip-rule="evenodd" /></svg></div>
-                            <div class="ml-3">
-                                <p class="text-sm text-yellow-700">{{ session('warning') }}</p>
-                            </div>
-                        </div>
-                    </div>
+                        <x-alert type="warning" :message="session('warning')" />
                     @endif
                     @if (session('error'))
-                    <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg shadow-sm">
-                        <div class="flex">
-                            <div class="flex-shrink-0"><svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" /></svg></div>
-                            <div class="ml-3">
-                                <p class="text-sm text-red-700">{{ session('error') }}</p>
-                            </div>
-                        </div>
-                    </div>
+                        <x-alert type="error" :message="session('error')" />
                     @endif
 
                     <!-- Panel untuk Mapel yang Gagal Ditempatkan -->

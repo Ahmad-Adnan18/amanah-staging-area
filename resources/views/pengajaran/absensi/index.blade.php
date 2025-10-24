@@ -156,10 +156,7 @@
                 </div>
 
                 @if (session('success'))
-                <div class="mt-8 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg" role="alert">
-                    <p class="font-bold">Berhasil!</p>
-                    <p>{{ session('success') }}</p>
-                </div>
+                    <x-alert type="success" :message="session('success')" />
                 @endif
 
                 <!-- Form Filter -->

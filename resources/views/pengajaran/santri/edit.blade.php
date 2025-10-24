@@ -16,11 +16,13 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- NIS -->
+                            @if(in_array(Auth::user()->role, ['admin','pengajaran']))
                             <div>
                                 <x-input-label for="nis" :value="__('NIS')" />
                                 <x-text-input id="nis" class="block mt-1 w-full focus:ring-red-600 focus:border-red-600" type="text" name="nis" :value="old('nis', $santri->nis)" />
                                 <x-input-error :messages="$errors->get('nis')" class="mt-2" />
                             </div>
+                            @endif
 
                             <!-- Nama Lengkap -->
                             <div>
@@ -91,11 +93,13 @@
                             </div>
 
                             <!-- Rayon -->
+                            @if(in_array(Auth::user()->role, ['admin','pengajaran']))
                             <div>
                                 <x-input-label for="rayon" :value="__('Rayon')" />
                                 <x-text-input id="rayon" class="block mt-1 w-full focus:ring-red-600 focus:border-red-600" type="text" name="rayon" :value="old('rayon', $santri->rayon)" />
                                 <x-input-error :messages="$errors->get('rayon')" class="mt-2" />
                             </div>
+                            @endif
 
                             <!-- Asal Sekolah -->
                             <div class="md:col-span-2">
@@ -140,7 +144,9 @@
                         </div>
 
                         <div class="flex items-center justify-end gap-4 pt-6">
-                            <a href="{{ route('admin.santri-management.index', ['kelas' => $santri->kelas_id]) }}" class="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Batal</a>
+                            <button type="button" onclick="history.back()" class="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 cursor-pointer">
+                                Batal
+                            </button>
                             <button type="submit" class="inline-flex items-center justify-center rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600">
                                 {{ __('Update Data') }}
                             </button>

@@ -263,10 +263,7 @@
 
                 {{-- Success Message --}}
                 @if (session('success'))
-                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" x-transition class="bg-green-100 border border-green-200 text-green-800 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl shadow-sm flex justify-between items-center" role="alert">
-                    <p class="text-xs sm:text-sm font-medium">{{ session('success') }}</p>
-                    <button @click="show = false" class="text-green-600 hover:text-green-800 ml-2">&times;</button>
-                </div>
+                    <x-alert type="success" :message="session('success')" />
                 @endif
 
                 {{-- Mobile View --}}
