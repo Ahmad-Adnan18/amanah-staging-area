@@ -2,7 +2,7 @@
     'round' => false,
     'autoplay' => true,
     'pauseOnHover' => true,
-    'loop' => true,
+    'loop' => false,
     'autoplayDelay' => 3500,
     'gap' => 16,
     'containerPadding' => 24,

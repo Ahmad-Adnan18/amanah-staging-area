@@ -134,7 +134,7 @@
                 @endif
                 @endif
 
-                <div class="items-center">
+                <div>
                     <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-4 @if($isTeacher) mt-8 @endif">Menu Akses Cepat</h2>
                     @php
                     $menuItems = [
@@ -164,7 +164,7 @@
                     ->values();
                     @endphp
 
-                    <div id="dashboard-glass-icons" data-glass-items='@json($glassItems)' data-extra-class="grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-8" class="w-full"></div>
+                    <div id="dashboard-glass-icons" data-glass-items='@json($glassItems)' data-extra-class="grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-16" class="w-full"></div>
                 </div>
 
                 {{-- Statistik Pondok - Ditampilkan untuk semua perangkat --}}
