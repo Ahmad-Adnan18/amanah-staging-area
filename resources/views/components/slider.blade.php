@@ -544,6 +544,12 @@ $config = json_encode([
         }
     }
 
+    @media (min-width: 1024px) {
+        .carousel-shell {
+            display: none;
+        }
+    }
+
     @media (prefers-reduced-motion: reduce) {
 
         .carousel-track,

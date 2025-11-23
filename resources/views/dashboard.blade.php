@@ -134,7 +134,7 @@
                 @endif
                 @endif
 
-                <div>
+                <div class="items-center">
                     <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-4 @if($isTeacher) mt-8 @endif">Menu Akses Cepat</h2>
                     @php
                     $menuItems = [

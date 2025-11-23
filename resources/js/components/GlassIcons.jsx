@@ -22,7 +22,7 @@ const getBackgroundStyle = (color) => {
         return { background: gradientMapping[color] };
     }
 
-    if (typeof color === 'string' && color.startsWith('linear-gradient')) {
+    if (typeof color === "string" && color.startsWith("linear-gradient")) {
         return { background: color };
     }
 
@@ -35,17 +35,19 @@ const GlassButton = ({ item }) => {
             return;
         }
 
-        if ((item?.method || '').toLowerCase() === 'post') {
-            const form = document.createElement('form');
-            form.method = 'POST';
+        if ((item?.method || "").toLowerCase() === "post") {
+            const form = document.createElement("form");
+            form.method = "POST";
             form.action = item.url;
-            form.style.display = 'none';
+            form.style.display = "none";
 
-            const csrfToken = item?.csrf || document.querySelector('meta[name="csrf-token"]')?.content;
+            const csrfToken =
+                item?.csrf ||
+                document.querySelector('meta[name="csrf-token"]')?.content;
             if (csrfToken) {
-                const csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = '_token';
+                const csrfInput = document.createElement("input");
+                csrfInput.type = "hidden";
+                csrfInput.name = "_token";
                 csrfInput.value = csrfToken;
                 form.appendChild(csrfInput);
             }
@@ -64,26 +66,39 @@ const GlassButton = ({ item }) => {
             aria-label={item?.label}
             onClick={handleClick}
             className={`relative bg-transparent outline-none w-[3.6em] h-[3.6em] [perspective:22em] [transform-style:preserve-3d] [-webkit-tap-highlight-color:transparent] group ${
-                item?.customClass || ''
+                item?.customClass || ""
             }`}
         >
             <span
                 className="absolute inset-0 rounded-[1em] block transition-[transform] duration-300 ease-[cubic-bezier(0.83,0,0.17,1)] origin-[100%_100%] rotate-[15deg] group-hover:[transform:rotate(23deg)_translate3d(-0.4em,-0.4em,0.35em)]"
                 style={{
                     ...getBackgroundStyle(item?.color),
-                    boxShadow: '0.35em -0.35em 0.6em hsla(223, 10%, 10%, 0.2)',
+                    boxShadow: "0.35em -0.35em 0.6em hsla(223, 10%, 10%, 0.2)",
                 }}
             ></span>
 
             <span
                 className="absolute inset-0 rounded-[1em] bg-[hsla(0,0%,100%,0.15)] transition-[transform] duration-300 ease-[cubic-bezier(0.83,0,0.17,1)] origin-[70%_50%] flex backdrop-blur-[0.65em] [-webkit-backdrop-filter:blur(0.65em)] group-hover:[transform:translateZ(1.5em)]"
                 style={{
-                    boxShadow: '0 0 0 0.08em hsla(0, 0%, 100%, 0.3) inset',
+                    boxShadow: "0 0 0 0.08em hsla(0, 0%, 100%, 0.3) inset",
                 }}
             >
-                <span className="m-auto w-[1.1em] h-[1.1em] flex items-center justify-center" aria-hidden="true">
-                    <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.4} d={item?.iconPath ?? ''}></path>
+                <span
+                    className="m-auto w-[1.1em] h-[1.1em] flex items-center justify-center"
+                    aria-hidden="true"
+                >
+                    <svg
+                        className="w-full h-full"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.4}
+                            d={item?.iconPath ?? ""}
+                        ></path>
                     </svg>
                 </span>
             </span>
@@ -95,7 +110,7 @@ const GlassButton = ({ item }) => {
     );
 };
 
-export default function GlassIcons({ items = [], className = '' }) {
+export default function GlassIcons({ items = [], className = "" }) {
     if (!Array.isArray(items) || items.length === 0) {
         return null;
     }
@@ -103,7 +118,7 @@ export default function GlassIcons({ items = [], className = '' }) {
     return (
         <motion.div
             layout
-            className={`grid gap-10 grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 mx-auto py-8 overflow-visible ${className}`}
+            className={`grid gap-16 grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 mx-auto py-12 overflow-visible justify-items-center ${className}`}
         >
             {items.map((item, index) => (
                 <GlassButton key={`${item?.label}-${index}`} item={item} />

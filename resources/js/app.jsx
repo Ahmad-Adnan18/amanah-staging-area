@@ -1,42 +1,12 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
 import { createRoot } from 'react-dom/client';
-import Dock from './components/Dock';
 import GlassIcons from './components/GlassIcons';
 
 window.Alpine = Alpine;
 Alpine.start();
 
-let dockRoot = null;
 const glassRoots = new Map();
-
-const initMobileDock = () => {
-    const container = document.getElementById('mobile-dock-root');
-    if (!container) {
-        return;
-    }
-
-    const rawItems = container.dataset.items ?? '[]';
-    let parsedItems = [];
-
-    try {
-        parsedItems = JSON.parse(rawItems);
-    } catch (error) {
-        console.error('Gagal parsing data Dock:', error);
-        return;
-    }
-
-    if (!Array.isArray(parsedItems) || parsedItems.length === 0) {
-        return;
-    }
-
-    if (dockRoot) {
-        dockRoot.unmount();
-    }
-
-    dockRoot = createRoot(container);
-    dockRoot.render(<Dock items={parsedItems} />);
-};
 
 const renderGlassIcons = (container) => {
     const rawItems = container.dataset.glassItems ?? '[]';
@@ -76,18 +46,14 @@ const initGlassIcons = () => {
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        initMobileDock();
         initGlassIcons();
     });
 } else {
-    initMobileDock();
     initGlassIcons();
 }
 
 if (import.meta.hot) {
     import.meta.hot.dispose(() => {
-        dockRoot?.unmount();
-        dockRoot = null;
         glassRoots.forEach((root) => root.unmount());
         glassRoots.clear();
     });
