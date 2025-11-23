@@ -1,185 +1,370 @@
-<div x-data="minimalSlider()" x-init="initSlider" @mouseenter="pauseAutoPlay" @mouseleave="resumeAutoPlay" @touchstart.passive="handleTouchStart" @touchmove.passive="handleTouchMove" @touchend="handleTouchEnd" class="minimal-slider">
+@props([
+    'round' => false,
+    'autoplay' => true,
+    'pauseOnHover' => true,
+    'loop' => true,
+    'autoplayDelay' => 3500,
+    'gap' => 16,
+    'containerPadding' => 24,
+])
 
-    <!-- Slider Container -->
-    <div class="slider-container" :style="getContainerStyle()">
-        <template x-for="(item, index) in items" :key="item.id">
+@php
+$config = json_encode([
+    'round' => (bool) $round,
+    'autoplay' => (bool) $autoplay,
+    'pauseOnHover' => (bool) $pauseOnHover,
+    'loop' => (bool) $loop,
+    'autoplayDelay' => (int) $autoplayDelay,
+    'gap' => (int) $gap,
+    'containerPadding' => (int) $containerPadding,
+]);
+@endphp
 
-            <div class="slide">
-
-                <!-- Image -->
-                <template x-if="item.type === 'image'">
-                    <img :src="item.file_url" :alt="item.title" class="slide-content" loading="lazy">
+<div
+    x-data="carouselSlider()"
+    x-init="initSlider($el.dataset.carouselConfig)"
+    x-cloak
+    data-carousel-config='{{ $config }}'
+    @mouseenter="handleHover(true)"
+    @mouseleave="handleHover(false)"
+    {{ $attributes->merge(['class' => 'carousel-shell']) }}
+    :class="round ? 'carousel-shell--round' : ''"
+>
+    <div class="carousel-viewport" x-ref="viewport">
+        <template x-if="carouselItems.length">
+            <div class="carousel-track" x-ref="track" :style="getTrackStyle()" @pointerdown.prevent="handlePointerDown" @pointermove.prevent="handlePointerMove" @pointerup="handlePointerUp" @pointerleave="handlePointerLeave" @pointercancel="handlePointerUp" @transitionend="handleTransitionEnd">
+                <template x-for="(item, index) in carouselItems" :key="`slide-${index}-${item.id ?? index}`">
+                    <article class="carousel-slide" :class="round ? 'carousel-slide--round' : ''" :style="getSlideStyle(index)">
+                        <div class="carousel-media">
+                            <template x-if="item.type === 'image'">
+                                <img :src="item.file_url" :alt="item.title" class="carousel-media__asset" loading="lazy" decoding="async">
+                            </template>
+                            <template x-if="item.type === 'video'">
+                                <video :src="item.file_url" class="carousel-media__asset" autoplay muted loop playsinline></video>
+                            </template>
+                            <template x-if="item.type === 'external'">
+                                <div class="carousel-external">
+                                    <iframe :src="item.embed_url" class="carousel-media__asset" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="carousel-content">
+                            <div class="carousel-chip">
+                                <span x-text="getSlideInitial(item)"></span>
+                            </div>
+                            <h3 class="carousel-title" x-text="item.title ?? 'Highlight'">Highlight</h3>
+                            <p class="carousel-description" x-show="getSlideDescription(item)" x-text="getSlideDescription(item)"></p>
+                        </div>
+                    </article>
                 </template>
+            </div>
+        </template>
 
-                <!-- Video -->
-                <template x-if="item.type === 'video'">
-                    <video :src="item.file_url" class="slide-content" autoplay muted loop playsinline></video>
-                </template>
-
-                <!-- YouTube -->
-                <template x-if="item.type === 'external'">
-                    <div class="external-container">
-                        <iframe :src="item.embed_url" class="external-content" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-                    </div>
-                </template>
-
-                <!-- [BARU] Judul Kegiatan di Ujung Kiri -->
-                <div class="slide-title-overlay">
-                    <span x-text="item.title"></span>
-                </div>
-
+        <template x-if="loaded && !carouselItems.length">
+            <div class="carousel-empty-state">
+                <p>Tidak ada konten slider untuk ditampilkan.</p>
             </div>
         </template>
     </div>
 
-    <!-- Indicators -->
-    <div x-show="items.length > 1" class="indicators">
-        <template x-for="(item, index) in items" :key="`indicator-${item.id}`">
-            <div @click="goToSlide(index)" :class="`indicator ${index === currentIndex ? 'active' : ''}`"></div>
+    <div x-show="items.length > 1" class="carousel-indicators">
+        <template x-for="(item, index) in items" :key="`indicator-${item.id ?? index}`">
+            <button type="button" class="carousel-indicator" :class="indicatorClass(index)" @click="goToSlide(index)" :aria-label="`Tampilkan slide ${index + 1}`"></button>
         </template>
     </div>
 </div>
 
 <script>
-    function minimalSlider() {
+    function carouselSlider() {
         return {
-            items: []
-            , currentIndex: 0
-            , loaded: false
-            , isAnimating: false, // Diganti dari 'sliding'
-            autoPlay: true
-            , autoPlayInterval: 5000
-            , slideInterval: null,
+            items: [],
+            carouselItems: [],
+            currentIndex: 0,
+            autoplay: true,
+            autoplayDelay: 3500,
+            pauseOnHover: true,
+            loop: true,
+            round: false,
+            gap: 16,
+            containerPadding: 24,
+            dragStartX: 0,
+            dragOffset: 0,
+            isDragging: false,
+            isHovered: false,
+            isResetting: false,
+            slideInterval: null,
+            viewportWidth: 0,
+            transitionMs: 500,
+            loaded: false,
+            resizeHandler: null,
 
-            // Touch/Swipe Variables
-            touchStartX: 0
-            , touchMoveX: 0
-            , dragOffset: 0
-            , isDragging: false
-            , minSwipeDistance: 50, // Minimal jarak geser untuk pindah slide
+            async initSlider(configJson = null) {
+                if (configJson) {
+                    try {
+                        const config = JSON.parse(configJson);
+                        Object.assign(this, {
+                            round: config.round ?? this.round,
+                            autoplay: config.autoplay ?? this.autoplay,
+                            pauseOnHover: config.pauseOnHover ?? this.pauseOnHover,
+                            loop: config.loop ?? this.loop,
+                            autoplayDelay: config.autoplayDelay ?? this.autoplayDelay,
+                            gap: config.gap ?? this.gap,
+                            containerPadding: config.containerPadding ?? this.containerPadding,
+                        });
+                    } catch (error) {
+                        console.warn('Carousel config parsing failed:', error);
+                    }
+                }
 
-            async initSlider() {
+                this.resizeHandler = this.measure.bind(this);
+                await this.fetchItems();
+                this.$nextTick(() => {
+                    this.measure();
+                    window.addEventListener('resize', this.resizeHandler, { passive: true });
+                });
+            },
+
+            async fetchItems() {
                 try {
                     const response = await fetch('/api/slider-items');
                     const result = await response.json();
-                    this.items = result.success ? result.data : [];
-                    this.loaded = true;
-
-                    if (this.items.length > 1 && this.autoPlay) {
-                        this.startAutoSlide();
-                    }
+                    this.items = Array.isArray(result.data) && result.success ? result.data : [];
                 } catch (error) {
                     console.error('Error loading slider:', error);
+                    this.items = [];
+                } finally {
                     this.loaded = true;
+                    this.buildCarouselItems();
+                    this.startAutoplay();
                 }
             },
 
-            // [NEW] Helper untuk mendapatkan lebar slide
-            slideWidth() {
-                // $el adalah elemen root komponen (div.minimal-slider)
-                return this.$el.clientWidth;
+            buildCarouselItems() {
+                if (this.loop && this.items.length > 1) {
+                    const first = this.items[0] ?? {};
+                    const clone = { ...first, id: `clone-${first.id ?? '0'}` };
+                    this.carouselItems = [...this.items, clone];
+                } else {
+                    this.carouselItems = [...this.items];
+                }
+
+                if (this.currentIndex >= this.carouselItems.length && this.carouselItems.length > 0) {
+                    this.currentIndex = 0;
+                }
             },
 
-            // [NEW] Fungsi inti untuk mengatur style container
-            getContainerStyle() {
-                // Offset dasar berdasarkan slide saat ini
-                let baseOffset = -this.currentIndex * this.slideWidth();
-                // Offset total adalah offset dasar + tarikan jari
-                let totalOffset = baseOffset + this.dragOffset;
+            teardown() {
+                this.clearAutoplay();
+                if (this.resizeHandler) {
+                    window.removeEventListener('resize', this.resizeHandler);
+                }
+            },
 
+            measure() {
+                if (!this.$refs.viewport) return;
+                this.viewportWidth = this.$refs.viewport.clientWidth;
+            },
+
+            itemWidth() {
+                if (!this.viewportWidth) {
+                    return 320;
+                }
+
+                if (this.round) {
+                    return Math.min(this.viewportWidth, 420);
+                }
+
+                const innerWidth = Math.max(this.viewportWidth - this.containerPadding * 2, 260);
+                return Math.min(innerWidth, 460);
+            },
+
+            trackItemOffset() {
+                return this.itemWidth() + this.gap;
+            },
+
+            currentIndexWithDrag() {
+                if (!this.trackItemOffset()) return this.currentIndex;
+                return this.currentIndex - this.dragOffset / this.trackItemOffset();
+            },
+
+            getTrackStyle() {
+                const offset = -(this.currentIndex * this.trackItemOffset()) + this.dragOffset;
                 return {
-                    transform: `translateX(${totalOffset}px)`,
-                    // Transisi dimatikan saat dragging, dan dihidupkan saat snap/slide
-                    transition: this.isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                    transform: `translate3d(${offset}px, 0, 0)`,
+                    gap: `${this.gap}px`,
+                    padding: `0 ${this.containerPadding}px`,
+                    transition: this.isDragging || this.isResetting ? 'none' : `transform ${this.transitionMs}ms cubic-bezier(0.2, 0.8, 0.2, 1)`
                 };
             },
 
-            // === TOUCH EVENTS (MODIFIED) ===
-            handleTouchStart(e) {
-                if (this.isAnimating) return; // Jangan mulai jika sedang animasi
+            getSlideStyle(index) {
+                const width = this.itemWidth();
+                const fractional = this.currentIndexWithDrag();
+                const delta = index - fractional;
+                const rotate = Math.max(-90, Math.min(90, delta * 35));
+                const opacity = Math.abs(delta) >= 2 ? 0.35 : 1;
+
+                return {
+                    width: `${width}px`,
+                    height: this.round ? `${width}px` : 'auto',
+                    transform: `perspective(1200px) rotateY(${rotate}deg)` + (this.round ? '' : ' translateZ(0)'),
+                    opacity,
+                    transition: this.isDragging
+                        ? 'transform 0s linear, opacity 0s linear'
+                        : `transform ${this.transitionMs}ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity ${this.transitionMs}ms ease`
+                };
+            },
+
+            handlePointerDown(event) {
+                if (!this.carouselItems.length) return;
                 this.isDragging = true;
-                this.touchStartX = e.changedTouches[0].screenX;
-                this.pauseAutoPlay();
+                this.dragStartX = event.clientX;
+                this.dragOffset = 0;
+                this.clearAutoplay();
+                event.target.setPointerCapture?.(event.pointerId);
             },
 
-            handleTouchMove(e) {
+            handlePointerMove(event) {
                 if (!this.isDragging) return;
-                this.touchMoveX = e.changedTouches[0].screenX;
-                this.dragOffset = this.touchMoveX - this.touchStartX;
+                this.dragOffset = event.clientX - this.dragStartX;
             },
 
-            handleTouchEnd(e) {
+            handlePointerUp(event) {
                 if (!this.isDragging) return;
                 this.isDragging = false;
-
-                const swipeDistance = this.touchStartX - this.touchMoveX;
-
-                // Cek apakah geserannya cukup jauh
-                if (Math.abs(swipeDistance) > this.minSwipeDistance) {
-                    if (swipeDistance > 0) {
-                        this.nextSlide(); // Geser ke kiri -> next
-                    } else {
-                        this.prevSlide(); // Geser ke kanan -> prev
-                    }
-                }
-
-                // Jika tidak cukup jauh, dragOffset = 0 akan membuatnya "snap back"
+                event.target.releasePointerCapture?.(event.pointerId);
+                const moved = this.snapAfterDrag();
                 this.dragOffset = 0;
-                this.resumeAutoPlay();
+                if (!moved) {
+                    this.startAutoplay();
+                }
             },
 
-            // [REMOVED] handleSwipe() dan snapBack() digabung ke handleTouchEnd
+            handlePointerLeave(event) {
+                if (this.isDragging) {
+                    this.handlePointerUp(event);
+                }
+            },
 
-            // === NAVIGASI (MODIFIED) ===
-            // Fungsi ini sekarang hanya mengubah index dan state
-            // Pergerakan visual diurus oleh getContainerStyle()
+            snapAfterDrag() {
+                const threshold = Math.min(140, this.itemWidth() * 0.25);
+                if (this.dragOffset < -threshold) {
+                    this.nextSlide();
+                    return true;
+                }
+
+                if (this.dragOffset > threshold) {
+                    this.prevSlide();
+                    return true;
+                }
+
+                return false;
+            },
+
+            handleTransitionEnd(event) {
+                if (event.target !== this.$refs.track || event.propertyName !== 'transform') return;
+                if (!this.loop || this.carouselItems.length <= this.items.length) return;
+
+                const lastIndex = this.carouselItems.length - 1;
+                if (this.currentIndex === lastIndex) {
+                    this.isResetting = true;
+                    this.currentIndex = 0;
+                    this.dragOffset = 0;
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            this.isResetting = false;
+                        });
+                    });
+                }
+            },
 
             nextSlide() {
-                if (this.isAnimating || this.items.length <= 1) return;
-                this.isAnimating = true;
-                this.currentIndex = (this.currentIndex + 1) % this.items.length;
-                this.resetAutoSlide();
-                setTimeout(() => this.isAnimating = false, 400); // 400ms = durasi transisi
+                if (!this.carouselItems.length) return;
+                const lastIndex = this.carouselItems.length - 1;
+                if (this.currentIndex >= lastIndex) {
+                    if (!this.loop) return;
+                    this.currentIndex = lastIndex;
+                } else {
+                    this.currentIndex += 1;
+                }
+                this.resetAutoplay();
             },
 
             prevSlide() {
-                if (this.isAnimating || this.items.length <= 1) return;
-                this.isAnimating = true;
-                this.currentIndex = (this.currentIndex - 1 + this.items.length) % this.items.length;
-                this.resetAutoSlide();
-                setTimeout(() => this.isAnimating = false, 400);
+                if (!this.carouselItems.length) return;
+                if (this.currentIndex === 0) {
+                    if (!this.loop) return;
+                    this.isResetting = true;
+                    this.currentIndex = Math.max(this.items.length - 1, 0);
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            this.isResetting = false;
+                        });
+                    });
+                } else {
+                    this.currentIndex -= 1;
+                }
+                this.resetAutoplay();
             },
 
             goToSlide(index) {
-                if (this.isAnimating || index === this.currentIndex) return;
-                this.isAnimating = true;
-                this.currentIndex = index;
-                this.resetAutoSlide();
-                setTimeout(() => this.isAnimating = false, 400);
+                if (!this.items.length) return;
+                const safeIndex = Math.max(0, Math.min(index, this.items.length - 1));
+                this.currentIndex = safeIndex;
+                this.resetAutoplay();
             },
 
-            // === AUTOPLAY (Unchanged, but uses new nextSlide) ===
-            startAutoSlide() {
-                if (this.items.length <= 1 || !this.autoPlay) return;
-                this.slideInterval = setInterval(() => this.nextSlide(), this.autoPlayInterval);
-            }
-            , resetAutoSlide() {
-                this.clearAutoSlide();
-                if (this.autoPlay) this.startAutoSlide();
-            }
-            , clearAutoSlide() {
-                if (this.slideInterval) clearInterval(this.slideInterval);
-                this.slideInterval = null;
-            }
-            , pauseAutoPlay() {
-                this.autoPlay = false;
-                this.clearAutoSlide();
-            }
-            , resumeAutoPlay() {
-                if (this.items.length > 1 && !this.isDragging) { // Hanya resume jika tidak sedang di-drag
-                    this.autoPlay = true;
-                    this.startAutoSlide();
+            handleHover(state) {
+                if (!this.pauseOnHover) return;
+                this.isHovered = state;
+                if (state) {
+                    this.clearAutoplay();
+                } else {
+                    this.startAutoplay();
                 }
+            },
+
+            startAutoplay() {
+                if (!this.autoplay || this.items.length <= 1) {
+                    this.clearAutoplay();
+                    return;
+                }
+
+                this.clearAutoplay();
+                this.slideInterval = setInterval(() => {
+                    if (this.pauseOnHover && this.isHovered) return;
+                    this.nextSlide();
+                }, this.autoplayDelay);
+            },
+
+            clearAutoplay() {
+                if (this.slideInterval) {
+                    clearInterval(this.slideInterval);
+                    this.slideInterval = null;
+                }
+            },
+
+            resetAutoplay() {
+                if (!this.autoplay || this.items.length <= 1) return;
+                this.startAutoplay();
+            },
+
+            indicatorClass(index) {
+                return this.currentIndicatorIndex() === index ? 'is-active' : '';
+            },
+
+            currentIndicatorIndex() {
+                if (!this.items.length) return 0;
+                return this.currentIndex % this.items.length;
+            },
+
+            getSlideDescription(item) {
+                return item?.description || item?.subtitle || item?.caption || '';
+            },
+
+            getSlideInitial(item) {
+                const source = item?.initial || item?.category || item?.title;
+                return source ? source.toString().trim().charAt(0).toUpperCase() : '•';
             }
         }
     }
@@ -187,187 +372,183 @@
 </script>
 
 <style>
-    .minimal-slider {
+    .carousel-shell {
         position: relative;
         width: 100%;
-        height: 400px;
         overflow: hidden;
-        /* PENTING: Sembunyikan slide di samping */
-        border-radius: 8px;
-        background: #000;
-        /* Izinkan scroll vertikal, tapi tangkap swipe horizontal */
+        border-radius: 24px;
+        border: none;
+        background: transparent;
+        color: #f5f5f5;
         touch-action: pan-y;
-        -webkit-user-select: none;
         user-select: none;
-        /* 2px solid darkred */
-        border: 4px solid #8B0000;
-        /* Pastikan border tidak menambah ukuran elemen */
-        box-sizing: border-box;
+        padding: 1.5rem 0;
     }
 
-    .slider-container {
-        /* [MODIFIED] Menggunakan flexbox */
-        display: flex;
+    .carousel-shell--round {
+        border-radius: 999px;
+        padding: 2rem 0;
+        border: none;
+        background: transparent;
+    }
+
+    .carousel-viewport {
         width: 100%;
-        height: 100%;
+        overflow: hidden;
         position: relative;
-        /* Transisi akan di-handle oleh inline style dari AlpineJS */
     }
 
-    .slide {
-        /* [MODIFIED] Mengatur agar tiap slide memenuhi container flex */
+    .carousel-track {
+        display: flex;
+        align-items: stretch;
+        width: max-content;
+        cursor: grab;
+        touch-action: pan-y;
+        perspective: 1200px;
+    }
+
+    .carousel-track:active {
+        cursor: grabbing;
+    }
+
+    .carousel-slide {
+        position: relative;
         flex-shrink: 0;
-        width: 100%;
-        height: 100%;
-        position: relative;
-        /* Agar konten internal bisa di-posisikan */
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+        min-height: 320px;
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(12px);
         display: flex;
-        align-items: center;
-        justify-content: center;
-        /* [REMOVED] position: absolute, opacity, transition, z-index */
+        flex-direction: column;
+        justify-content: flex-end;
     }
 
-    /* [REMOVED] .slide.active tidak lagi diperlukan untuk transisi */
+    .carousel-shell--round .carousel-slide {
+        border-radius: 50%;
+        min-height: auto;
+        aspect-ratio: 1 / 1;
+    }
 
-    /* [REMOVED] Semua class .fade-enter-* dan .fade-leave-* dihapus */
+    .carousel-media {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+    }
 
-    .slide-content {
+    .carousel-media__asset {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
     }
 
-    .external-container {
+    .carousel-external {
         width: 100%;
         height: 100%;
+    }
+
+    .carousel-content {
+        position: relative;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        z-index: 2;
+    }
+
+    .carousel-chip {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #000;
-        position: relative;
-        overflow: hidden;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #fff;
     }
 
-    .external-content {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 100%;
-        height: 100%;
-        min-width: 110%;
-        min-height: 110%;
-        border: none;
-        transform: translate(-50%, -50%);
+    .carousel-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        margin: 0;
+        color: #fff;
+        letter-spacing: -0.02em;
     }
 
-    /* Indicators (Tidak berubah) */
-    .indicators {
-        position: absolute;
-        bottom: 1rem;
-        left: 50%;
-        transform: translateX(-50%);
+    .carousel-description {
+        font-size: 0.95rem;
+        margin: 0;
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .carousel-empty-state {
         display: flex;
-        gap: 0.5rem;
-        z-index: 10;
+        align-items: center;
+        justify-content: center;
+        min-height: 240px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.95rem;
     }
 
-    .indicator {
-        width: 8px;
-        height: 8px;
+    .carousel-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+
+    .carousel-indicator {
+        width: 10px;
+        height: 10px;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.4);
+        border: none;
+        background: rgba(255, 255, 255, 0.35);
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: transform 0.2s ease, background-color 0.2s ease;
     }
 
-    .indicator.active {
-        background: white;
+    .carousel-indicator.is-active {
+        background: #fff;
         transform: scale(1.2);
     }
 
-    .indicator:hover {
-        background: rgba(255, 255, 255, 0.8);
-        transform: scale(1.1);
+    .carousel-indicator:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 3px;
     }
 
-    .slide-title-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        /* Padding: atas 1.5rem, kiri/kanan 1rem, bawah 1rem */
-        padding: 1.5rem 1rem 1rem;
-        z-index: 5;
-
-        /* Gradien modern agar teks mudah dibaca di atas gambar apapun */
-        background: linear-gradient(to top,
-                rgba(0, 0, 0, 0.6) 0%,
-                /* Lebih gelap di bawah */
-                rgba(0, 0, 0, 0.4) 50%,
-                transparent 100%
-                /* Transparan di atas */
-            );
-
-        color: white;
-        font-size: 0.875rem;
-        /* 14px */
-        font-weight: 500;
-
-        /* Mencegah teks terseleksi saat swipe */
-        -webkit-user-select: none;
-        user-select: none;
-
-        /* Bayangan teks tipis untuk kontras */
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-
-        /* Jika judul terlalu panjang, tampilkan ... */
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        /* Pastikan tidak mengganggu event sentuhan */
-        pointer-events: none;
-    }
-
-    /* Sesuaikan ukuran font dan padding di mobile */
     @media (max-width: 768px) {
-        .slide-title-overlay {
-            font-size: 0.75rem;
-            /* 12px */
-            padding: 1rem 0.75rem 0.75rem;
+        .carousel-shell {
+            border-radius: 18px;
+            padding: 1rem 0;
+        }
+
+        .carousel-slide {
+            min-height: 260px;
+        }
+
+        .carousel-content {
+            padding: 1.25rem;
+        }
+
+        .carousel-title {
+            font-size: 1.1rem;
+        }
+
+        .carousel-chip {
+            width: 40px;
+            height: 40px;
         }
     }
 
-    /* Responsive (Tidak berubah) */
-    @media (max-width: 768px) {
-        .minimal-slider {
-            height: 250px;
-            border-radius: 6px;
-        }
+    @media (prefers-reduced-motion: reduce) {
 
-        .indicators {
-            bottom: 0.5rem;
-        }
-
-        .indicator {
-            width: 6px;
-            height: 6px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .minimal-slider {
-            height: 200px;
-        }
-    }
-
-    /* [BARU] Sembunyikan slider di layar desktop (lebih besar dari 768px) */
-    @media (min-width: 769px) {
-        .minimal-slider {
-            display: none;
+        .carousel-track,
+        .carousel-slide {
+            transition: none !important;
         }
     }
 
