@@ -14,6 +14,9 @@ export default {
         "./storage/framework/views/*.php",
         "./resources/views/**/*.blade.php",
         "./resources/js/**/*.js", // Tambahkan ini jika kamu punya file JS (Vue, Alpine, React)
+        "./resources/js/**/*.jsx", // Pastikan file React JSX juga discan
+        "./resources/js/**/*.ts",
+        "./resources/js/**/*.tsx",
         "./resources/js/**/*.vue", // Tambahkan ini jika kamu pakai Vue.js
         "./resources/css/**/*.css", // Jika kamu punya CSS custom yang berisi kelas Tailwind
     ],

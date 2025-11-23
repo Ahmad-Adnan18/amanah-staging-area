@@ -74,90 +74,57 @@
                 @foreach($menuGroups as $groupName => $group)
                 @php
                 $color = $group['color'];
-                $items = $group['items'];
+                $items = collect($group['items']);
 
-                // Check if user can view any item in this group
-                $canViewGroup = false;
-                foreach ($items as $item) {
-                if (is_null($item['roles']) || (Auth::check() && in_array(Auth::user()->role, $item['roles']))) {
-                $canViewGroup = true;
-                break;
-                }
-                }
+                $glassItems = $items
+                ->filter(function ($item) {
+                    return is_null($item['roles']) || (Auth::check() && in_array(Auth::user()->role, $item['roles']));
+                })
+                ->map(function ($item) use ($group) {
+                    $routeName = $item['route'];
+                    return [
+                    'label' => $item['label'],
+                    'color' => $item['color'] ?? $group['color'] ?? 'blue',
+                    'iconPath' => $item['icon'],
+                    'url' => route($routeName),
+                    'method' => $routeName === 'logout' ? 'post' : 'get',
+                    'csrf' => $routeName === 'logout' ? csrf_token() : null,
+                    ];
+                })
+                ->values();
+
+                $containerId = 'menu-group-' . \Illuminate\Support\Str::slug($groupName) . '-' . uniqid();
                 @endphp
 
-                @if($canViewGroup)
+                @if($glassItems->isNotEmpty())
                 <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-                    {{-- Group Header --}}
                     <h2 class="text-xl font-semibold text-slate-800 mb-6 flex items-center gap-3">
-                        {{-- PERBAIKAN: Gunakan class warna statis --}}
-                        @if($color === 'blue')
+                        @switch($color)
+                        @case('blue')
                         <div class="w-2 h-8 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full"></div>
-                        @elseif($color === 'emerald') <div class="w-2 h-8 bg-gradient-to-b from-emerald-500 to-emerald-600 rounded-full"></div>
-                        @elseif($color === 'amber')
+                        @break
+                        @case('emerald')
+                        <div class="w-2 h-8 bg-gradient-to-b from-emerald-500 to-emerald-600 rounded-full"></div>
+                        @break
+                        @case('amber')
                         <div class="w-2 h-8 bg-gradient-to-b from-amber-500 to-amber-600 rounded-full"></div>
-                        @elseif($color === 'violet')
+                        @break
+                        @case('violet')
                         <div class="w-2 h-8 bg-gradient-to-b from-violet-500 to-violet-600 rounded-full"></div>
-                        @elseif($color === 'green')
+                        @break
+                        @case('green')
                         <div class="w-2 h-8 bg-gradient-to-b from-green-500 to-green-600 rounded-full"></div>
-                        @elseif($color === 'slate')
+                        @break
+                        @case('slate')
                         <div class="w-2 h-8 bg-gradient-to-b from-slate-500 to-slate-600 rounded-full"></div>
-                        @else
+                        @break
+                        @default
                         <div class="w-2 h-8 bg-gradient-to-b from-gray-500 to-gray-600 rounded-full"></div>
-                        @endif
+                        @endswitch
                         {{ $groupName }}
                     </h2>
 
-                    {{-- Menu Items Grid --}}
-                    <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                        @foreach ($items as $item)
-                        @if (is_null($item['roles']) || (Auth::check() && in_array(Auth::user()->role, $item['roles'])))
-                        @if ($item['route'] === 'logout')
-                        {{-- Logout Form --}}
-                        <form method="POST" action="{{ route('logout') }}" class="block">
-                            @csrf
-                            <button type="submit" class="menu-item logout-item relative group w-full h-full">
-                                {{-- Icon Container --}}
-                                <div class="icon-container bg-slate-100 text-slate-600">
-                                    <svg class="w-6 h-6 transition-transform duration-300 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $item['icon'] }}"></path>
-                                    </svg>
-                                </div>
-                                {{-- Label --}}
-                                <p class="menu-label">{{ $item['label'] }}</p>
-                                <span class="ripple-effect absolute inset-0 rounded-xl pointer-events-none"></span>
-                            </button>
-                        </form>
-                        @else
-                        {{-- Regular Menu Item --}}
-                        <a href="{{ route($item['route']) }}" class="menu-item relative group" aria-label="{{ $item['label'] }}">
-                            {{-- PERBAIKAN: Gunakan class warna statis untuk icon container --}}
-                            @if($color === 'blue')
-                            <div class="icon-container bg-blue-100 text-blue-600">
-                                @elseif($color === 'emerald') <div class="icon-container bg-emerald-100 text-emerald-600">
-                                    @elseif($color === 'amber')
-                                    <div class="icon-container bg-amber-100 text-amber-600">
-                                        @elseif($color === 'violet')
-                                        <div class="icon-container bg-violet-100 text-violet-600">
-                                            @elseif($color === 'green')
-                                            <div class="icon-container bg-green-100 text-green-600">
-                                                @elseif($color === 'slate')
-                                                <div class="icon-container bg-slate-100 text-slate-600">
-                                                    @else
-                                                    <div class="icon-container bg-gray-100 text-gray-600">
-                                                        @endif
-                                                        <svg class="w-6 h-6 transition-transform duration-300 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $item['icon'] }}"></path>
-                                                        </svg>
-                                                    </div>
-                                                    {{-- Label --}}
-                                                    <p class="menu-label">{{ $item['label'] }}</p>
-                                                    <span class="ripple-effect absolute inset-0 rounded-xl pointer-events-none"></span>
-                        </a>
-                        @endif
-                        @endif
-                        @endforeach
-                    </div>
+                    <div id="{{ $containerId }}" data-glass-items='{{ $glassItems->toJson() }}' data-extra-class="grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-12" class="w-full"></div>
                 </section>
                 @endif
                 @endforeach

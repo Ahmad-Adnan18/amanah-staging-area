@@ -2,11 +2,13 @@ import './bootstrap';
 import Alpine from 'alpinejs';
 import { createRoot } from 'react-dom/client';
 import Dock from './components/Dock';
+import GlassIcons from './components/GlassIcons';
 
 window.Alpine = Alpine;
 Alpine.start();
 
 let dockRoot = null;
+const glassRoots = new Map();
 
 const initMobileDock = () => {
     const container = document.getElementById('mobile-dock-root');
@@ -36,16 +38,58 @@ const initMobileDock = () => {
     dockRoot.render(<Dock items={parsedItems} />);
 };
 
+const renderGlassIcons = (container) => {
+    const rawItems = container.dataset.glassItems ?? '[]';
+    let parsedItems = [];
+
+    try {
+        parsedItems = JSON.parse(rawItems);
+    } catch (error) {
+        console.error('Gagal parsing data GlassIcons:', error);
+        return;
+    }
+
+    if (!Array.isArray(parsedItems) || parsedItems.length === 0) {
+        if (glassRoots.has(container)) {
+            glassRoots.get(container).unmount();
+            glassRoots.delete(container);
+        }
+        return;
+    }
+
+    if (!glassRoots.has(container)) {
+        glassRoots.set(container, createRoot(container));
+    }
+
+    const extraClass = container.dataset.extraClass ?? '';
+    glassRoots.get(container)?.render(<GlassIcons items={parsedItems} className={extraClass} />);
+};
+
+const initGlassIcons = () => {
+    const containers = document.querySelectorAll('[data-glass-items]');
+    if (!containers.length) {
+        return;
+    }
+
+    containers.forEach(renderGlassIcons);
+};
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMobileDock);
+    document.addEventListener('DOMContentLoaded', () => {
+        initMobileDock();
+        initGlassIcons();
+    });
 } else {
     initMobileDock();
+    initGlassIcons();
 }
 
 if (import.meta.hot) {
     import.meta.hot.dispose(() => {
         dockRoot?.unmount();
         dockRoot = null;
+        glassRoots.forEach((root) => root.unmount());
+        glassRoots.clear();
     });
 }
 

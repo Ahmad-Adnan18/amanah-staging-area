@@ -136,44 +136,35 @@
 
                 <div>
                     <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-4 @if($isTeacher) mt-8 @endif">Menu Akses Cepat</h2>
-                    <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                        @php
-                        $menuItems = [
-                        ['route' => 'admin.santri-management.index', 'roles' => null, 'icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', 'label' => 'Data Santri', 'color' => 'blue'],
-                        ['route' => 'pengajaran.kelas.index', 'roles' => null, 'icon' => 'M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222', 'label' => 'Data Kelas', 'color' => 'indigo'],
-                        ['route' => 'perizinan.index', 'roles' => null, 'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'label' => 'Perizinan', 'color' => 'green'],
-                        ['route' => 'pelanggaran.index', 'roles' => null, 'icon' => 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z', 'label' => 'Pelanggaran', 'color' => 'amber'],
-                        ['route' => 'admin.teachers.index', 'roles' => ['admin', 'pengajaran'], 'icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z', 'label' => 'Data Guru', 'color' => 'rose'],
-                        ['route' => 'santri.portofolio.list', 'roles' => ['admin','pengajaran','pengasuhan','kesehatan','ustadz_umum'], 'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'label' => 'Portofolio Santri', 'color' => 'purple'],
-                        ['route' => 'pengajaran.rekapan-harian.index', 'roles' => ['admin','pengajaran'], 'icon' => 'M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z', 'label' => 'Rekapan Harian', 'color' => 'blue'],
-                        ['route' => 'pengajaran.rekapan-harian.laporan', 'roles' => null, 'icon' => 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'label' => 'Laporan Absensi', 'color' => 'green'],
-                        ['route' => 'ubudiyah.index', 'roles' => ['admin','ubudiyah'], 'icon' => 'M12 2l9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9l9-7z M9 22V12h6v10 M12 2v7', 'label' => 'Setoran Hafalan', 'color' => 'blue'],
-                        ];
+                    @php
+                    $menuItems = [
+                    ['route' => 'admin.santri-management.index', 'roles' => null, 'icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', 'label' => 'Data Santri', 'color' => 'blue'],
+                    ['route' => 'pengajaran.kelas.index', 'roles' => null, 'icon' => 'M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222', 'label' => 'Data Kelas', 'color' => 'indigo'],
+                    ['route' => 'perizinan.index', 'roles' => null, 'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'label' => 'Perizinan', 'color' => 'green'],
+                    ['route' => 'pelanggaran.index', 'roles' => null, 'icon' => 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z', 'label' => 'Pelanggaran', 'color' => 'orange'],
+                    ['route' => 'admin.teachers.index', 'roles' => ['admin', 'pengajaran'], 'icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z', 'label' => 'Data Guru', 'color' => 'red'],
+                    ['route' => 'santri.portofolio.list', 'roles' => ['admin','pengajaran','pengasuhan','kesehatan','ustadz_umum'], 'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'label' => 'Portofolio Santri', 'color' => 'purple'],
+                    ['route' => 'pengajaran.rekapan-harian.index', 'roles' => ['admin','pengajaran'], 'icon' => 'M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z', 'label' => 'Rekapan Harian', 'color' => 'blue'],
+                    ['route' => 'pengajaran.rekapan-harian.laporan', 'roles' => null, 'icon' => 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'label' => 'Laporan Absensi', 'color' => 'green'],
+                    ['route' => 'ubudiyah.index', 'roles' => ['admin','ubudiyah'], 'icon' => 'M12 2l9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9l9-7z M9 22V12h6v10 M12 2v7', 'label' => 'Setoran Hafalan', 'color' => 'indigo'],
+                    ];
 
-                        $colorClasses = [
-                        'blue' => ['bg' => 'bg-blue-100', 'text' => 'text-blue-600', 'hover:bg' => 'hover:bg-blue-50', 'hover:border' => 'hover:border-blue-300', 'group-hover:bg' => 'group-hover:bg-blue-200'],
-                        'indigo' => ['bg' => 'bg-indigo-100', 'text' => 'text-indigo-600', 'hover:bg' => 'hover:bg-indigo-50', 'hover:border' => 'hover:border-indigo-300', 'group-hover:bg' => 'group-hover:bg-indigo-200'],
-                        'green' => ['bg' => 'bg-green-100', 'text' => 'text-green-600', 'hover:bg' => 'hover:bg-green-50', 'hover:border' => 'hover:border-green-300', 'group-hover:bg' => 'group-hover:bg-green-200'],
-                        'amber' => ['bg' => 'bg-amber-100', 'text' => 'text-amber-600', 'hover:bg' => 'hover:bg-amber-50', 'hover:border' => 'hover:border-amber-300', 'group-hover:bg' => 'group-hover:bg-amber-200'],
-                        'rose' => ['bg' => 'bg-rose-100', 'text' => 'text-rose-600', 'hover:bg' => 'hover:bg-rose-50', 'hover:border' => 'hover:border-rose-300', 'group-hover:bg' => 'group-hover:bg-rose-200'],
-                        'purple' => ['bg' => 'bg-purple-100', 'text' => 'text-purple-600', 'hover:bg' => 'hover:bg-purple-50', 'hover:border' => 'hover:border-purple-300', 'group-hover:bg' => 'group-hover:bg-purple-200'],
-                        ];
-                        @endphp
+                    $glassItems = collect($menuItems)
+                    ->filter(function ($item) {
+                    return is_null($item['roles']) || in_array(Auth::user()->role, $item['roles']);
+                    })
+                    ->map(function ($item) {
+                    return [
+                    'label' => $item['label'],
+                    'color' => $item['color'],
+                    'iconPath' => $item['icon'],
+                    'url' => route($item['route']),
+                    ];
+                    })
+                    ->values();
+                    @endphp
 
-                        @foreach ($menuItems as $item)
-                        @if (is_null($item['roles']) || in_array(Auth::user()->role, $item['roles']))
-                        @php $colors = $colorClasses[$item['color']]; @endphp
-                        <a href="{{ route($item['route']) }}" class="group flex flex-col items-center justify-center text-center p-4 bg-white rounded-2xl shadow-lg border border-slate-200 {{ $colors['hover:bg'] }} {{ $colors['hover:border'] }} transition-all duration-300 transform hover:-translate-y-1">
-                            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 {{ $colors['bg'] }} {{ $colors['text'] }} {{ $colors['group-hover:bg'] }}">
-                                <svg class="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $item['icon'] }}"></path>
-                                </svg>
-                            </div>
-                            <p class="mt-3 text-xs sm:text-sm font-semibold text-slate-800">{{ $item['label'] }}</p>
-                        </a>
-                        @endif
-                        @endforeach
-                    </div>
+                    <div id="dashboard-glass-icons" data-glass-items='@json($glassItems)' data-extra-class="grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-8" class="w-full"></div>
                 </div>
 
                 {{-- Statistik Pondok - Ditampilkan untuk semua perangkat --}}
@@ -282,46 +273,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const menuItems = document.querySelectorAll('.menu-item');
-            menuItems.forEach(item => {
-                const iconContainer = item.querySelector('.icon-container');
-                const rippleEffect = item.querySelector('.ripple-effect');
-                const color = item.getAttribute('data-color');
-
-                item.addEventListener('mouseenter', () => {
-                    iconContainer ? .classList.add('hover-active');
-                    item.classList.add('hover-active');
-                });
-
-                item.addEventListener('mouseleave', () => {
-                    iconContainer ? .classList.remove('hover-active');
-                    item.classList.remove('hover-active');
-                });
-
-                rippleEffect && item.addEventListener('click', (e) => createRipple(e, rippleEffect, color));
-            });
-
-            function createRipple(event, rippleElement, color) {
-                const rect = rippleElement.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = event.clientX - rect.left - size / 2;
-                const y = event.clientY - rect.top - size / 2;
-
-                const existing = rippleElement.querySelector('.ripple');
-                existing ? .remove();
-
-                const ripple = document.createElement('span');
-                ripple.classList.add('ripple');
-                ripple.style.width = ripple.style.height = size + 'px';
-                ripple.style.left = x + 'px';
-                ripple.style.top = y + 'px';
-                ripple.style.backgroundColor = `rgba(var(--color-${color}-500-rgb), 0.2)`;
-
-                rippleElement.appendChild(ripple);
-                setTimeout(() => ripple.remove(), 600);
-            }
-
-            // Animate schedule cards on load
             const scheduleCards = document.querySelectorAll('.schedule-slot');
             scheduleCards.forEach((card, index) => {
                 card.style.opacity = '0';
@@ -382,98 +333,6 @@
     </script>
 
     <style>
-        :root {
-            --color-blue-500-rgb: 59, 130, 246;
-            --color-indigo-500-rgb: 99, 102, 241;
-            --color-green-500-rgb: 16, 185, 129;
-            --color-amber-500-rgb: 245, 158, 11;
-            --color-rose-500-rgb: 244, 63, 94;
-            --color-purple-500-rgb: 139, 92, 246;
-        }
-
-        .menu-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1rem;
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            border: 1px solid rgb(226, 232, 240);
-            transition: all 0.3s ease-out;
-            min-height: 100px;
-            position: relative;
-            text-decoration: none;
-            color: inherit;
-            cursor: pointer;
-        }
-
-        .menu-item:hover {
-            background-color: rgb(248, 250, 252);
-            border-color: rgb(203, 213, 225);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transform: translateY(-0.125rem);
-        }
-
-        .menu-item.hover-active .icon-container {
-            transform: scale(1.1) rotate(6deg);
-        }
-
-        .menu-item.hover-active .icon-container svg {
-            transform: rotate(12deg);
-        }
-
-        .menu-item.hover-active .menu-label {
-            color: rgb(15, 23, 42);
-            font-weight: 600;
-        }
-
-        .icon-container {
-            width: 3rem;
-            height: 3rem;
-            border-radius: 9999px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease-out;
-            margin-bottom: 0.75rem;
-        }
-
-        .icon-container svg {
-            width: 1.5rem;
-            height: 1.5rem;
-            transition: transform 0.3s ease-out;
-        }
-
-        .menu-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: rgb(51, 65, 85);
-            transition: all 0.3s ease-out;
-            line-clamp: 2;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.1);
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-        }
-
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
         /* Schedule Card Enhancements */
         .schedule-slot {
             position: relative;
