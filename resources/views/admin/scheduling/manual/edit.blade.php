@@ -54,7 +54,7 @@
                         <div>
                             <label for="kelas_id" class="block text-sm font-medium text-gray-700 mb-2">Kelas</label>
                             <select name="kelas_id" id="kelas_id" required
-                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md">
+                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md tom-select-kelas">
                                 <option value="">Pilih Kelas</option>
                                 @foreach($classes as $class)
                                     <option value="{{ $class->id }}" {{ old('kelas_id', $schedule->kelas_id) == $class->id ? 'selected' : '' }}>
@@ -71,7 +71,7 @@
                         <div>
                             <label for="mata_pelajaran_id" class="block text-sm font-medium text-gray-700 mb-2">Mata Pelajaran</label>
                             <select name="mata_pelajaran_id" id="mata_pelajaran_id" required
-                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md">
+                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md tom-select-subject">
                                 <option value="">Pilih Mata Pelajaran</option>
                                 @foreach($subjects as $subject)
                                     <option value="{{ $subject->id }}" {{ old('mata_pelajaran_id', $schedule->mata_pelajaran_id) == $subject->id ? 'selected' : '' }}>
@@ -88,7 +88,7 @@
                         <div>
                             <label for="teacher_id" class="block text-sm font-medium text-gray-700 mb-2">Guru</label>
                             <select name="teacher_id" id="teacher_id" required
-                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md">
+                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md tom-select-teacher">
                                 <option value="">Pilih Guru</option>
                                 @foreach($teachers as $teacher)
                                     <option value="{{ $teacher->id }}" {{ old('teacher_id', $schedule->teacher_id) == $teacher->id ? 'selected' : '' }}>
@@ -101,21 +101,17 @@
                             @enderror
                         </div>
 
-                        <!-- Ruangan -->
+                        <!-- Informasi Ruangan (diambil dari kelas) -->
                         <div>
-                            <label for="room_id" class="block text-sm font-medium text-gray-700 mb-2">Ruangan</label>
-                            <select name="room_id" id="room_id" required
-                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md">
-                                <option value="">Pilih Ruangan</option>
-                                @foreach($rooms as $room)
-                                    <option value="{{ $room->id }}" {{ old('room_id', $schedule->room_id) == $room->id ? 'selected' : '' }}>
-                                        {{ $room->name }} ({{ $room->type }})
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('room_id')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Ruangan</label>
+                            <div id="room-info" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 rounded-md bg-green-100 text-green-800">
+                                @if($schedule->kelas->room)
+                                    {{ $schedule->kelas->room->name }} ({{ $schedule->kelas->room->type }})
+                                @else
+                                    Tidak ada ruangan ditentukan untuk kelas ini
+                                @endif
+                            </div>
+                            <input type="hidden" name="room_id" id="room_id" value="{{ $schedule->kelas->room_id ?? '' }}">
                         </div>
 
                         <!-- Hari dan Jam -->
@@ -202,6 +198,35 @@
                     </div>
                 </div>
             @endif
+
+            <!-- Tom Select CSS -->
+            <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Initialize Tom Select
+                    new TomSelect('#kelas_id', {
+                        plugins: ['dropdown_input'],
+                        create: false,
+                        allowEmptyOption: true,
+                        sortField: 'text',
+                    });
+                    
+                    new TomSelect('#mata_pelajaran_id', {
+                        plugins: ['dropdown_input'],
+                        create: false,
+                        allowEmptyOption: true,
+                        sortField: 'text',
+                    });
+                    
+                    new TomSelect('#teacher_id', {
+                        plugins: ['dropdown_input'],
+                        create: false,
+                        allowEmptyOption: true,
+                        sortField: 'text',
+                    });
+                });
+            </script>
         </div>
     </div>
 </x-app-layout>

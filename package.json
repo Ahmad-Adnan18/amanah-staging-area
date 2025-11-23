@@ -5,8 +5,18 @@
         "build": "vite build",
         "dev": "vite"
     },
+    "dependencies": {
+        "motion": "^11.11.6",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+    },
     "devDependencies": {
+        "@vitejs/plugin-react": "^4.3.2",
+        "@tailwindcss/aspect-ratio": "^0.4.2",
+        "@tailwindcss/container-queries": "^0.1.1",
         "@tailwindcss/forms": "^0.5.2",
+        "@tailwindcss/line-clamp": "^0.4.4",
+        "@tailwindcss/typography": "^0.5.19",
         "alpinejs": "^3.4.2",
         "autoprefixer": "^10.4.2",
         "axios": "^1.7.4",

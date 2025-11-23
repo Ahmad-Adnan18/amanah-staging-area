@@ -1,11 +1,19 @@
 import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
 
 export default defineConfig({
     plugins: [
+        react({
+            include: '**/*.{jsx,tsx,js}',
+        }),
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            input: ['resources/css/app.css', 'resources/js/app.jsx'],
             refresh: true,
         }),
     ],
+    esbuild: {
+        loader: 'jsx',
+        include: /resources\/js\/.*\.jsx?$/,
+    },
 });

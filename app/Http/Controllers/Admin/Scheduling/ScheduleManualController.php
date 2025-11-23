@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers\Admin\Scheduling;
 
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
@@ -19,10 +20,9 @@ class ScheduleManualController extends Controller
 {
     public function create()
     {
-        $classes = Kelas::where('is_active_for_scheduling', true)->get();
+        $classes = Kelas::with('room')->where('is_active_for_scheduling', true)->get();
         $subjects = MataPelajaran::all();
         $teachers = Teacher::all();
-        $rooms = Room::all();
         $days = [1 => 'Sabtu', 2 => 'Ahad', 3 => 'Senin', 4 => 'Selasa', 5 => 'Rabu', 6 => 'Kamis'];
         $timeSlots = range(1, 7);
 
@@ -30,7 +30,6 @@ class ScheduleManualController extends Controller
             'classes',
             'subjects',
             'teachers',
-            'rooms',
             'days',
             'timeSlots'
         ));
@@ -42,10 +41,13 @@ class ScheduleManualController extends Controller
             'kelas_id' => 'required|exists:kelas,id',
             'mata_pelajaran_id' => 'required|exists:mata_pelajarans,id',
             'teacher_id' => 'required|exists:teachers,id',
-            'room_id' => 'required|exists:rooms,id',
             'day_of_week' => 'required|integer|min:1|max:6',
             'time_slot' => 'required|integer|min:1|max:7',
         ]);
+
+        // Ambil room_id dari kelas
+        $kelas = Kelas::find($validated['kelas_id']);
+        $validated['room_id'] = $kelas->room_id;
 
         $conflicts = $this->checkConflicts($validated);
 
@@ -61,10 +63,9 @@ class ScheduleManualController extends Controller
 
     public function edit(Schedule $schedule)
     {
-        $classes = Kelas::where('is_active_for_scheduling', true)->get();
+        $classes = Kelas::with('room')->where('is_active_for_scheduling', true)->get();
         $subjects = MataPelajaran::all();
         $teachers = Teacher::all();
-        $rooms = Room::all();
         $days = [1 => 'Sabtu', 2 => 'Ahad', 3 => 'Senin', 4 => 'Selasa', 5 => 'Rabu', 6 => 'Kamis'];
         $timeSlots = range(1, 7);
 
@@ -73,7 +74,6 @@ class ScheduleManualController extends Controller
             'classes',
             'subjects',
             'teachers',
-            'rooms',
             'days',
             'timeSlots'
         ));
@@ -85,10 +85,13 @@ class ScheduleManualController extends Controller
             'kelas_id' => 'required|exists:kelas,id',
             'mata_pelajaran_id' => 'required|exists:mata_pelajarans,id',
             'teacher_id' => 'required|exists:teachers,id',
-            'room_id' => 'required|exists:rooms,id',
             'day_of_week' => 'required|integer|min:1|max:6',
             'time_slot' => 'required|integer|min:1|max:7',
         ]);
+
+        // Ambil room_id dari kelas
+        $kelas = Kelas::find($validated['kelas_id']);
+        $validated['room_id'] = $kelas->room_id;
 
         $conflicts = $this->checkUpdateConflicts($validated, $schedule->id);
 
@@ -117,10 +120,13 @@ class ScheduleManualController extends Controller
             'kelas_id' => 'required|exists:kelas,id',
             'mata_pelajaran_id' => 'required|exists:mata_pelajarans,id',
             'teacher_id' => 'required|exists:teachers,id',
-            'room_id' => 'required|exists:rooms,id',
             'day_of_week' => 'required|integer|min:1|max:6',
             'time_slot' => 'required|integer|min:1|max:7',
         ]);
+
+        // Ambil room_id dari kelas
+        $kelas = Kelas::find($validated['kelas_id']);
+        $validated['room_id'] = $kelas->room_id;
 
         $conflicts = $this->checkConflicts($validated);
 
@@ -256,17 +262,15 @@ class ScheduleManualController extends Controller
 
     public function grid()
     {
-        $classes = Kelas::where('is_active_for_scheduling', true)->get();
+        $classes = Kelas::with('room')->where('is_active_for_scheduling', true)->get();
         $subjects = MataPelajaran::all();
         $teachers = Teacher::all();
-        $rooms = Room::all();
         $days = [1 => 'Sabtu', 2 => 'Ahad', 3 => 'Senin', 4 => 'Selasa', 5 => 'Rabu', 6 => 'Kamis'];
 
         return view('admin.scheduling.manual.grid', compact(
             'classes',
             'subjects',
             'teachers',
-            'rooms',
             'days'
         ));
     }
@@ -274,10 +278,16 @@ class ScheduleManualController extends Controller
     // Method baru untuk grid data
     public function gridData()
     {
-        $classes = Kelas::where('is_active_for_scheduling', true)->get();
-        $subjects = MataPelajaran::all();
-        $teachers = Teacher::all();
-        $rooms = Room::all();
+        $classes = Kelas::with('room')->where('is_active_for_scheduling', true)->orderBy('nama_kelas')->get();
+        
+        // [PERBAIKAN] Hanya ambil mata pelajaran unik berdasarkan kombinasi nama dan tingkatan
+        $subjects = MataPelajaran::select('id', 'nama_pelajaran', 'tingkatan')
+            ->distinct()
+            ->orderBy('tingkatan')
+            ->orderBy('nama_pelajaran')
+            ->get();
+            
+        $teachers = Teacher::select('id', 'name', 'teacher_code')->orderBy('name')->get();
         $days = [1 => 'Sabtu', 2 => 'Ahad', 3 => 'Senin', 4 => 'Selasa', 5 => 'Rabu', 6 => 'Kamis'];
 
         // FIX: Load dengan EAGER LOADING relationships
@@ -285,7 +295,7 @@ class ScheduleManualController extends Controller
             'subject:id,nama_pelajaran',
             'teacher:id,name',
             'room:id,name',
-            'kelas:id,nama_kelas'
+            'kelas:id,nama_kelas,room_id'
         ])
             ->get()
             ->map(function ($schedule) {
@@ -303,6 +313,7 @@ class ScheduleManualController extends Controller
                     'teacher_name' => $schedule->teacher ? $schedule->teacher->name : 'N/A',
                     'room_name' => $schedule->room ? $schedule->room->name : 'N/A',
                     'kelas_name' => $schedule->kelas ? $schedule->kelas->nama_kelas : 'N/A',
+                    'kelas_room_id' => $schedule->kelas ? $schedule->kelas->room_id : null,
 
                     'has_conflict' => $this->checkSingleConflict($schedule)
                 ];
@@ -312,7 +323,6 @@ class ScheduleManualController extends Controller
             'classes' => $classes,
             'subjects' => $subjects,
             'teachers' => $teachers,
-            'rooms' => $rooms,
             'days' => $days,
             'schedules' => $schedules
         ]);
@@ -324,8 +334,11 @@ class ScheduleManualController extends Controller
         $validated = $request->validate([
             'mata_pelajaran_id' => 'required|exists:mata_pelajarans,id',
             'teacher_id' => 'required|exists:teachers,id',
-            'room_id' => 'required|exists:rooms,id',
         ]);
+
+        // Ambil room_id dari kelas
+        $kelas = Kelas::find($schedule->kelas_id);
+        $validated['room_id'] = $kelas->room_id;
 
         $conflicts = $this->checkUpdateConflicts(array_merge($validated, [
             'kelas_id' => $schedule->kelas_id,
@@ -350,6 +363,10 @@ class ScheduleManualController extends Controller
         $errors = [];
 
         foreach ($updates as $update) {
+            // Ambil room_id dari kelas
+            $kelas = Kelas::find($update['kelas_id']);
+            $update['room_id'] = $kelas->room_id;
+
             $conflicts = $this->checkConflicts($update);
 
             if (empty($conflicts)) {
@@ -451,5 +468,33 @@ class ScheduleManualController extends Controller
             'success' => true,
             'message' => "Berhasil menghapus {$deleted} jadwal untuk kelas {$kelas->nama_kelas}."
         ]);
+    }
+
+    public function fixRoomSync()
+    {
+        try {
+            // ✅ LOG UNTUK DEBUG
+            \Log::info('Fix Room Sync called by user: ' . auth()->id());
+            
+            $updated = DB::table('schedules')
+                ->join('kelas', 'schedules.kelas_id', '=', 'kelas.id')
+                ->whereColumn('schedules.room_id', '!=', 'kelas.room_id')
+                ->update(['schedules.room_id' => DB::raw('kelas.room_id')]);
+                
+            \Log::info("Fixed {$updated} schedule rooms");
+                
+            return response()->json([
+                'success' => true,
+                'message' => "Berhasil memperbaiki {$updated} jadwal dengan ruangan yang sesuai.",
+                'updated_count' => $updated
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Fix Room Sync Error: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

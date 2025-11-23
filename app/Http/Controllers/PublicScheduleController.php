@@ -6,6 +6,7 @@ use App\Models\Kelas;
 use App\Models\Schedule;
 use App\Models\Teacher; // [PERBAIKAN] Kembali menggunakan model Teacher
 use App\Models\User;
+use App\Models\MataPelajaran;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -18,6 +19,35 @@ class PublicScheduleController extends Controller
 
         // [PERBAIKAN] Ambil data guru langsung dari tabel 'teachers'
         $teachers = Teacher::orderBy('name')->get();
+        
+        // [NEW] Ambil data pelajaran yang memiliki jadwal
+        $subjectIds = Schedule::distinct('mata_pelajaran_id')->pluck('mata_pelajaran_id');
+        $allSubjects = MataPelajaran::whereIn('id', $subjectIds)->get();
+        
+        // Ambil pelajaran unik berdasarkan nama_pelajaran
+        $uniqueSubjects = [];
+        $usedNames = [];
+        
+        foreach($allSubjects as $subject) {
+            if (!in_array($subject->nama_pelajaran, $usedNames)) {
+                $uniqueSubjects[] = $subject;
+                $usedNames[] = $subject->nama_pelajaran;
+            }
+        }
+        
+        $subjects = collect($uniqueSubjects)->sortBy('nama_pelajaran')->values();
+        
+        // [NEW] Buat mapping nama pelajaran ke ID pelajaran
+        $subjectNameToIds = [];
+        foreach($allSubjects as $subject) {
+            $subjectName = $subject->nama_pelajaran;
+            if (!isset($subjectNameToIds[$subjectName])) {
+                $subjectNameToIds[$subjectName] = [];
+            }
+            if (!in_array($subject->id, $subjectNameToIds[$subjectName])) {
+                $subjectNameToIds[$subjectName][] = $subject->id;
+            }
+        }
 
         $schedules = Schedule::with(['subject', 'teacher', 'room', 'kelas'])->get();
 
@@ -26,6 +56,7 @@ class PublicScheduleController extends Controller
         $scheduleData = [
             'byClass' => $this->formatScheduleForJs($schedules, 'kelas_id'),
             'byTeacher' => $this->formatScheduleForJs($schedules, 'teacher_id'),
+            'bySubject' => $this->formatScheduleForJsBySubject($schedules), // [NEW] Gunakan fungsi baru
             'teachingHours' => $this->calculateTeachingHours($schedules),
         ];
 
@@ -38,7 +69,7 @@ class PublicScheduleController extends Controller
         // [PERBAIKAN] Data guru untuk dropdown diubah agar value-nya adalah teacher->id
         // Namun, kita tetap menggunakan data $teachers yang sudah diambil di atas.
         // Penyesuaian akan dilakukan di JavaScript.
-        return view('jadwal.public.index', compact('classes', 'teachers', 'scheduleData', 'days', 'timeSlots', 'teachersDayOff'));
+        return view('jadwal.public.index', compact('classes', 'teachers', 'subjects', 'scheduleData', 'days', 'timeSlots', 'teachersDayOff', 'subjectNameToIds'));
     }
 
     private function formatScheduleForJs($schedules, $key)
@@ -48,6 +79,28 @@ class PublicScheduleController extends Controller
             // Logika ini sekarang akan bekerja dengan benar
             if ($schedule->{$key} && $schedule->teacher) {
                 $formatted[$schedule->{$key}][$schedule->day_of_week][$schedule->time_slot] = [
+                    'subject' => $schedule->subject->nama_pelajaran ?? 'N/A',
+                    'teacher' => $schedule->teacher->name ?? 'N/A',
+                    'class' => $schedule->kelas->nama_kelas ?? 'N/A',
+                    'room' => $schedule->room->name ?? 'N/A',
+                ];
+            }
+        }
+        return $formatted;
+    }
+    
+    // [NEW] Fungsi khusus untuk format jadwal pelajaran yang bisa menangani banyak jadwal di hari dan jam yang sama
+    private function formatScheduleForJsBySubject($schedules)
+    {
+        $formatted = [];
+        foreach ($schedules as $schedule) {
+            if ($schedule->mata_pelajaran_id && $schedule->teacher) {
+                // Membuat array untuk menangani banyak jadwal dalam satu hari dan jam
+                if (!isset($formatted[$schedule->mata_pelajaran_id][$schedule->day_of_week][$schedule->time_slot])) {
+                    $formatted[$schedule->mata_pelajaran_id][$schedule->day_of_week][$schedule->time_slot] = [];
+                }
+                
+                $formatted[$schedule->mata_pelajaran_id][$schedule->day_of_week][$schedule->time_slot][] = [
                     'subject' => $schedule->subject->nama_pelajaran ?? 'N/A',
                     'teacher' => $schedule->teacher->name ?? 'N/A',
                     'class' => $schedule->kelas->nama_kelas ?? 'N/A',
@@ -124,6 +177,25 @@ class PublicScheduleController extends Controller
             $data['teacherName'] = $teacher->name;
             $data['teachingHoursSummary'] = $teachingHours;
 
+        } elseif ($type == 'pelajaran') {
+            // [NEW] Tambahkan penanganan untuk tipe pelajaran
+            $selectedSubject = MataPelajaran::findOrFail($id);
+            
+            // Ambil semua jadwal untuk pelajaran-pelajaran dengan nama yang sama
+            $allSubjectIds = MataPelajaran::where('nama_pelajaran', $selectedSubject->nama_pelajaran)
+                ->pluck('id');
+                
+            $schedules = Schedule::whereIn('mata_pelajaran_id', $allSubjectIds)
+                ->with(['subject', 'teacher', 'kelas', 'room'])
+                ->get()
+                ->groupBy(['day_of_week', 'time_slot']);
+
+            $data['title'] = 'Jadwal Pelajaran: ' . $selectedSubject->nama_pelajaran;
+            $data['schedules'] = $schedules;
+            $data['type'] = 'pelajaran';
+            $data['subjectName'] = $selectedSubject->nama_pelajaran;
+            $data['subject'] = $selectedSubject; // [NEW] Tambahkan objek subject
+
         } else {
             abort(404);
         }
@@ -179,4 +251,6 @@ class PublicScheduleController extends Controller
         $pdf = Pdf::loadView('jadwal.public.print-guru-libur', $data)->setPaper('a4', 'portrait');
         return $pdf->stream('guru-libur-' . $days[$day] . '.pdf');
     }
+    
+
 }

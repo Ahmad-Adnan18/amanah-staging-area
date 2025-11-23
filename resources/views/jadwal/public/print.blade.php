@@ -95,74 +95,124 @@
                 <div class="logo-placeholder">LOGO JADWAL PELAJARAN</div>
             @endif
             <div class="header-sub">{{ $title }}</div>
-        @else
+        @elseif($type == 'guru')
             @if($logoMengajarBase64)
                 <img src="{{ $logoMengajarBase64 }}" class="logo-image" alt="Logo Jadwal Mengajar"/>
             @else
                 <div class="logo-placeholder">LOGO JADWAL MENGAJAR</div>
             @endif
             <div class="header-sub">Al Ustadz/ah: {{ $teacherName }}</div>
+        @elseif($type == 'pelajaran')
+            @if($logoPelajaranBase64)
+                <img src="{{ $logoPelajaranBase64 }}" class="logo-image" alt="Logo Jadwal Pelajaran"/>
+            @else
+                <div class="logo-placeholder">LOGO JADWAL PELAJARAN</div>
+            @endif
+            <div class="header-sub">{{ $title }}</div>
         @endif
     </div>
 
-    <table class="day-grid">
-        <tr>
-            @foreach($days as $dayKey => $dayName)
-                @if($loop->iteration > 3) @continue @endif
-                <td class="day-column">
-                    <div class="day-title">{{ $dayName }}</div>
+    @if($type == 'pelajaran')
+        <table class="table">
+            <thead>
+                <tr class="bg-slate-50">
+                    <th style="border: 1px solid #000; padding: 3px; text-align: center; font-weight: bold;">No</th>
+                    <th style="border: 1px solid #000; padding: 3px; text-align: center; font-weight: bold;">Hari</th>
+                    <th style="border: 1px solid #000; padding: 3px; text-align: center; font-weight: bold;">Waktu</th>
+                    <th style="border: 1px solid #000; padding: 3px; text-align: center; font-weight: bold;">Kelas</th>
+                    <th style="border: 1px solid #000; padding: 3px; text-align: center; font-weight: bold;">Guru</th>
+                    <th style="border: 1px solid #000; padding: 3px; text-align: center; font-weight: bold;">Ruang</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php $counter = 1; @endphp
+                @foreach($days as $dayKey => $dayName)
                     @foreach($timeSlots as $timeSlot)
-                        <table class="slot-table">
-                            <tr>
-                                <td class="slot-num">{{ $timeSlot }}.</td>
-                                @if(isset($schedules[$dayKey][$timeSlot]))
-                                    @php $schedule = $schedules[$dayKey][$timeSlot][0]; @endphp
-                                    <td class="slot-subject">{{ $schedule->subject->nama_pelajaran ?? '' }}</td>
-                                    <td class="slot-detail">
-                                        @if($type == 'kelas')
-                                            Ruang: {{ $schedule->room->name ?? '-' }}
-                                        @else
-                                            {{ $schedule->kelas->nama_kelas ?? '' }}
-                                        @endif
-                                    </td>
-                                @else
-                                    <td></td><td></td>
+                        @if(isset($schedules[$dayKey][$timeSlot]))
+                            @foreach($schedules[$dayKey][$timeSlot] as $schedule)
+                                @if($schedule->subject && $schedule->subject->nama_pelajaran == $subject->nama_pelajaran)
+                                    <tr>
+                                        <td style="border: 1px solid #000; padding: 3px; text-align: center;">{{ $counter++ }}</td>
+                                        <td style="border: 1px solid #000; padding: 3px;">{{ $dayName }}</td>
+                                        <td style="border: 1px solid #000; padding: 3px; text-align: center;">Jam ke-{{ $timeSlot }}</td>
+                                        <td style="border: 1px solid #000; padding: 3px;">{{ $schedule->kelas->nama_kelas ?? '-' }}</td>
+                                        <td style="border: 1px solid #000; padding: 3px;">{{ $schedule->teacher->name ?? '-' }}</td>
+                                        <td style="border: 1px solid #000; padding: 3px;">{{ $schedule->room->name ?? '-' }}</td>
+                                    </tr>
                                 @endif
-                            </tr>
-                        </table>
+                            @endforeach
+                        @endif
                     @endforeach
-                </td>
-            @endforeach
-        </tr>
-        <tr>
-            @foreach($days as $dayKey => $dayName)
-                @if($loop->iteration <= 3) @continue @endif
-                <td class="day-column">
-                    <div class="day-title">{{ $dayName }}</div>
-                    @foreach($timeSlots as $timeSlot)
-                        <table class="slot-table">
-                            <tr>
-                                <td class="slot-num">{{ $timeSlot }}.</td>
-                                @if(isset($schedules[$dayKey][$timeSlot]))
-                                    @php $schedule = $schedules[$dayKey][$timeSlot][0]; @endphp
-                                    <td class="slot-subject">{{ $schedule->subject->nama_pelajaran ?? '' }}</td>
-                                    <td class="slot-detail">
-                                        @if($type == 'kelas')
-                                            Ruang: {{ $schedule->room->name ?? '-' }}
-                                        @else
-                                            {{ $schedule->kelas->nama_kelas ?? '' }}
-                                        @endif
-                                    </td>
-                                @else
-                                    <td></td><td></td>
-                                @endif
-                            </tr>
-                        </table>
-                    @endforeach
-                </td>
-            @endforeach
-        </tr>
-    </table>
+                @endforeach
+                @if($counter == 1)
+                    <tr>
+                        <td colspan="6" style="border: 1px solid #000; padding: 5px; text-align: center;">Tidak ada jadwal pelajaran pada pelajaran ini</td>
+                    </tr>
+                @endif
+            </tbody>
+        </table>
+    @endif
+
+    @if($type !== 'pelajaran')
+        <table class="day-grid">
+            <tr>
+                @foreach($days as $dayKey => $dayName)
+                    @if($loop->iteration > 3) @continue @endif
+                    <td class="day-column">
+                        <div class="day-title">{{ $dayName }}</div>
+                        @foreach($timeSlots as $timeSlot)
+                            <table class="slot-table">
+                                <tr>
+                                    <td class="slot-num">{{ $timeSlot }}.</td>
+                                    @if(isset($schedules[$dayKey][$timeSlot]))
+                                        @php $schedule = $schedules[$dayKey][$timeSlot][0]; @endphp
+                                        <td class="slot-subject">{{ $schedule->subject->nama_pelajaran ?? '' }}</td>
+                                        <td class="slot-detail">
+                                            @if($type == 'kelas')
+                                                Ruang: {{ $schedule->room->name ?? '-' }}
+                                            @else
+                                                {{ $schedule->kelas->nama_kelas ?? '' }}
+                                            @endif
+                                        </td>
+                                    @else
+                                        <td></td><td></td>
+                                    @endif
+                                </tr>
+                            </table>
+                        @endforeach
+                    </td>
+                @endforeach
+            </tr>
+            <tr>
+                @foreach($days as $dayKey => $dayName)
+                    @if($loop->iteration <= 3) @continue @endif
+                    <td class="day-column">
+                        <div class="day-title">{{ $dayName }}</div>
+                        @foreach($timeSlots as $timeSlot)
+                            <table class="slot-table">
+                                <tr>
+                                    <td class="slot-num">{{ $timeSlot }}.</td>
+                                    @if(isset($schedules[$dayKey][$timeSlot]))
+                                        @php $schedule = $schedules[$dayKey][$timeSlot][0]; @endphp
+                                        <td class="slot-subject">{{ $schedule->subject->nama_pelajaran ?? '' }}</td>
+                                        <td class="slot-detail">
+                                            @if($type == 'kelas')
+                                                Ruang: {{ $schedule->room->name ?? '-' }}
+                                            @else
+                                                {{ $schedule->kelas->nama_kelas ?? '' }}
+                                            @endif
+                                        </td>
+                                    @else
+                                        <td></td><td></td>
+                                    @endif
+                                </tr>
+                            </table>
+                        @endforeach
+                    </td>
+                @endforeach
+            </tr>
+        </table>
+    @endif
 
     @if($type == 'guru')
         <table class="summary-table">

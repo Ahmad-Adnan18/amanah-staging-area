@@ -14,6 +14,11 @@
                     </p>
                 </div>
 
+                <!-- Slider -->
+                <div class="mb-8">
+                    <x-slider />
+                </div>
+
                 <!-- Profil Santri Card -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden transition-all hover:shadow-md">
                     <div class="p-5 sm:p-6">

@@ -15,7 +15,7 @@
                         </a>
                     </div>
                 </div>
-                
+
                 <!-- Form -->
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
                     <form action="{{ route('admin.users.store') }}" method="POST">
@@ -45,10 +45,12 @@
                                 <select name="role" id="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
                                     <option value="ustadz_umum">Ustadz Umum</option>
                                     <option value="pengajaran">Pengajaran</option>
+                                    <option value="ubudiyah">Ubudiyah</option>
                                     <option value="pengasuhan">pengasuhan</option>
                                     <option value="kesehatan">Kesehatan</option>
                                     <option value="admin">Admin</option>
                                     <option value="wali_santri">Wali Santri</option>
+                                    <option value="dokumentasi">Dokumentasi</option>
                                 </select>
                                 <x-input-error class="mt-2" :messages="$errors->get('role')" />
                             </div>

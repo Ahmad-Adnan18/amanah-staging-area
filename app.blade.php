@@ -17,7 +17,8 @@
         <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
 
         <!-- Scripts Vite -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @viteReactRefresh
+        @vite(['resources/css/app.css', 'resources/js/app.jsx'])
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-slate-50">

@@ -20,7 +20,7 @@ class RekapanHarianPolicy
 
     public function viewAny(User $user): bool
     {
-        return in_array($user->role, ['pengajaran', 'teacher', 'ustadz_umum', 'pengasuhan', 'kesehatan']);
+        return in_array($user->role, ['pengajaran', 'teacher', 'ustadz_umum', 'pengasuhan', 'kesehatan','dokumentasi']);
     }
 
     public function create(User $user): bool
@@ -40,6 +40,6 @@ class RekapanHarianPolicy
 
     public function viewReport(User $user): bool
     {
-        return in_array($user->role, ['pengajaran', 'teacher', 'ustadz_umum', 'pengasuhan', 'kesehatan']);
+        return in_array($user->role, ['pengajaran', 'teacher', 'ustadz_umum', 'pengasuhan', 'kesehatan','dokumentasi']);
     }
 }

@@ -66,9 +66,8 @@ class MataPelajaranController extends Controller
 
     public function create()
     {
-        $teachers = Teacher::orderBy('name')->get();
         $tingkatans = MataPelajaran::distinct()->pluck('tingkatan')->sort()->toArray();
-        return view('pengajaran.mata-pelajaran.create', compact('teachers', 'tingkatans'));
+        return view('pengajaran.mata-pelajaran.create', compact('tingkatans'));
     }
 
     public function store(Request $request)
@@ -78,8 +77,6 @@ class MataPelajaranController extends Controller
             'tingkatan' => 'required|string|max:100|min:2', // UBAH: Sekarang string bebas dengan batasan panjang
             'kategori' => 'required|in:Umum,Diniyah', // UBAH: Lebih ketat, hanya dua opsi
             'duration_jp' => 'required|integer|min:1|max:10', // Tambah max untuk mencegah input tidak wajar
-            'teacher_ids' => 'nullable|array|min:1', // Minimal 1 guru
-            'teacher_ids.*' => 'exists:teachers,id',
             'requires_special_room' => 'nullable|boolean',
         ], [
             'tingkatan.required' => 'Tingkatan harus diisi.',
@@ -88,7 +85,6 @@ class MataPelajaranController extends Controller
             'tingkatan.min' => 'Tingkatan minimal 2 karakter.',
             'kategori.in' => 'Kategori harus Umum atau Diniyah.',
             'duration_jp.max' => 'Durasi maksimal 10 jam pelajaran.',
-            'teacher_ids.min' => 'Minimal harus pilih 1 guru pengampu.',
         ]);
         
         // Sanitasi tingkatan: trim dan capitalize
@@ -113,19 +109,14 @@ class MataPelajaranController extends Controller
             'requires_special_room' => $request->boolean('requires_special_room', false),
         ]);
 
-        if ($request->has('teacher_ids') && is_array($request->teacher_ids)) {
-            $mataPelajaran->teachers()->sync($request->teacher_ids);
-        }
-
         return redirect()->route('pengajaran.mata-pelajaran.index')
                         ->with('success', 'Mata pelajaran "' . $request->nama_pelajaran . '" untuk tingkatan "' . $tingkatan . '" berhasil ditambahkan.');
     }
 
     public function edit(MataPelajaran $mataPelajaran)
     {
-        $teachers = Teacher::orderBy('name')->get();
         $tingkatans = MataPelajaran::distinct()->pluck('tingkatan')->sort()->toArray();
-        return view('pengajaran.mata-pelajaran.edit', compact('mataPelajaran', 'teachers', 'tingkatans'));
+        return view('pengajaran.mata-pelajaran.edit', compact('mataPelajaran', 'tingkatans'));
     }
 
     public function update(Request $request, MataPelajaran $mataPelajaran)
@@ -135,8 +126,6 @@ class MataPelajaranController extends Controller
             'tingkatan' => 'required|string|max:100|min:2', // UBAH: String bebas
             'kategori' => 'required|in:Umum,Diniyah',
             'duration_jp' => 'required|integer|min:1|max:10',
-            'teacher_ids' => 'nullable|array|min:1',
-            'teacher_ids.*' => 'exists:teachers,id',
             'requires_special_room' => 'nullable|boolean',
         ], [
             'tingkatan.required' => 'Tingkatan harus diisi.',
@@ -145,7 +134,6 @@ class MataPelajaranController extends Controller
             'tingkatan.min' => 'Tingkatan minimal 2 karakter.',
             'kategori.in' => 'Kategori harus Umum atau Diniyah.',
             'duration_jp.max' => 'Durasi maksimal 10 jam pelajaran.',
-            'teacher_ids.min' => 'Minimal harus pilih 1 guru pengampu.',
         ]);
 
         // Sanitasi tingkatan
@@ -171,9 +159,6 @@ class MataPelajaranController extends Controller
             'requires_special_room' => $request->boolean('requires_special_room', false),
         ]);
 
-        // Update relasi guru
-        $mataPelajaran->teachers()->sync($request->teacher_ids ?? []);
-
         return redirect()->route('pengajaran.mata-pelajaran.index')
                         ->with('success', 'Mata pelajaran "' . $request->nama_pelajaran . '" untuk tingkatan "' . $tingkatan . '" berhasil diperbarui.');
     }
@@ -184,9 +169,6 @@ class MataPelajaranController extends Controller
         // (Ini tergantung pada struktur database Anda - sesuaikan jika perlu)
         
         $namaPelajaran = $mataPelajaran->nama_pelajaran . ' (' . $mataPelajaran->tingkatan . ')';
-        
-        // Hapus relasi guru terlebih dahulu
-        $mataPelajaran->teachers()->detach();
         
         // Hapus mata pelajaran
         $mataPelajaran->delete();

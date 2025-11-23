@@ -26,8 +26,10 @@ KOMPONEN NAVIGASI HIBRIDA LENGKAP - PROFESIONAL
     <!-- Link Navigasi Sidebar -->
     <nav class="flex-1 space-y-1 overflow-y-auto px-4 py-6" x-data="{
             isAkademikOpen: {{ request()->routeIs(['pengajaran.*', 'admin.santri-management.*', 'akademik.*', 'admin.rooms.*', 'admin.teachers.*', 'laporan.*']) ? 'true' : 'false' }},
+            isUbudiyahOpen: {{ request()->routeIs(['ubudiyah.*', 'admin.master-data.surats*']) ? 'true' : 'false' }},
             isPenjadwalanOpen: {{ request()->routeIs(['admin.rules.*', 'admin.teacher-availability.*', 'admin.generator.*', 'admin.schedule.view.*', 'admin.schedule.swap.*']) ? 'true' : 'false' }},
-            isAdministrasiOpen: {{ request()->routeIs(['admin.users.*']) ? 'true' : 'false' }}
+            isAdministrasiOpen: {{ request()->routeIs(['admin.users.*']) ? 'true' : 'false' }},
+            isKontenOpen: {{ request()->routeIs(['slider.*']) ? 'true' : 'false' }}
          }">
 
         @php
@@ -51,7 +53,7 @@ KOMPONEN NAVIGASI HIBRIDA LENGKAP - PROFESIONAL
                 <span>{{ __('Dashboard') }}</span>
             </a>
 
-            @if (Auth::user()->role !== 'wali_santri')
+            @if (!in_array(Auth::user()->role, ['wali_santri']))
             <a href="{{ route('perizinan.index') }}" class="{{ $baseClasses }} {{ request()->routeIs('perizinan.*') ? $activeClasses : $inactiveClasses }}">
                 <div class="flex items-center justify-center w-5 h-5">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,6 +136,39 @@ KOMPONEN NAVIGASI HIBRIDA LENGKAP - PROFESIONAL
         </div>
         @endif
 
+        @if(in_array(Auth::user()->role, ['admin','ubudiyah']))
+        <div class="pt-4 mt-4 border-t border-slate-200">
+            <button @click="isUbudiyahOpen = !isUbudiyahOpen" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-slate-50 transition-all duration-200 border-l-4 border-transparent">
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center justify-center w-5 h-5">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9l9-7z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 22V12h6v10"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v7"></path>
+                        </svg>
+                    </div>
+                    <span>Ubudiyah</span>
+                </div>
+                <svg class="h-4 w-4 transform transition-transform duration-200 text-slate-500" :class="{'rotate-180': isUbudiyahOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+
+            <div x-show="isUbudiyahOpen" x-collapse class="mt-2 space-y-1 pl-4" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2">
+
+                <a href="{{ route('ubudiyah.index') }}" class="{{ $childBase }} {{ request()->routeIs('ubudiyah.index') ? $childActive : $childInactive }}">
+                    Input Setoran Tahfidz
+                </a>
+                <a href="{{ route('ubudiyah.mutabaah') }}" class="{{ $childBase }} {{ request()->routeIs('ubudiyah.mutabaah') ? $childActive : $childInactive }}">
+                    Laporan Mutaba'ah
+                </a>
+                <a href="{{ route('admin.master-data.surats.index') }}" class="{{ $childBase }} {{ request()->routeIs('admin.master-data.surats.*') ? $childActive : $childInactive }}">
+                    Manajemen Surat
+                </a>
+            </div>
+        </div>
+        @endif
+
         @if(in_array(Auth::user()->role, ['admin', 'pengajaran']))
         <!-- GRUP: PENJADWALAN -->
         <div class="pt-4 mt-4 border-t border-slate-200">
@@ -204,6 +239,31 @@ KOMPONEN NAVIGASI HIBRIDA LENGKAP - PROFESIONAL
             </div>
         </div>
         @endif
+
+        <!-- GRUP: KONTEN -->
+        @if(in_array(Auth::user()->role, ['admin', 'dokumentasi']))
+        <div class="pt-4 mt-4 border-t border-slate-200">
+            <button @click="isKontenOpen = !isKontenOpen" class="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-slate-50 transition-all duration-200 border-l-4 border-transparent">
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center justify-center w-5 h-5">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <span>Konten</span>
+                </div>
+                <svg class="h-4 w-4 transform transition-transform duration-200 text-slate-500" :class="{'rotate-180': isKontenOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+
+            <div x-show="isKontenOpen" x-collapse class="mt-2 space-y-1 pl-4" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2">
+                <a href="{{ route('slider.index') }}" class="{{ $childBase }} {{ request()->routeIs('slider.*') ? $childActive : $childInactive }}">
+                    Manajemen Slider
+                </a>
+            </div>
+        </div>
+        @endif
     </nav>
 
     <!-- USER DROPDOWN (di bawah sidebar) -->
@@ -244,129 +304,103 @@ KOMPONEN NAVIGASI HIBRIDA LENGKAP - PROFESIONAL
 
 <!-- 
 ======================================================================
-[BAGIAN 3] Bottom Navigation Bar (Hanya untuk Mobile)
+[BAGIAN 3] Bottom Navigation Bar (Hanya untuk Mobile) - VERSI LEBIH PROFESIONAL
 ====================================================================== 
 -->
-<footer class="fixed bottom-0 left-0 z-10 w-full bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-lg md:hidden">
-    @if(Auth::user()->role === 'wali_santri')
-    @php
-    // Cari santri berdasarkan wali_id yang sama dengan user ID
-    $santriWali = \App\Models\Santri::where('wali_id', Auth::id())->first();
-    @endphp
+@php
+$dockItems = [];
+$santriWali = null;
 
-    <!-- Bottom Nav Khusus Wali Santri: Dashboard, Data Santri, dan Menu -->
-    <div class="grid h-16 max-w-lg grid-cols-3 mx-auto">
-        <a href="{{ route('dashboard') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium transition-all duration-200 {{ request()->routeIs('dashboard') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <div class="relative">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                </svg>
-                @if(request()->routeIs('dashboard'))
-                <div class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
-                @endif
-            </div>
-            <span class="text-xs font-medium">Beranda</span>
-        </a>
+if (Auth::user()->role === 'wali_santri') {
+$santriWali = \App\Models\Santri::where('wali_id', Auth::id())->first();
 
-        @if($santriWali)
-        <!-- Tombol Lengkapi Data Santri untuk Wali Santri -->
-        <a href="{{ route('pengajaran.santris.edit', $santriWali) }}" class="inline-flex flex-col items-center justify-center px-5 font-medium transition-all duration-200 {{ request()->routeIs('pengajaran.santris.edit') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <div class="relative">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                @if(request()->routeIs('pengajaran.santris.edit'))
-                <div class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
-                @endif
-            </div>
-            <span class="text-xs font-medium text-center leading-tight">Data Santri</span>
-        </a>
-        @else
-        <!-- Jika tidak ada santri, tampilkan placeholder -->
-        <a href="#" class="inline-flex flex-col items-center justify-center px-5 font-medium text-slate-400 cursor-not-allowed">
-            <div class="relative">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-            </div>
-            <span class="text-xs font-medium text-center leading-tight">Tidak Ada Santri</span>
-        </a>
-        @endif
+$dockItems[] = [
+'label' => 'Beranda',
+'url' => route('dashboard'),
+'icon' => 'home',
+'active' => request()->routeIs('dashboard'),
+'disabled' => false,
+];
 
-        <a href="{{ route('menu.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium transition-all duration-200 {{ request()->routeIs('menu.index') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <div class="relative">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-                @if(request()->routeIs('menu.index'))
-                <div class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
-                @endif
-            </div>
-            <span class="text-xs font-medium">Menu</span>
-        </a>
+$dockItems[] = [
+'label' => $santriWali ? 'Data Santri' : 'Tidak Ada Santri',
+'url' => $santriWali ? route('pengajaran.santris.edit', $santriWali) : null,
+'icon' => 'user',
+'active' => request()->routeIs('pengajaran.santris.edit'),
+'disabled' => !$santriWali,
+];
+
+$dockItems[] = [
+'label' => 'Menu',
+'url' => route('menu.index'),
+'icon' => 'menu',
+'active' => request()->routeIs('menu.index'),
+'disabled' => false,
+];
+} else {
+$dockItems = [
+[
+'label' => 'Beranda',
+'url' => route('dashboard'),
+'icon' => 'home',
+'active' => request()->routeIs('dashboard'),
+'disabled' => false,
+],
+[
+'label' => 'Kelas',
+'url' => route('pengajaran.kelas.index'),
+'icon' => 'kelas',
+'active' => request()->routeIs('pengajaran.kelas.*'),
+'disabled' => false,
+],
+[
+'label' => 'Jadwal',
+'url' => route('jadwal.public.index'),
+'icon' => 'calendar',
+'active' => request()->routeIs('jadwal.public.index'),
+'disabled' => false,
+],
+[
+'label' => 'Laporan',
+'url' => route('laporan.index'),
+'icon' => 'chart',
+'active' => request()->routeIs('laporan.*'),
+'disabled' => false,
+],
+[
+'label' => 'Menu',
+'url' => route('menu.index'),
+'icon' => 'menu',
+'active' => request()->routeIs('menu.index'),
+'disabled' => false,
+],
+];
+}
+
+$dockIconSvgs = [
+'home' => '<svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+</svg>',
+'user' => '<svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+</svg>',
+'kelas' => '<svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path>
+</svg>',
+'calendar' => '<svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+</svg>',
+'chart' => '<svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+</svg>',
+'menu' => '<svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+</svg>',
+];
+@endphp
+
+<footer class="fixed bottom-0 left-0 z-10 w-full shadow-md md:hidden">
+    <div class="relative mx-auto flex max-w-screen-lg flex-col items-center py-3">
+        <div id="mobile-dock-root" data-items='@json($dockItems)' class="w-full"></div>
     </div>
-    @else
-    <!-- Bottom Nav Default untuk Role Lain -->
-    <div class="grid h-16 max-w-lg grid-cols-5 mx-auto">
-        <a href="{{ route('dashboard') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium transition-all duration-200 {{ request()->routeIs('dashboard') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <div class="relative">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                </svg>
-                @if(request()->routeIs('dashboard'))
-                <div class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
-                @endif
-            </div>
-            <span class="text-xs font-medium">Beranda</span>
-        </a>
-
-        <a href="{{ route('pengajaran.kelas.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium transition-all duration-200 {{ request()->routeIs('pengajaran.kelas.*') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <div class="relative">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path>
-                </svg>
-                @if(request()->routeIs('pengajaran.kelas.*'))
-                <div class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
-                @endif
-            </div>
-            <span class="text-xs font-medium">Kelas</span>
-        </a>
-
-        <a href="{{ route('jadwal.public.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium transition-all duration-200 {{ request()->routeIs('jadwal.public.index') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <div class="relative">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-                @if(request()->routeIs('jadwal.public.index'))
-                <div class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
-                @endif
-            </div>
-            <span class="text-xs font-medium">Jadwal</span>
-        </a>
-
-        <a href="{{ route('laporan.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium transition-all duration-200 {{ request()->routeIs('laporan.*') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <div class="relative">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                @if(request()->routeIs('laporan.*'))
-                <div class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
-                @endif
-            </div>
-            <span class="text-xs font-medium">Laporan</span>
-        </a>
-
-        <a href="{{ route('menu.index') }}" class="inline-flex flex-col items-center justify-center px-5 font-medium transition-all duration-200 {{ request()->routeIs('menu.index') ? 'text-red-600 bg-red-50' : 'text-slate-500 hover:bg-slate-50' }}">
-            <div class="relative">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-                @if(request()->routeIs('menu.index'))
-                <div class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
-                @endif
-            </div>
-            <span class="text-xs font-medium">Menu</span>
-        </a>
-    </div>
-    @endif
 </footer>

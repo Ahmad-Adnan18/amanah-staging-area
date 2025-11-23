@@ -25,6 +25,17 @@
                 ['route' => 'pengajaran.rekapan-harian.laporan', 'roles' => ['admin','pengajaran','pengasuhan','kesehatan','ustadz_umum'], 'icon' => 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'label' => 'Laporan Absensi'],
                 ]
                 ],
+                // ==================================
+                // [BARU] GRUP UBUDIYAH
+                // ==================================
+                'Ubudiyah' => [
+                'color' => 'emerald', // Warna baru
+                'items' => [
+                ['route' => 'ubudiyah.index', 'roles' => ['admin','ubudiyah'], 'icon' => 'M12 2l9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9l9-7z M9 22V12h6v10 M12 2v7', 'label' => 'Setoran Tahfidz'],
+                ['route' => 'ubudiyah.mutabaah', 'roles' => ['admin','ubudiyah'], 'icon' => 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'label' => 'Laporan Tahfidz'],
+                ['route' => 'admin.master-data.surats.index', 'roles' => ['admin','ubudiyah'], 'icon' => 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.523 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.523 18.246 18 16.5 18s-3.332.477-4.5 1.253', 'label' => 'Manajemen Surat'],
+                ]
+                ],
                 'Penjadwalan' => [
                 'color' => 'amber',
                 'items' => [
@@ -42,6 +53,12 @@
                 ['route' => 'admin.users.index', 'roles' => ['admin'], 'icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z', 'label' => 'Manajemen User'],
                 ['route' => 'pengajaran.jabatan.index', 'roles' => ['admin'], 'icon' => 'M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2', 'label' => 'Manajemen Jabatan'],
                 ['route' => 'admin.settings.index', 'roles' => ['admin'], 'icon' => 'M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75', 'label' => 'Manajemen Aplikasi'],
+                ]
+                ],
+                'Konten' => [
+                'color' => 'green',
+                'items' => [
+                ['route' => 'slider.index', 'roles' => ['admin', 'dokumentasi'], 'icon' => 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z', 'label' => 'Manajemen Slider'],
                 ]
                 ],
                 'Akun' => [
@@ -76,10 +93,13 @@
                         {{-- PERBAIKAN: Gunakan class warna statis --}}
                         @if($color === 'blue')
                         <div class="w-2 h-8 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full"></div>
+                        @elseif($color === 'emerald') <div class="w-2 h-8 bg-gradient-to-b from-emerald-500 to-emerald-600 rounded-full"></div>
                         @elseif($color === 'amber')
                         <div class="w-2 h-8 bg-gradient-to-b from-amber-500 to-amber-600 rounded-full"></div>
                         @elseif($color === 'violet')
                         <div class="w-2 h-8 bg-gradient-to-b from-violet-500 to-violet-600 rounded-full"></div>
+                        @elseif($color === 'green')
+                        <div class="w-2 h-8 bg-gradient-to-b from-green-500 to-green-600 rounded-full"></div>
                         @elseif($color === 'slate')
                         <div class="w-2 h-8 bg-gradient-to-b from-slate-500 to-slate-600 rounded-full"></div>
                         @else
@@ -114,22 +134,25 @@
                             {{-- PERBAIKAN: Gunakan class warna statis untuk icon container --}}
                             @if($color === 'blue')
                             <div class="icon-container bg-blue-100 text-blue-600">
-                                @elseif($color === 'amber')
-                                <div class="icon-container bg-amber-100 text-amber-600">
-                                    @elseif($color === 'violet')
-                                    <div class="icon-container bg-violet-100 text-violet-600">
-                                        @elseif($color === 'slate')
-                                        <div class="icon-container bg-slate-100 text-slate-600">
-                                            @else
-                                            <div class="icon-container bg-gray-100 text-gray-600">
-                                                @endif
-                                                <svg class="w-6 h-6 transition-transform duration-300 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $item['icon'] }}"></path>
-                                                </svg>
-                                            </div>
-                                            {{-- Label --}}
-                                            <p class="menu-label">{{ $item['label'] }}</p>
-                                            <span class="ripple-effect absolute inset-0 rounded-xl pointer-events-none"></span>
+                                @elseif($color === 'emerald') <div class="icon-container bg-emerald-100 text-emerald-600">
+                                    @elseif($color === 'amber')
+                                    <div class="icon-container bg-amber-100 text-amber-600">
+                                        @elseif($color === 'violet')
+                                        <div class="icon-container bg-violet-100 text-violet-600">
+                                            @elseif($color === 'green')
+                                            <div class="icon-container bg-green-100 text-green-600">
+                                                @elseif($color === 'slate')
+                                                <div class="icon-container bg-slate-100 text-slate-600">
+                                                    @else
+                                                    <div class="icon-container bg-gray-100 text-gray-600">
+                                                        @endif
+                                                        <svg class="w-6 h-6 transition-transform duration-300 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $item['icon'] }}"></path>
+                                                        </svg>
+                                                    </div>
+                                                    {{-- Label --}}
+                                                    <p class="menu-label">{{ $item['label'] }}</p>
+                                                    <span class="ripple-effect absolute inset-0 rounded-xl pointer-events-none"></span>
                         </a>
                         @endif
                         @endif

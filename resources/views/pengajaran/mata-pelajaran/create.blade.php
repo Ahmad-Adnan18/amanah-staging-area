@@ -86,19 +86,7 @@
                                 </div>
                             </div>
 
-                            {{-- Pilihan Guru Pengampu dengan Tom-Select --}}
-                            <div>
-                                <label for="teacher_ids" class="block text-sm font-medium text-gray-700">Guru Pengampu</label>
-                                <select name="teacher_ids[]" id="teacher_ids" multiple placeholder="Cari dan pilih guru..." autocomplete="off" class="mt-1">
-                                    @foreach ($teachers as $teacher)
-                                        <option value="{{ $teacher->id }}" {{ in_array($teacher->id, old('teacher_ids', [])) ? 'selected' : '' }}>
-                                            {{ $teacher->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <p class="mt-2 text-sm text-gray-500">Anda bisa memilih lebih dari satu guru.</p>
-                                <x-input-error class="mt-2" :messages="$errors->get('teacher_ids')" />
-                            </div>
+
 
                         </div>
                         <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-4">
@@ -119,11 +107,6 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Initialize Tom-Select for teacher_ids
-            new TomSelect('#teacher_ids', {
-                plugins: ['remove_button'],
-                create: false,
-            });
             // Initialize Tom-Select for tingkatan with input support
             new TomSelect('#tingkatan', {
                 create: true,

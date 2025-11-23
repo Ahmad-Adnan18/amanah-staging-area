@@ -17,7 +17,7 @@
     
         public function viewAny(User $user): bool
         {
-            return in_array($user->role, ['admin', 'pengajaran','pengasuhan','kesehatan','ustadz_umum']);
+            return in_array($user->role, ['admin', 'pengajaran','pengasuhan','kesehatan','ustadz_umum','dokumentasi']);
         }
     
         public function create(User $user): bool

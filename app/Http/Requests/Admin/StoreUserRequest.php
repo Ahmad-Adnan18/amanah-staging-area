@@ -19,7 +19,7 @@ class StoreUserRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', Rule::in(['admin', 'pengasuhan', 'kesehatan', 'pengajaran', 'ustadz_umum','wali_santri'])],
+            'role' => ['required', Rule::in(['admin', 'pengasuhan', 'kesehatan', 'pengajaran', 'ustadz_umum','wali_santri', 'dokumentasi','ubudiyah'])],
         ];
     }
 }

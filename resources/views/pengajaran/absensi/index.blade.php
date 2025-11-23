@@ -226,8 +226,8 @@
                             </div>
                         </div>
 
-                        <!-- Tabel untuk Desktop -->
-                        <div class="hidden sm:block overflow-x-auto">
+                        <!-- Tabel Absensi -->
+                        <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-slate-200">
                                 <thead class="bg-slate-50">
                                     <tr>
@@ -266,38 +266,6 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                        </div>
-
-                        <!-- Card Layout untuk Mobile -->
-                        <div class="sm:hidden space-y-4 px-4 py-4">
-                            @foreach ($santris as $index => $santri)
-                            <div class="bg-white border border-slate-200 rounded-lg p-4">
-                                <input type="hidden" name="absensis[{{ $index }}][santri_id]" value="{{ $santri->id }}">
-                                <div class="font-medium text-slate-900">{{ $santri->nama }}</div>
-                                <div class="text-sm text-slate-500 mb-2">NIS: {{ $santri->nis }}</div>
-                                <div class="grid grid-cols-1 gap-2">
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700">Status</label>
-                                        <select name="absensis[{{ $index }}][status]" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 text-sm">
-                                            <option value="hadir" {{ optional($santri->absensis->first())->status === 'hadir' ? 'selected' : '' }}>Hadir</option>
-                                            <option value="izin" {{ optional($santri->absensis->first())->status === 'izin' ? 'selected' : '' }}>Izin</option>
-                                            <option value="sakit" {{ optional($santri->absensis->first())->status === 'sakit' ? 'selected' : '' }}>Sakit</option>
-                                            <option value="alfa" {{ optional($santri->absensis->first())->status === 'alfa' ? 'selected' : '' }}>Alfa</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700">Keterangan</label>
-                                        <input type="text" name="absensis[{{ $index }}][keterangan]" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 text-sm" value="{{ optional($santri->absensis->first())->keterangan ?? '' }}" />
-                                    </div>
-                                    @if ($santri->absensis->isNotEmpty())
-                                    <div class="flex space-x-2">
-                                        <button type="button" @click="openEditModal({ id: {{ $santri->absensis->first()->id }}, status: '{{ $santri->absensis->first()->status }}', keterangan: '{{ $santri->absensis->first()->keterangan }}' })" class="flex-1 rounded-md bg-blue-600 text-white py-2 text-sm hover:bg-blue-700" aria-label="Edit absensi untuk {{ $santri->nama }}">Edit</button>
-                                        <button type="button" @click="deleteAbsensi({{ $santri->absensis->first()->id }})" class="flex-1 rounded-md bg-red-600 text-white py-2 text-sm hover:bg-red-700" aria-label="Hapus absensi untuk {{ $santri->nama }}">Hapus</button>
-                                    </div>
-                                    @endif
-                                </div>
-                            </div>
-                            @endforeach
                         </div>
 
                         <div class="px-4 sm:px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end">

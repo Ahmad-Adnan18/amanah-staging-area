@@ -10,6 +10,13 @@
                         <p class="mt-1 text-sm md:text-base text-slate-600">Input jadwal secara cepat dengan grid yang dapat diedit</p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2 md:gap-3">
+                        <!-- Sync Ruangan Button - PERBAIKI STYLING -->
+                        <button type="button" onclick="fixRoomSync()" class="inline-flex items-center justify-center px-3 py-2 md:px-4 md:py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500 focus:bg-blue-700 active:bg-blue-800 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm">
+                            <svg class="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            <span class="text-xs">Sync Ruangan</span>
+                        </button>
                         <!-- Bulk Actions -->
                         <button type="button" id="bulkSaveBtn" class="inline-flex items-center justify-center px-3 py-2 md:px-4 md:py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500 transition-all duration-200 transform hover:scale-105">
                             <svg class="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -17,9 +24,6 @@
                             </svg>
                             <span class="text-xs">Simpan Semua</span>
                         </button>
-                        <a href="{{ route('admin.scheduling.manual.create') }}" class="inline-flex items-center justify-center px-3 py-2 md:px-4 md:py-2 bg-red-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-600 transition-all duration-200 transform hover:scale-105">
-                            <span class="text-xs">+ Tambah Manual</span>
-                        </a>
                     </div>
                 </div>
 
@@ -68,33 +72,62 @@
 
                 <!-- Bulk Edit Panel -->
                 <div id="bulkEditPanel" class="hidden border-t border-slate-200 bg-slate-50 p-3 md:p-4">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-0">
-                        <div class="text-center md:text-left">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
+                        <div class="flex-shrink-0 text-center md:text-left">
                             <h4 class="font-semibold text-gray-900">Bulk Edit</h4>
                             <p class="text-xs md:text-sm text-gray-600" id="selectedCellsCount">0 sel terpilih</p>
                         </div>
-                        <div class="flex flex-col sm:flex-row gap-2 md:gap-2">
-                            <select id="bulkSubject" class="w-full sm:w-auto text-xs md:text-sm border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                <option value="">Pilih Mapel</option>
-                                @foreach($subjects as $subject)
-                                <option value="{{ $subject->id }}">{{ $subject->nama_pelajaran }}</option>
-                                @endforeach
-                            </select>
-                            <select id="bulkTeacher" class="w-full sm:w-auto text-xs md:text-sm border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                <option value="">Pilih Guru</option>
-                                @foreach($teachers as $teacher)
-                                <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
-                                @endforeach
-                            </select>
-                            <select id="bulkRoom" class="w-full sm:w-auto text-xs md:text-sm border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                <option value="">Pilih Ruangan</option>
-                                @foreach($rooms as $room)
-                                <option value="{{ $room->id }}">{{ $room->name }}</option>
-                                @endforeach
-                            </select>
-                            <button type="button" id="applyBulkBtn" class="w-full sm:w-auto px-3 py-2 bg-blue-600 text-white rounded-md text-xs md:text-sm hover:bg-blue-500 transition-all duration-200 transform hover:scale-105">
-                                Terapkan
-                            </button>
+                        <div class="bulk-edit-controls-container w-full md:w-auto">
+                            <div class="flex flex-col sm:flex-row gap-3 md:gap-3 flex-wrap md:flex-nowrap">
+                                <div class="bulk-select-container w-full sm:w-48 md:w-52">
+                                    <select id="bulkSubject" class="w-full text-xs md:text-sm border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 tom-select-subject">
+                                        <option value="">Pilih Mapel</option>
+                                        @php
+                                        $uniqueSubjects = [];
+                                        @endphp
+                                        @foreach($subjects as $subject)
+                                        @php
+                                        $key = $subject->nama_pelajaran . '|' . $subject->tingkatan;
+                                        @endphp
+                                        @if(!in_array($key, $uniqueSubjects))
+                                        @php
+                                        $uniqueSubjects[] = $key;
+                                        @endphp
+                                        <option value="{{ $subject->id }}">{{ $subject->nama_pelajaran }} ({{ $subject->tingkatan }})</option>
+                                        @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="bulk-select-container w-full sm:w-48 md:w-52">
+                                    <select id="bulkTeacher" class="w-full text-xs md:text-sm border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 tom-select-teacher">
+                                        <option value="">Pilih Guru</option>
+                                        @php
+                                        $uniqueTeachers = [];
+                                        @endphp
+                                        @foreach($teachers as $teacher)
+                                        @php
+                                        $key = $teacher->name . '|' . $teacher->teacher_code;
+                                        @endphp
+                                        @if(!in_array($key, $uniqueTeachers))
+                                        @php
+                                        $uniqueTeachers[] = $key;
+                                        @endphp
+                                        <option value="{{ $teacher->id }}">{{ $teacher->name }} ({{ $teacher->teacher_code }})</option>
+                                        @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="bulk-info-container w-full sm:w-auto flex-grow">
+                                    <div class="w-full text-xs md:text-sm border-gray-300 rounded-md bg-gray-100 p-2 md:p-2.5 text-center text-gray-700 h-full flex items-center justify-center min-h-[42px] md:min-h-[46px]" id="bulkRoomInfo">
+                                        Ruangan ditentukan otomatis dari kelas
+                                    </div>
+                                </div>
+                                <div class="bulk-button-container w-full sm:w-auto">
+                                    <button type="button" id="applyBulkBtn" class="w-full px-3 py-2 bg-blue-600 text-white rounded-md text-xs md:text-sm hover:bg-blue-500 transition-all duration-200 transform hover:scale-105">
+                                        Terapkan
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -166,10 +199,21 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Mata Pelajaran</label>
                             <div class="relative">
-                                <select name="mata_pelajaran_id" id="edit_mata_pelajaran_id" required class="w-full pl-3 pr-8 sm:pr-10 py-2 text-sm sm:text-base border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200">
+                                <select name="mata_pelajaran_id" id="edit_mata_pelajaran_id" required class="w-full pl-3 pr-8 sm:pr-10 py-2 text-sm sm:text-base border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 tom-select-subject">
                                     <option value="">Pilih Mata Pelajaran</option>
+                                    @php
+                                    $uniqueSubjects = [];
+                                    @endphp
                                     @foreach($subjects as $subject)
-                                    <option value="{{ $subject->id }}">{{ $subject->nama_pelajaran }}</option>
+                                    @php
+                                    $key = $subject->nama_pelajaran . '|' . $subject->tingkatan;
+                                    @endphp
+                                    @if(!in_array($key, $uniqueSubjects))
+                                    @php
+                                    $uniqueSubjects[] = $key;
+                                    @endphp
+                                    <option value="{{ $subject->id }}">{{ $subject->nama_pelajaran }} ({{ $subject->tingkatan }})</option>
+                                    @endif
                                     @endforeach
                                 </select>
                                 <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
@@ -184,10 +228,21 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Guru</label>
                             <div class="relative">
-                                <select name="teacher_id" id="edit_teacher_id" required class="w-full pl-3 pr-8 sm:pr-10 py-2 text-sm sm:text-base border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200">
+                                <select name="teacher_id" id="edit_teacher_id" required class="w-full pl-3 pr-8 sm:pr-10 py-2 text-sm sm:text-base border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 tom-select-teacher">
                                     <option value="">Pilih Guru</option>
+                                    @php
+                                    $uniqueTeachers = [];
+                                    @endphp
                                     @foreach($teachers as $teacher)
-                                    <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                                    @php
+                                    $key = $teacher->name . '|' . $teacher->teacher_code;
+                                    @endphp
+                                    @if(!in_array($key, $uniqueTeachers))
+                                    @php
+                                    $uniqueTeachers[] = $key;
+                                    @endphp
+                                    <option value="{{ $teacher->id }}">{{ $teacher->name }} ({{ $teacher->teacher_code }})</option>
+                                    @endif
                                     @endforeach
                                 </select>
                                 <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
@@ -198,22 +253,13 @@
                             </div>
                         </div>
 
-                        <!-- Ruangan -->
+                        <!-- Ruangan (diambil otomatis dari kelas) -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Ruangan</label>
-                            <div class="relative">
-                                <select name="room_id" id="edit_room_id" required class="w-full pl-3 pr-8 sm:pr-10 py-2 text-sm sm:text-base border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200">
-                                    <option value="">Pilih Ruangan</option>
-                                    @foreach($rooms as $room)
-                                    <option value="{{ $room->id }}">{{ $room->name }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                                    <svg class="w-3 h-3 sm:w-4 sm:w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
+                            <div class="w-full pl-3 pr-8 sm:pr-10 py-2 text-sm sm:text-base border-gray-300 rounded-lg bg-gray-100 text-gray-700" id="edit_room_info">
+                                Akan otomatis ditentukan dari kelas
                             </div>
+                            <input type="hidden" name="room_id" id="edit_room_id" value="">
                         </div>
                     </div>
                 </form>
@@ -237,6 +283,193 @@
 
     @push('scripts')
     <script>
+        // Function untuk sync ruangan
+        // Function untuk sync ruangan - PAKAI TOAST NOTIFICATION
+        function fixRoomSync() {
+            // Gunakan confirm dialog yang sama seperti lainnya
+            const dialogId = 'confirm-dialog-' + Date.now();
+            const dialog = document.createElement('div');
+            dialog.id = dialogId;
+            dialog.className = 'fixed inset-0 z-50 overflow-y-auto';
+            dialog.innerHTML = `
+        <div class="flex items-center justify-center min-h-screen px-3 sm:px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 backdrop-blur-sm"></div>
+            <div class="relative inline-block w-full max-w-md px-3 sm:px-4 pt-4 pb-3 sm:pt-5 sm:pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-xl sm:rounded-2xl shadow-xl sm:my-8 sm:align-middle sm:p-6">
+                <div class="flex items-center mb-3 sm:mb-4">
+                    <div class="flex items-center justify-center flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-yellow-100 rounded-lg">
+                        <svg class="w-4 h-4 sm:w-6 sm:h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3 sm:ml-4">
+                        <h3 class="text-base sm:text-lg font-bold text-gray-900">Sync Ruangan</h3>
+                        <p class="text-xs sm:text-sm text-gray-500">Yakin ingin sync semua ruangan jadwal dengan ruangan kelas? Ini akan memperbaiki ruangan yang tidak sesuai.</p>
+                    </div>
+                </div>
+                <div class="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
+                    <button type="button" class="w-full sm:w-auto px-3 sm:px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200" id="cancelBtn">
+                        Batal
+                    </button>
+                    <button type="button" class="w-full sm:w-auto px-3 sm:px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 transition-all duration-200" id="confirmBtn">
+                        Ya, Sync Ruangan
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+            document.body.appendChild(dialog);
+
+            // Event listener dengan closure yang benar
+            const cancelBtn = dialog.querySelector('#cancelBtn');
+            const confirmBtn = dialog.querySelector('#confirmBtn');
+
+            const closeDialog = () => {
+                dialog.classList.add('opacity-0');
+                setTimeout(() => {
+                    if (dialog.parentNode) dialog.remove();
+                }, 300);
+            };
+
+            cancelBtn.addEventListener('click', closeDialog);
+
+            confirmBtn.addEventListener('click', () => {
+                closeDialog();
+
+                // Show loading state pada tombol
+                const button = event.target.closest('button') || document.querySelector('button[onclick="fixRoomSync()"]');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Syncing...';
+                button.disabled = true;
+
+                // Proses sync ruangan
+                fetch('/admin/scheduling/manual/fix-rooms', {
+                        method: 'POST'
+                        , headers: {
+                            'Content-Type': 'application/json'
+                            , 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            , 'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        // Cek jika response adalah HTML (error)
+                        const contentType = response.headers.get('content-type');
+                        if (!contentType || !contentType.includes('application/json')) {
+                            return response.text().then(html => {
+                                throw new Error('Server returned HTML instead of JSON. Might be authentication issue.');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Gunakan toast success seperti di class ScheduleGrid
+                            if (window.scheduleGrid) {
+                                window.scheduleGrid.showSuccess('✅ ' + data.message);
+                            } else {
+                                // Fallback jika scheduleGrid tidak tersedia
+                                showCustomToast('✅ ' + data.message, 'success');
+                            }
+
+                            // Reload grid untuk menampilkan perubahan
+                            if (window.scheduleGrid) {
+                                window.scheduleGrid.loadGrid();
+                            }
+                        } else {
+                            if (window.scheduleGrid) {
+                                window.scheduleGrid.showError('❌ ' + data.message);
+                            } else {
+                                showCustomToast('❌ ' + data.message, 'error');
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Sync error:', error);
+                        if (window.scheduleGrid) {
+                            window.scheduleGrid.showError('❌ Terjadi error: ' + error.message);
+                        } else {
+                            showCustomToast('❌ Terjadi error: ' + error.message, 'error');
+                        }
+                    })
+                    .finally(() => {
+                        // Restore button
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    });
+            });
+
+            // Close on backdrop click
+            dialog.addEventListener('click', (e) => {
+                if (e.target === dialog) closeDialog();
+            });
+
+            // Escape key
+            const escapeHandler = (e) => {
+                if (e.key === 'Escape') {
+                    closeDialog();
+                    document.removeEventListener('keydown', escapeHandler);
+                }
+            };
+            document.addEventListener('keydown', escapeHandler);
+        }
+
+        // Fallback function untuk toast jika scheduleGrid tidak tersedia
+        function showCustomToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastId = 'toast-' + Date.now();
+
+            const icons = {
+                success: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`
+                , error: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`
+                , info: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
+            };
+
+            const colors = {
+                success: 'bg-green-50 border-green-200 text-green-800'
+                , error: 'bg-red-50 border-red-200 text-red-800'
+                , info: 'bg-blue-50 border-blue-200 text-blue-800'
+            };
+
+            const toast = document.createElement('div');
+            toast.id = toastId;
+            toast.className = `p-3 rounded-lg border shadow-lg transform transition-all duration-300 ${colors[type]} opacity-0 translate-x-full text-sm`;
+            toast.innerHTML = `
+        <div class="flex items-center">
+            <div class="flex-shrink-0">
+                ${icons[type]}
+            </div>
+            <div class="ml-2 flex-1">
+                <p class="text-sm font-medium">${message}</p>
+            </div>
+            <button type="button" class="ml-2 -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex h-6 w-6 hover:bg-gray-100 transition-colors duration-200" onclick="document.getElementById('${toastId}').remove()">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    `;
+
+            toastContainer.appendChild(toast);
+
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', 'translate-x-full');
+                toast.classList.add('opacity-100', 'translate-x-0');
+            }, 10);
+
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.classList.remove('opacity-100', 'translate-x-0');
+                    toast.classList.add('opacity-0', 'translate-x-full');
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.remove();
+                        }
+                    }, 300);
+                }
+            }, 4000);
+        }
         class ScheduleGrid {
             constructor() {
                 this.selectedCells = new Set();
@@ -469,17 +702,42 @@
                 const modalTitle = document.getElementById('modalTitle');
                 modalTitle.textContent = scheduleId ? 'Edit Jadwal' : 'Tambah Jadwal Baru';
 
+                // Gunakan variabel kelas yang sudah didefinisikan sebelumnya
+                // Dapatkan room_id berdasarkan kelas
+
                 if (scheduleId) {
                     const schedule = this.findScheduleById(scheduleId);
                     if (schedule) {
                         document.getElementById('edit_mata_pelajaran_id').value = schedule.mata_pelajaran_id;
                         document.getElementById('edit_teacher_id').value = schedule.teacher_id;
-                        document.getElementById('edit_room_id').value = schedule.room_id;
+
+                        // Set room_id secara otomatis berdasarkan kelas
+                        document.getElementById('edit_room_id').value = kelas ? kelas.room_id : '';
+
+                        // Tampilkan info ruangan di elemen info
+                        const roomInfo = document.getElementById('edit_room_info');
+                        if (kelas && kelas.room) {
+                            roomInfo.textContent = `${kelas.room.name} (${kelas.room.type})`;
+                            roomInfo.className = 'w-full pl-3 pr-8 sm:pr-10 py-2 text-sm sm:text-base border-gray-300 rounded-lg bg-green-100 text-green-800';
+                        } else {
+                            roomInfo.textContent = 'Tidak ada ruangan ditentukan untuk kelas ini';
+                            roomInfo.className = 'w-full pl-3 pr-8 sm:pr-10 py-2 text-sm sm:text-base border-gray-300 rounded-lg bg-yellow-100 text-yellow-800';
+                        }
                     }
                 } else {
                     document.getElementById('edit_mata_pelajaran_id').value = '';
                     document.getElementById('edit_teacher_id').value = '';
-                    document.getElementById('edit_room_id').value = '';
+                    document.getElementById('edit_room_id').value = kelas ? kelas.room_id : '';
+
+                    // Tampilkan info ruangan berdasarkan kelas yang terpilih
+                    const roomInfo = document.getElementById('edit_room_info');
+                    if (kelas && kelas.room) {
+                        roomInfo.textContent = `${kelas.room.name} (${kelas.room.type})`;
+                        roomInfo.className = 'w-full pl-3 pr-8 sm:pr-10 py-2 text-sm sm:text-base border-gray-300 rounded-lg bg-green-100 text-green-800';
+                    } else {
+                        roomInfo.textContent = 'Tidak ada ruangan ditentukan untuk kelas ini';
+                        roomInfo.className = 'w-full pl-3 pr-8 sm:pr-10 py-2 text-sm sm:text-base border-gray-300 rounded-lg bg-yellow-100 text-yellow-800';
+                    }
                 }
 
                 const modal = document.getElementById('quickEditModal');
@@ -507,10 +765,9 @@
 
                 const subject = document.getElementById('edit_mata_pelajaran_id').value;
                 const teacher = document.getElementById('edit_teacher_id').value;
-                const room = document.getElementById('edit_room_id').value;
 
-                if (!subject || !teacher || !room) {
-                    this.showError('Semua field wajib diisi.');
+                if (!subject || !teacher) {
+                    this.showError('Mata pelajaran dan guru wajib diisi.');
                     return;
                 }
 
@@ -586,9 +843,8 @@
             async applyBulkEdit() {
                 const subjectId = document.getElementById('bulkSubject').value;
                 const teacherId = document.getElementById('bulkTeacher').value;
-                const roomId = document.getElementById('bulkRoom').value;
-                if (!subjectId || !teacherId || !roomId) {
-                    this.showError('Harap pilih semua field untuk bulk edit');
+                if (!subjectId || !teacherId) {
+                    this.showError('Harap pilih mata pelajaran dan guru untuk bulk edit');
                     return;
                 }
                 this.showConfirmDialog(
@@ -597,13 +853,15 @@
                     , async () => {
                         const updates = Array.from(this.selectedCells).map(cellId => {
                             const [kelasId, day, timeSlot] = cellId.split('-');
+                            // Dapatkan room_id berdasarkan kelas
+                            const kelas = this.currentData.classes.find(k => k.id == parseInt(kelasId));
                             return {
                                 kelas_id: parseInt(kelasId)
                                 , day_of_week: parseInt(day)
                                 , time_slot: parseInt(timeSlot)
                                 , mata_pelajaran_id: parseInt(subjectId)
                                 , teacher_id: parseInt(teacherId)
-                                , room_id: parseInt(roomId)
+                                , room_id: kelas ? kelas.room_id : null
                             };
                         });
                         try {
@@ -910,6 +1168,196 @@
             window.scheduleGrid = new ScheduleGrid();
         });
 
+        // Initialize Tom Select for bulk edit dropdowns
+        document.addEventListener('DOMContentLoaded', function() {
+            // Custom rendering for Tom Select items
+            const customRender = {
+                option: function(data, escape) {
+                    return '<div class="py-2 px-3 hover:bg-blue-50 cursor-pointer">' +
+                        '<span class="block text-sm font-medium text-gray-900">' + escape(data.text) + '</span>' +
+                        '</div>';
+                }
+                , item: function(data, escape) {
+                    return '<div class="py-1 px-2 text-sm font-medium text-blue-800 bg-blue-100 rounded">' + escape(data.text) + '</div>';
+                }
+            };
+
+            // Initialize Tom Select for bulkSubject
+            new TomSelect('#bulkSubject', {
+                plugins: ['dropdown_input']
+                , create: false
+                , allowEmptyOption: true
+                , sortField: 'text'
+                , maxOptions: 1000
+                , dropdownParent: 'body'
+                , render: customRender
+            });
+
+            // Initialize Tom Select for bulkTeacher
+            new TomSelect('#bulkTeacher', {
+                plugins: ['dropdown_input']
+                , create: false
+                , allowEmptyOption: true
+                , sortField: 'text'
+                , maxOptions: 1000
+                , dropdownParent: 'body'
+                , render: customRender
+            });
+
+            // Initialize Tom Select for quick edit modal dropdowns
+            new TomSelect('#edit_mata_pelajaran_id', {
+                plugins: ['dropdown_input']
+                , create: false
+                , allowEmptyOption: true
+                , sortField: 'text'
+                , maxOptions: 1000
+                , dropdownParent: 'body'
+                , render: customRender
+            });
+
+            new TomSelect('#edit_teacher_id', {
+                plugins: ['dropdown_input']
+                , create: false
+                , allowEmptyOption: true
+                , sortField: 'text'
+                , maxOptions: 1000
+                , dropdownParent: 'body'
+                , render: customRender
+            });
+        });
+
     </script>
+
+    <!-- Tom Select CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+
+    <!-- Custom Tom Select Styles -->
+    <style>
+        /* Tom Select Custom Styles */
+        .ts-control {
+            @apply border-gray-300 rounded-lg shadow-sm focus: ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200;
+        }
+
+        .ts-wrapper.single .ts-control,
+        .ts-wrapper.multi .ts-control {
+            @apply py-2 px-3 text-sm sm: text-base;
+        }
+
+        .ts-wrapper.single .ts-control:focus-within,
+        .ts-wrapper.multi .ts-control:focus-within {
+            @apply border-red-500 ring-2 ring-red-500 ring-opacity-20;
+        }
+
+        .ts-dropdown {
+            @apply border-gray-300 rounded-lg shadow-lg mt-1;
+        }
+
+        .ts-dropdown .option:hover,
+        .ts-dropdown .option:focus,
+        .ts-dropdown .active {
+            @apply bg-red-50 text-red-800;
+        }
+
+        .ts-dropdown .option.selected {
+            @apply bg-red-100 text-red-900 font-medium;
+        }
+
+        .ts-wrapper.multi .ts-control>div {
+            @apply bg-red-100 text-red-800 rounded px-2 py-1 text-sm font-medium;
+        }
+
+        .ts-wrapper.multi .ts-control>div.active {
+            @apply bg-red-200;
+        }
+
+        .ts-wrapper.single .ts-control .item,
+        .ts-wrapper.multi .ts-control .item {
+            @apply text-sm sm: text-base;
+        }
+
+        /* Fixed width for bulk edit inputs */
+        .bulk-select-container .ts-wrapper .ts-control {
+            @apply min-w-[180px] md: min-w-[208px];
+        }
+
+        /* Info container styling */
+        .bulk-info-container .ts-control {
+            @apply min-h-[42px] md: min-h-[46px];
+        }
+
+        /* Placeholder styling */
+        .ts-control .placeholder {
+            @apply text-gray-500 truncate;
+        }
+
+        /* Ensure consistent height */
+        .ts-wrapper.single .ts-control,
+        .ts-wrapper.multi .ts-control {
+            @apply min-h-[42px] md: min-h-[46px];
+        }
+
+        /* Dropdown input styling */
+        .ts-dropdown .dropdown-input {
+            @apply py-2 px-3 text-sm border-b border-gray-200 focus: outline-none focus:ring-0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+
+            .ts-wrapper.single .ts-control,
+            .ts-wrapper.multi .ts-control {
+                @apply py-1.5 px-2 text-sm;
+            }
+
+            .ts-wrapper.multi .ts-control>div {
+                @apply px-1.5 py-0.5 text-xs;
+            }
+
+            /* Fixed width for mobile */
+            .bulk-select-container .ts-wrapper .ts-control {
+                @apply min-w-[100px] md: min-w-[120px];
+            }
+
+            .ts-wrapper.single .ts-control,
+            .ts-wrapper.multi .ts-control {
+                @apply min-h-[38px] md: min-h-[42px];
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 480px) {
+            .bulk-select-container .ts-wrapper .ts-control {
+                @apply min-w-[90px];
+            }
+
+            .ts-wrapper.single .ts-control,
+            .ts-wrapper.multi .ts-control {
+                @apply min-h-[36px] py-1 px-1.5 text-xs;
+            }
+        }
+
+        /* Medium devices */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .bulk-select-container .ts-wrapper .ts-control {
+                @apply min-w-[140px];
+            }
+        }
+
+        /* Large devices */
+        @media (min-width: 1024px) {
+            .bulk-select-container .ts-wrapper .ts-control {
+                @apply min-w-[208px];
+            }
+        }
+
+        /* Desktop specific adjustments */
+        @media (min-width: 1280px) {
+            .bulk-select-container .ts-wrapper .ts-control {
+                @apply min-w-[220px];
+            }
+        }
+
+    </style>
+
     @endpush
 </x-app-layout>

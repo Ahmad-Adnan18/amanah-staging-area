@@ -69,10 +69,21 @@ class ScheduleSwapController extends Controller
             DB::transaction(function () use ($source, $target) {
                 $targetDay = $target->day_of_week;
                 $targetSlot = $target->time_slot;
-                $targetRoom = $target->room_id;
 
-                $target->update(['day_of_week' => $source->day_of_week, 'time_slot' => $source->time_slot, 'room_id' => $source->room_id]);
-                $source->update(['day_of_week' => $targetDay, 'time_slot' => $targetSlot, 'room_id' => $targetRoom]);
+                // Saat menukar jadwal, room_id tetap harus sesuai dengan kelas masing-masing
+                $sourceKelas = Kelas::find($source->kelas_id);
+                $targetKelas = Kelas::find($target->kelas_id);
+
+                $target->update([
+                    'day_of_week' => $source->day_of_week, 
+                    'time_slot' => $source->time_slot, 
+                    'room_id' => $sourceKelas->room_id
+                ]);
+                $source->update([
+                    'day_of_week' => $targetDay, 
+                    'time_slot' => $targetSlot, 
+                    'room_id' => $targetKelas->room_id
+                ]);
             });
 
             return redirect()->route('admin.schedule.view.grid')->with('success', 'Jadwal berhasil ditukar.');

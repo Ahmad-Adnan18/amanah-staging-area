@@ -16,9 +16,7 @@ class RekapanHarianController extends Controller
 {
     public function index(Request $request)
     {
-        if (!in_array(Auth::user()->role, ['pengajaran', 'teacher', 'ustadz_umum', 'pengasuhan', 'kesehatan', 'admin'])) {
-            abort(403, 'Unauthorized action.');
-        }
+        
 
         $kelasList = Kelas::orderBy('nama_kelas')->get();
         $selectedKelas = $request->kelas_id;
@@ -108,11 +106,7 @@ class RekapanHarianController extends Controller
 
     public function laporan(Request $request)
     {
-        // Manual authorization check
-        if (!in_array(Auth::user()->role, ['pengajaran', 'teacher', 'ustadz_umum', 'pengasuhan', 'kesehatan', 'admin'])) {
-            abort(403, 'Unauthorized action.');
-        }
-
+        
         $kelasList = Kelas::orderBy('nama_kelas')->get();
         $rekapData = collect();
         $summary = null;

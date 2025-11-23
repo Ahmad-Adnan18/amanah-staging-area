@@ -89,6 +89,8 @@ class NilaiController extends Controller
 
     /**
      * Menangani permintaan export leger nilai ke Excel.
+     * Menghasilkan file Excel leger berdasarkan filter yang diberikan.
+     * Membersihkan karakter-karakter yang tidak valid dari nama file.
      */
     public function exportLeger(Request $request)
     {
@@ -105,7 +107,15 @@ class NilaiController extends Controller
         $kelas = Kelas::findOrFail($filters['kelas_id']);
         $mataPelajaran = MataPelajaran::findOrFail($filters['mata_pelajaran_id']);
 
-        $fileName = "Leger {$filters['jenis_penilaian']} - {$mataPelajaran->nama_pelajaran} - {$kelas->nama_kelas}.xlsx";
+        // Sanitize the filename to prevent invalid characters
+        $jenisPenilaian = str_replace('_', ' ', $filters['jenis_penilaian']);
+        $fileName = "Leger " . $jenisPenilaian . " - " . $mataPelajaran->nama_pelajaran . " - " . $kelas->nama_kelas . ".xlsx";
+
+        // Remove any remaining invalid characters from filename
+        $fileName = str_replace(['/', '\\'], ['-', '-'], $fileName);
+
+        // Also clean up any other potentially problematic characters
+        $fileName = preg_replace('/[<>:"|?*]/', '-', $fileName);
 
         return Excel::download(new LegerNilaiExport($filters, $kelas, $mataPelajaran), $fileName);
     }

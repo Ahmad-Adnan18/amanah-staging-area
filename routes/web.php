@@ -33,6 +33,8 @@ use App\Http\Controllers\Admin\Scheduling\ScheduleManualController;
 use App\Http\Controllers\Admin\AppSettingController;
 // TAMBAHKAN USE STATEMENT UNTUK CONTROLLER BARU
 use App\Http\Controllers\Kesehatan\RiwayatPenyakitController;
+use App\Http\Controllers\Pengajaran\TahfidzController;
+use App\Http\Controllers\Admin\MasterData\SuratController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -99,6 +101,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('absensi/{absensi}', [AbsensiController::class, 'destroy'])->name('absensi.destroy');
         Route::get('absensi/laporan-periodik', [AbsensiController::class, 'laporanPeriodik'])->name('absensi.laporan-periodik');
         Route::get('absensi/export-periodik', [AbsensiController::class, 'exportPeriodik'])->name('absensi.export-periodik');
+        
     });
 
     // --- RUTE UNTUK MANAJEMEN PERIZINAN ---
@@ -141,6 +144,10 @@ Route::middleware('auth')->group(function () {
             Route::get('teacher-availability', [TeacherAvailabilityController::class, 'index'])->name('teacher-availability.index');
             Route::get('teacher-availability/{teacher}/edit', [TeacherAvailabilityController::class, 'edit'])->name('teacher-availability.edit');
             Route::put('teacher-availability/{teacher}', [TeacherAvailabilityController::class, 'update'])->name('teacher-availability.update');
+            // --- RUTE BARU UNTUK MANAJEMEN SURAT ---
+            Route::resource('surats', SuratController::class)
+                ->except('show') // Kita tidak perlu halaman 'show'
+                ->names('master-data.surats'); // Sesuaikan name prefix
         });
 
         // Rute untuk Aturan Penjadwalan
@@ -178,6 +185,10 @@ Route::middleware('auth')->group(function () {
             Route::post('/bulk-update', [ScheduleManualController::class, 'bulkUpdate'])->name('bulk.update');
             Route::post('/copy-pattern', [ScheduleManualController::class, 'copyPattern'])->name('copy.pattern');
             Route::delete('/quick-delete/{schedule}', [ScheduleManualController::class, 'quickDelete'])->name('quick.delete');
+
+            // TAMBAHKAN ROUTE INI UNTUK SYNC RUANGAN
+            Route::post('/fix-rooms', [ScheduleManualController::class, 'fixRoomSync'])->name('fix-rooms');
+            
         });
 
         // Rute untuk Sistem Hybrid (tetap di luar group manual)
@@ -235,6 +246,21 @@ Route::middleware('auth')->group(function () {
         Route::delete('/prestasi/{prestasi}', [PrestasiController::class, 'destroy'])->name('prestasi.destroy');
     });
 
+    // --- [BARU] GRUP RUTE UBUDIYAH ---
+    Route::prefix('ubudiyah')->name('ubudiyah.')->controller(TahfidzController::class)->group(function () {
+        // Halaman Input
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
+        Route::delete('/{setoran}', 'destroy')->name('destroy');
+        
+        // Halaman Laporan
+        Route::get('/mutabaah', 'mutabaah')->name('mutabaah');
+
+        // API Helpers
+        Route::get('/get-santri-by-kelas/{kelasId}', 'getSantriByKelas')->name('get-santri-by-kelas');
+        Route::get('/get-surat-list', 'getSuratList')->name('get-surat-list');
+    });
+
     // --- RUTE BARU UNTUK PUSAT MANAJEMEN SANTRI ---
     Route::prefix('manajemen-santri')->name('admin.santri-management.')->group(function () {
         Route::get('/', [SantriManagementController::class, 'index'])->name('index');
@@ -242,6 +268,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/import', [SantriManagementController::class, 'import'])->name('import.store');
     });
     Route::get('/jadwal/print/{type}/{id}', [PublicScheduleController::class, 'print'])->name('jadwal.public.print');
+    Route::get('/jadwal/print/pelajaran/{subjectId}', [PublicScheduleController::class, 'printSubjectSchedule'])->name('jadwal.public.print.subject');
 
     // --- RUTE BARU UNTUK MANAJEMEN INVENTARIS (Scoped per Room) ---
     Route::prefix('admin/rooms/{room}/inventory')->name('admin.rooms.inventory.')->group(function () {
@@ -260,6 +287,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan', [RekapanHarianController::class, 'laporan'])->name('laporan')->middleware('can:viewReport,App\Models\RekapanHarian');
         Route::post('/export', [RekapanHarianController::class, 'export'])->name('export');
     });
+
+    // Slider management routes
+    Route::prefix('slider')->name('slider.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\SliderController::class, 'indexView'])->name('index'); // Ini untuk view
+        Route::get('/data', [\App\Http\Controllers\SliderController::class, 'index'])->name('data'); // <--- PERBAIKI BAGIAN INI
+        Route::post('/store', [\App\Http\Controllers\SliderController::class, 'store'])->name('store');
+        Route::put('/{sliderItem}', [\App\Http\Controllers\SliderController::class, 'update'])->name('update');
+        Route::delete('/{sliderItem}', [\App\Http\Controllers\SliderController::class, 'destroy'])->name('destroy');
+    });
+
+    
 });
 
 require __DIR__ . '/auth.php';

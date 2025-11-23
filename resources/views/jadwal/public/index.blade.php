@@ -10,6 +10,7 @@
         [x-cloak] {
             display: none !important;
         }
+
     </style>
 
     <div class="bg-slate-50 min-h-screen">
@@ -31,6 +32,8 @@
                         <button @click="setActiveTab('guru')" :class="{ 'border-red-500 text-red-600': activeTab === 'guru', 'border-transparent text-gray-500 hover:text-gray-700': activeTab !== 'guru' }" class="flex-shrink-0 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Jadwal per Guru</button>
                         {{-- [NEW] Tab Guru Libur --}}
                         <button @click="setActiveTab('guru-libur')" :class="{ 'border-red-500 text-red-600': activeTab === 'guru-libur', 'border-transparent text-gray-500 hover:text-gray-700': activeTab !== 'guru-libur' }" class="flex-shrink-0 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Guru Libur</button>
+                        {{-- [NEW] Tab Jadwal per Pelajaran --}}
+                        <button @click="setActiveTab('pelajaran')" :class="{ 'border-red-500 text-red-600': activeTab === 'pelajaran', 'border-transparent text-gray-500 hover:text-gray-700': activeTab !== 'pelajaran' }" class="flex-shrink-0 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Jadwal per Pelajaran</button>
                     </nav>
                 </div>
                 <div class="p-4 sm:p-6">
@@ -48,9 +51,14 @@
                         <select x-ref="hariSelect" id="hari_select" placeholder="Pilih hari...">
                             <option value="">Pilih Hari</option>
                             @foreach($days as $key => $day)
-                                <option value="{{ $key }}">{{ $day }}</option>
+                            <option value="{{ $key }}">{{ $day }}</option>
                             @endforeach
                         </select>
+                    </div>
+                    {{-- [NEW] Dropdown Pilih Pelajaran --}}
+                    <div x-show="activeTab === 'pelajaran'" x-cloak>
+                        <label for="pelajaran_select" class="block text-sm font-medium text-gray-700 mb-1">Pilih Pelajaran</label>
+                        <select x-ref="pelajaranSelect" id="pelajaran_select" placeholder="Cari dan pilih pelajaran..."></select>
                     </div>
                 </div>
             </div>
@@ -69,7 +77,7 @@
                 {{-- [MOBILE] Layout diubah jadi flex-col di mobile, dan sm:flex-row di desktop --}}
                 <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
                     <h3 class="text-xl font-bold text-slate-800 text-center sm:text-left" x-text="scheduleTitle"></h3>
-                    
+
                     {{-- [MOBILE] Tombol-tombol dibuat vertikal dan full-width di mobile --}}
                     <div class="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                         <a :href="printUrl" target="_blank" class="inline-flex items-center gap-2 justify-center rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600">
@@ -108,10 +116,10 @@
                         </div>
                         @endforeach
                     </div>
-                    
+
                     <div class="mt-6">
                         <h5 class="font-bold mb-3 text-center text-sm">REKAPITULASI JAM MENGAJAR</h5>
-                        
+
                         {{-- Tampilan Tabel untuk DESKTOP --}}
                         <div class="hidden sm:block overflow-x-auto">
                             <table class="w-full border-collapse text-xs">
@@ -148,23 +156,23 @@
                                 <span class="text-slate-600">Sabtu:</span>
                                 <span class="font-semibold" x-text="teachingHoursSummary.sabtu + ' Jam'"></span>
                             </div>
-                             <div class="flex justify-between items-center">
+                            <div class="flex justify-between items-center">
                                 <span class="text-slate-600">Ahad:</span>
                                 <span class="font-semibold" x-text="teachingHoursSummary.ahad + ' Jam'"></span>
                             </div>
-                             <div class="flex justify-between items-center">
+                            <div class="flex justify-between items-center">
                                 <span class="text-slate-600">Senin:</span>
                                 <span class="font-semibold" x-text="teachingHoursSummary.senin + ' Jam'"></span>
                             </div>
-                             <div class="flex justify-between items-center">
+                            <div class="flex justify-between items-center">
                                 <span class="text-slate-600">Selasa:</span>
                                 <span class="font-semibold" x-text="teachingHoursSummary.selasa + ' Jam'"></span>
                             </div>
-                             <div class="flex justify-between items-center">
+                            <div class="flex justify-between items-center">
                                 <span class="text-slate-600">Rabu:</span>
                                 <span class="font-semibold" x-text="teachingHoursSummary.rabu + ' Jam'"></span>
                             </div>
-                             <div class="flex justify-between items-center">
+                            <div class="flex justify-between items-center">
                                 <span class="text-slate-600">Kamis:</span>
                                 <span class="font-semibold" x-text="teachingHoursSummary.kamis + ' Jam'"></span>
                             </div>
@@ -246,6 +254,49 @@
                     </div>
                 </div>
 
+                {{-- [NEW] Tampilan untuk PELAJARAN --}}
+                <div x-show="activeTab === 'pelajaran'" x-cloak>
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold" style="font-family: 'Times New Roman', serif;">جَدْوَلُ الْمَوَادِّ الْدِّرَاسِيَّة</h2>
+                        <h3 class="text-xl font-semibold" x-text="scheduleTitle"></h3>
+                    </div>
+
+                    {{-- Daftar Jadwal Pelajaran --}}
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50">
+                                    <th class="border border-slate-300 px-4 py-2 text-left font-semibold">No</th>
+                                    <th class="border border-slate-300 px-4 py-2 text-left font-semibold">Hari</th>
+                                    <th class="border border-slate-300 px-4 py-2 text-left font-semibold">Waktu</th>
+                                    <th class="border border-slate-300 px-4 py-2 text-left font-semibold">Kelas</th>
+                                    <th class="border border-slate-300 px-4 py-2 text-left font-semibold">Guru</th>
+                                    <th class="border border-slate-300 px-4 py-2 text-left font-semibold">Ruang</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="(daySchedules, dayIndex) in formattedSchedules" :key="dayIndex">
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="border border-slate-300 px-4 py-2" x-text="parseInt(dayIndex) + 1"></td>
+                                        <td class="border border-slate-300 px-4 py-2" x-text="daySchedules.day_name"></td>
+                                        <td class="border border-slate-300 px-4 py-2" x-text="'Jam ke-' + daySchedules.time_slot"></td>
+                                        <td class="border border-slate-300 px-4 py-2" x-text="daySchedules.class"></td>
+                                        <td class="border border-slate-300 px-4 py-2" x-text="daySchedules.teacher"></td>
+                                        <td class="border border-slate-300 px-4 py-2" x-text="daySchedules.room"></td>
+                                    </tr>
+                                </template>
+                                <template x-if="formattedSchedules.length === 0">
+                                    <tr>
+                                        <td colspan="6" class="border border-slate-300 px-4 py-4 text-center text-gray-500">
+                                            Tidak ada jadwal pelajaran pada pelajaran ini
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -253,66 +304,129 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('scheduleViewer', () => ({
-                activeTab: 'kelas',
-                viewMode: 'card',
-                selectedClass: '',
-                selectedTeacher: '',
-                selectedDay: '', // [NEW]
-                schedules: @json($scheduleData),
-                classes: @json($classes),
-                teachers: @json($teachers),
+                activeTab: 'kelas'
+                , viewMode: 'card'
+                , selectedClass: ''
+                , selectedTeacher: ''
+                , selectedDay: '', // [NEW]
+                selectedSubject: '', // [NEW]
+                schedules: @json($scheduleData)
+                , classes: @json($classes)
+                , teachers: @json($teachers)
+                , subjects: @json($subjects), // [NEW]
+                subjectNameToIds: @json($subjectNameToIds), // [NEW]
                 teachersDayOff: @json($teachersDayOff), // [NEW]
+                days: @json($days), // [NEW]
+                timeSlots: @json($timeSlots), // [NEW]
                 tomSelectInstances: {},
 
                 init() {
                     this.tomSelectInstances.kelas = new TomSelect(this.$refs.kelasSelect, {
-                        options: this.classes.map(c => ({ value: c.id, text: c.nama_kelas })),
-                        onChange: (value) => { this.selectedClass = value; }
+                        options: this.classes.map(c => ({
+                            value: c.id
+                            , text: c.nama_kelas
+                        }))
+                        , onChange: (value) => {
+                            this.selectedClass = value;
+                        }
                     });
                     this.tomSelectInstances.guru = new TomSelect(this.$refs.guruSelect, {
-                        options: this.teachers.map(t => ({ value: t.id, text: t.name })),
-                        onChange: (value) => { this.selectedTeacher = value; },
-                        maxOptions: null
+                        options: this.teachers.map(t => ({
+                            value: t.id
+                            , text: t.name
+                        }))
+                        , onChange: (value) => {
+                            this.selectedTeacher = value;
+                        }
+                        , maxOptions: null
                     });
-                    
+
                     // [NEW] Inisialisasi dropdown hari
                     this.tomSelectInstances.hari = new TomSelect(this.$refs.hariSelect, {
-                        options: [
-                            {value: 1, text: 'Sabtu'},
-                            {value: 2, text: 'Ahad'}, 
-                            {value: 3, text: 'Senin'},
-                            {value: 4, text: 'Selasa'},
-                            {value: 5, text: 'Rabu'},
-                            {value: 6, text: 'Kamis'}
-                        ],
-                        onChange: (value) => { this.selectedDay = value; }
+                        options: [{
+                                value: 1
+                                , text: 'Sabtu'
+                            }
+                            , {
+                                value: 2
+                                , text: 'Ahad'
+                            }
+                            , {
+                                value: 3
+                                , text: 'Senin'
+                            }
+                            , {
+                                value: 4
+                                , text: 'Selasa'
+                            }
+                            , {
+                                value: 5
+                                , text: 'Rabu'
+                            }
+                            , {
+                                value: 6
+                                , text: 'Kamis'
+                            }
+                        ]
+                        , onChange: (value) => {
+                            this.selectedDay = value;
+                        }
+                    });
+
+                    // [NEW] Inisialisasi dropdown pelajaran
+                    this.tomSelectInstances.pelajaran = new TomSelect(this.$refs.pelajaranSelect, {
+                        options: this.subjects.map(s => ({
+                            value: s.id
+                            , text: s.nama_pelajaran
+                        }))
+                        , onChange: (value) => {
+                            this.selectedSubject = value;
+                        }
                     });
 
                     this.$watch('selectedClass', (val) => {
                         if (val) {
                             this.selectedTeacher = '';
                             this.selectedDay = '';
+                            this.selectedSubject = '';
                             if (this.tomSelectInstances.guru) this.tomSelectInstances.guru.clear();
                             if (this.tomSelectInstances.hari) this.tomSelectInstances.hari.clear();
+                            if (this.tomSelectInstances.pelajaran) this.tomSelectInstances.pelajaran.clear();
                         }
                     });
-                    
+
                     this.$watch('selectedTeacher', (val) => {
                         if (val) {
                             this.selectedClass = '';
                             this.selectedDay = '';
+                            this.selectedSubject = '';
                             if (this.tomSelectInstances.kelas) this.tomSelectInstances.kelas.clear();
                             if (this.tomSelectInstances.hari) this.tomSelectInstances.hari.clear();
+                            if (this.tomSelectInstances.pelajaran) this.tomSelectInstances.pelajaran.clear();
                         }
                     });
-                    
+
                     // [NEW] Watch untuk hari
                     this.$watch('selectedDay', (val) => {
                         if (val) {
                             this.selectedClass = '';
                             this.selectedTeacher = '';
+                            this.selectedSubject = '';
                             if (this.tomSelectInstances.kelas) this.tomSelectInstances.kelas.clear();
                             if (this.tomSelectInstances.guru) this.tomSelectInstances.guru.clear();
+                            if (this.tomSelectInstances.pelajaran) this.tomSelectInstances.pelajaran.clear();
+                        }
+                    });
+
+                    // [NEW] Watch untuk pelajaran
+                    this.$watch('selectedSubject', (val) => {
+                        if (val) {
+                            this.selectedClass = '';
+                            this.selectedTeacher = '';
+                            this.selectedDay = '';
+                            if (this.tomSelectInstances.kelas) this.tomSelectInstances.kelas.clear();
+                            if (this.tomSelectInstances.guru) this.tomSelectInstances.guru.clear();
+                            if (this.tomSelectInstances.hari) this.tomSelectInstances.hari.clear();
                         }
                     });
                 },
@@ -322,13 +436,15 @@
                     this.selectedClass = '';
                     this.selectedTeacher = '';
                     this.selectedDay = ''; // [NEW]
+                    this.selectedSubject = ''; // [NEW]
                     if (this.tomSelectInstances.kelas) this.tomSelectInstances.kelas.clear();
                     if (this.tomSelectInstances.guru) this.tomSelectInstances.guru.clear();
                     if (this.tomSelectInstances.hari) this.tomSelectInstances.hari.clear(); // [NEW]
+                    if (this.tomSelectInstances.pelajaran) this.tomSelectInstances.pelajaran.clear(); // [NEW]
                 },
 
                 get selectedItem() {
-                    return this.selectedClass || this.selectedTeacher || this.selectedDay;
+                    return this.selectedClass || this.selectedTeacher || this.selectedDay || this.selectedSubject;
                 },
 
                 // [NEW] Getter untuk daftar guru libur
@@ -341,7 +457,14 @@
 
                 // [NEW] Getter untuk nama hari yang dipilih
                 get selectedDayName() {
-                    const dayMap = {1: 'Sabtu', 2: 'Ahad', 3: 'Senin', 4: 'Selasa', 5: 'Rabu', 6: 'Kamis'};
+                    const dayMap = {
+                        1: 'Sabtu'
+                        , 2: 'Ahad'
+                        , 3: 'Senin'
+                        , 4: 'Selasa'
+                        , 5: 'Rabu'
+                        , 6: 'Kamis'
+                    };
                     return dayMap[this.selectedDay] || '';
                 },
 
@@ -349,12 +472,17 @@
                     if (!this.selectedItem) {
                         return '#';
                     }
-                    
+
                     if (this.activeTab === 'guru-libur') {
                         // [NEW] URL untuk print guru libur
                         return `{{ url('/jadwal/print/guru-libur') }}/${this.selectedDay}`;
                     }
-                    
+
+                    if (this.activeTab === 'pelajaran') {
+                        // [NEW] URL untuk print pelajaran
+                        return `{{ url('/jadwal/print/pelajaran') }}/${this.selectedSubject}`;
+                    }
+
                     const type = this.activeTab === 'kelas' ? 'kelas' : 'guru';
                     const id = this.selectedItem;
                     return `{{ url('/jadwal/print') }}/${type}/${id}`;
@@ -372,25 +500,86 @@
                     if (this.activeTab === 'guru-libur' && this.selectedDay) {
                         return `Daftar Guru Libur - ${this.selectedDayName}`;
                     }
+                    if (this.activeTab === 'pelajaran' && this.selectedSubject) {
+                        const s = this.subjects.find(sub => sub.id == this.selectedSubject);
+                        return `Jadwal Pelajaran: ${s ? s.nama_pelajaran : ''}`;
+                    }
                     return 'Jadwal Pelajaran';
-                },
-                get scheduleToShow() {
+                }
+                , get scheduleToShow() {
                     if (this.activeTab === 'kelas' && this.selectedClass) {
                         return this.schedules.byClass[this.selectedClass] || {};
                     }
                     if (this.activeTab === 'guru' && this.selectedTeacher) {
                         return this.schedules.byTeacher[this.selectedTeacher] || {};
                     }
+                    if (this.activeTab === 'pelajaran' && this.selectedSubject) {
+                        // Untuk pelajaran, kita kembalikan format yang sesuai dengan logika formattedSchedules
+                        // Kita tetap kembalikan sebagai object dasar karena digunakan di tempat lain
+                        return this.schedules.bySubject[this.selectedSubject] || {};
+                    }
                     return {};
                 },
-                get teachingHoursSummary() {
+
+                get formattedSchedules() {
+                    if (this.activeTab !== 'pelajaran' || !this.selectedSubject) {
+                        return [];
+                    }
+
+                    // Ambil nama pelajaran yang dipilih dari dropdown
+                    const selectedSubject = this.subjects.find(s => s.id == this.selectedSubject);
+                    if (!selectedSubject) return [];
+
+                    const selectedSubjectName = selectedSubject.nama_pelajaran;
+
+                    // Ambil semua ID pelajaran dengan nama yang sama
+                    const matchingSubjectIds = this.subjectNameToIds[selectedSubjectName] || [];
+
+                    const result = [];
+
+                    // Ambil jadwal untuk semua pelajaran dengan nama yang sama
+                    matchingSubjectIds.forEach(subjectId => {
+                        const schedules = this.schedules.bySubject[subjectId] || {};
+
+                        for (const dayKey in schedules) {
+                            const daySchedules = schedules[dayKey];
+                            for (const timeSlot in daySchedules) {
+                                const timeSlotSchedules = daySchedules[timeSlot];
+                                // timeSlotSchedules sekarang adalah array dari jadwal
+                                if (Array.isArray(timeSlotSchedules)) {
+                                    timeSlotSchedules.forEach(schedule => {
+                                        result.push({
+                                            day_name: this.days[parseInt(dayKey)]
+                                            , time_slot: timeSlot
+                                            , class: schedule.class
+                                            , teacher: schedule.teacher
+                                            , room: schedule.room
+                                        });
+                                    });
+                                }
+                            }
+                        }
+                    });
+
+                    return result;
+                }
+                , get teachingHoursSummary() {
                     const teacherId = this.selectedTeacher;
                     if (teacherId && this.schedules.teachingHours && this.schedules.teachingHours[teacherId]) {
                         return this.schedules.teachingHours[teacherId];
                     }
-                    return { sabtu: 0, ahad: 0, senin: 0, selasa: 0, rabu: 0, kamis: 0, total: 0 };
+                    return {
+                        sabtu: 0
+                        , ahad: 0
+                        , senin: 0
+                        , selasa: 0
+                        , rabu: 0
+                        , kamis: 0
+                        , total: 0
+                    };
                 }
             }));
         });
+
     </script>
 </x-app-layout>

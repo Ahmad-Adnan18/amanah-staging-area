@@ -96,18 +96,7 @@
                                             <a href="{{ route('pengajaran.mata-pelajaran.edit', $mapel) }}" class="text-red-600 hover:text-red-900 text-sm font-medium">Edit</a>
                                         </div>
                                     </div>
-                                    <div>
-                                        <p class="text-xs font-medium text-slate-500 mb-1">Guru Pengampu:</p>
-                                        <div class="flex flex-wrap gap-1">
-                                            @forelse ($mapel->teachers as $teacher)
-                                                <span class="inline-block bg-slate-100 text-slate-700 text-xs font-medium px-2 py-0.5 rounded-full">
-                                                    {{ $teacher->name }}
-                                                </span>
-                                            @empty
-                                                <span class="text-xs text-red-500 italic">Belum ada</span>
-                                            @endforelse
-                                        </div>
-                                    </div>
+
                                 </div>
                             @empty
                                 <div class="px-6 py-12 text-center text-slate-500">
@@ -127,7 +116,7 @@
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Nama Pelajaran</th>
                                     <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Info</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Guru Pengampu</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Ditetapkan</th>
                                     <th class="relative px-6 py-3"><span class="sr-only">Aksi</span></th>
                                 </tr>
                             </thead>
@@ -141,16 +130,8 @@
                                             <div class="text-xs text-slate-500">Tingkat {{ $mapel->tingkatan }} / {{ $mapel->duration_jp }} JP</div>
                                         </td>
 
-                                        <td class="px-6 py-4 text-slate-600 max-w-xs">
-                                            <div class="flex flex-wrap gap-1">
-                                                @forelse ($mapel->teachers as $teacher)
-                                                    <span class="inline-block bg-slate-100 text-slate-700 text-xs font-medium px-2 py-0.5 rounded-full">
-                                                        {{ $teacher->name }}
-                                                    </span>
-                                                @empty
-                                                    <span class="text-xs text-red-500 italic">Belum ada</span>
-                                                @endforelse
-                                            </div>
+                                        <td class="px-6 py-4 whitespace-nowrap text-slate-600">
+                                            <span class="text-xs text-slate-500">Ditetapkan di kelas</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <a href="{{ route('pengajaran.mata-pelajaran.edit', $mapel) }}" class="text-red-600 hover:text-red-900">Edit</a>

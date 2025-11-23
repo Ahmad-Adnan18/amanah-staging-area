@@ -33,12 +33,34 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+
+            // [BARU] Validasi Kode Registrasi Khusus Guru
+            'registration_code' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    // Ambil kode rahasia dari file .env
+                    $secretCode = env('GURU_REGISTRATION_CODE');
+                    
+                    // Jika .env tidak di-set, pendaftaran ditutup
+                    if (empty($secretCode)) {
+                        $fail('Pendaftaran guru saat ini sedang ditutup.');
+                        return;
+                    }
+
+                    // Jika kode yang dimasukkan tidak cocok
+                    if ($value !== $secretCode) {
+                        $fail('Kode Registrasi Guru tidak valid.');
+                    }
+                }
+            ],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'ustadz_umum',
         ]);
 
         event(new Registered($user));

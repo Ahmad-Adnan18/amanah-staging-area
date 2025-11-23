@@ -21,7 +21,7 @@ class UpdateUserRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($userId)],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()], // Password opsional
-            'role' => ['required', Rule::in(['admin', 'pengasuhan', 'kesehatan', 'pengajaran', 'ustadz_umum','wali_santri'])],
+            'role' => ['required', Rule::in(['admin', 'pengasuhan', 'kesehatan', 'pengajaran', 'ustadz_umum','wali_santri', 'dokumentasi','ubudiyah'])],
         ];
     }
 }

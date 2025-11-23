@@ -85,13 +85,13 @@ class KelasController extends Controller
 
         // Data untuk Alokasi Guru Mengajar
         $allMataPelajarans = MataPelajaran::where('tingkatan', $kela->tingkatan)
-            ->with('teachers') // Eager load kandidat guru untuk setiap mapel
             ->orderBy('nama_pelajaran')
             ->get();
 
         $assignedSubjects = $kela->mataPelajarans->pluck('pivot.teacher_id', 'id');
+        $teachers = Teacher::orderBy('name')->get();
 
-        return view('pengajaran.kelas.edit', compact('kela', 'users', 'jabatans', 'penanggungJawab', 'rooms', 'tingkatans', 'allMataPelajarans', 'assignedSubjects'));
+        return view('pengajaran.kelas.edit', compact('kela', 'users', 'jabatans', 'penanggungJawab', 'rooms', 'tingkatans', 'allMataPelajarans', 'assignedSubjects', 'teachers'));
     }
 
     public function update(Request $request, Kelas $kela)

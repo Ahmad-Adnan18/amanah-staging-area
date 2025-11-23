@@ -60,6 +60,9 @@ class DashboardController extends Controller
                 $viewData['scheduleSlots'] = array_fill(1, 7, null); // Empty numeric array
                 $viewData['jamMap'] = $jamMap;
 
+                // For holiday, no schedule today
+                $viewData['hasScheduleToday'] = false;
+
                 Log::info('Dashboard - Friday (Holiday)', [
                     'user_id' => $user->id,
                     'teacher_id' => $teacher->id,
@@ -101,6 +104,9 @@ class DashboardController extends Controller
                 $viewData['scheduleSlots'] = $scheduleSlots;
                 $viewData['jamMap'] = $jamMap;
 
+                // Calculate if there's a schedule today
+                $viewData['hasScheduleToday'] = collect($scheduleSlots)->contains(fn($s) => $s !== null);
+
                 // DEBUG LOG for troubleshooting
                 $scheduleCount = count(array_filter($scheduleSlots, function ($slot) {
                     return $slot !== null;
@@ -122,8 +128,10 @@ class DashboardController extends Controller
             $viewData['todayDateString'] = $today->locale('id')->translatedFormat('l, d F Y');
         } else {
             // For non-teachers, still send consistent empty data
+            $viewData['isTeacher'] = false;
             $viewData['isHoliday'] = false;
             $viewData['scheduleSlots'] = array_fill(1, 7, null);
+            $viewData['hasScheduleToday'] = false;
             $viewData['jamMap'] = $this->getTimeMap();
         }
 

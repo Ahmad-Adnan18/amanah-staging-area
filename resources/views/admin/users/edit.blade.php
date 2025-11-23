@@ -15,7 +15,7 @@
                         </a>
                     </div>
                 </div>
-                
+
                 <!-- Form -->
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
                     <form action="{{ route('admin.users.update', $user) }}" method="POST">
@@ -47,10 +47,12 @@
                                 <select name="role" id="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
                                     <option value="ustadz_umum" @selected($user->role == 'ustadz_umum')>Ustadz Umum</option>
                                     <option value="pengajaran" @selected($user->role == 'pengajaran')>Pengajaran</option>
+                                    <option value="ubudiyah" @selected($user->role == 'ubudiyah')>Ubudiyah</option>
                                     <option value="pengasuhan" @selected($user->role == 'pengasuhan')>Pengasuhan</option>
                                     <option value="kesehatan" @selected($user->role == 'kesehatan')>Kesehatan</option>
                                     <option value="admin" @selected($user->role == 'admin')>Admin</option>
                                     <option value="wali_santri" @selected($user->role == 'wali_santri')>Wali Santri</option>
+                                    <option value="dokumentasi" @selected($user->role == 'dokumentasi')>Dokumentasi</option>
                                 </select>
                                 <x-input-error class="mt-2" :messages="$errors->get('role')" />
                             </div>
