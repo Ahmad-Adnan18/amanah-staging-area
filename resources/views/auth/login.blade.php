@@ -108,6 +108,11 @@
                             Daftar sebagai Wali Santri
                         </a>
                     </div>
+                    <div class="mt-4">
+                        <a href="{{ route('download.show') }}" class="flex w-full justify-center rounded-lg bg-slate-900 px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-slate-800 transition-colors">
+                            Download Aplikasi Android
+                        </a>
+                    </div>
                 </div>
 
                 <div class="text-center text-sm text-slate-600">

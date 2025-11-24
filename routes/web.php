@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\Configuration\RuleController;
 use App\Http\Controllers\Admin\Scheduling\ScheduleGeneratorController;
 use App\Http\Controllers\Admin\Scheduling\ScheduleViewController;
 use App\Http\Controllers\PublicScheduleController;
+use App\Http\Controllers\DownloadController;
 // TAMBAHKAN USE STATEMENT UNTUK CONTROLLER GURU YANG BARU
 use App\Http\Controllers\Admin\MasterData\TeacherController;
 use App\Http\Controllers\Admin\MasterData\InventoryItemController;
@@ -39,6 +40,9 @@ use App\Http\Controllers\Admin\MasterData\SuratController;
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+Route::get('/download', [DownloadController::class, 'show'])->name('download.show');
+Route::get('/download/apk', [DownloadController::class, 'apk'])->name('download.apk');
 
 // RUTE BARU UNTUK REGISTRASI WALI
 Route::get('/wali-register', [WaliRegistrationController::class, 'create'])->name('wali.register');

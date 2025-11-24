@@ -1,0 +1,19 @@
+{
+  "appId": "app.perizinan.akademik",
+  "appName": "Amanah",
+  "webDir": "public",
+  "server": {
+    "url": "https://kunkarima.site",
+    "cleartext": true
+  },
+  "plugins": {
+    "StatusBar": {
+      "overlaysWebView": false,
+      "backgroundColor": "#F44336",
+      "style": "LIGHT"
+    }
+  },
+  "android": {
+    "backgroundColor": "#ffffff"
+  }
+}

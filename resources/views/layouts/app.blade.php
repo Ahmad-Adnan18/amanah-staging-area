@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#e31a1aff">
 
@@ -47,6 +47,15 @@
             background-attachment: fixed;
         }
 
+        /* TAMBAHAN BARU: Agar header turun otomatis */
+        .header-safe-area {
+            padding-top: env(safe-area-inset-top);
+            padding-top: constant(safe-area-inset-top);
+            /* Support HP lama */
+            height: auto;
+            /* Biar tingginya menyesuaikan padding */
+        }
+
     </style>
 </head>
 <body class="font-sans antialiased bg-gradient-modern">
@@ -55,7 +64,7 @@
             @include('layouts.navigation')
 
             <main class="md:ml-64">
-                <header class="md:hidden sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-slate-200">
+                <header class="md:hidden sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-slate-200 header-safe-area">
                     <div class="px-4 sm:px-6 lg:px-8">
                         <div class="flex h-16 items-center justify-between">
                             <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
