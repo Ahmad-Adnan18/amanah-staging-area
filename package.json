@@ -10,7 +10,9 @@
         "@capacitor/app": "^7.1.0",
         "@capacitor/cli": "^7.4.4",
         "@capacitor/core": "^7.4.4",
+        "@capacitor/preferences": "^7.0.2",
         "@capacitor/status-bar": "^7.0.3",
+        "@capgo/capacitor-native-biometric": "^7.5.3",
         "motion": "^11.11.6",
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
