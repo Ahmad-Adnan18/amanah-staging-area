@@ -19,6 +19,7 @@
     <!-- External CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pulltorefreshjs/0.1.22/index.umd.min.js"></script>
 
     <!-- Scripts Vite -->
     @viteReactRefresh
@@ -105,6 +106,26 @@
                 // Malam hari
                 body.classList.remove('bg-gradient-time-based');
                 body.classList.add('bg-gradient-night');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cek apakah ini di Android/App?
+            if (window.Capacitor) {
+                PullToRefresh.init({
+                    mainElement: 'body', // Elemen yang ditarik
+                    triggerElement: 'body'
+                    , onRefresh: function() {
+                        // Apa yang terjadi saat ditarik? Reload halaman
+                        window.location.reload();
+                    }
+                    , distThreshold: 70, // Jarak tarikan (pixel)
+                    iconArrow: '&#8675;', // Ikon panah bawah
+                    iconRefreshing: '&hellip;', // Ikon loading (...)
+                    instructionsPullToRefresh: 'Tarik untuk segarkan'
+                    , instructionsReleaseToRefresh: 'Lepas untuk memuat ulang'
+                    , instructionsRefreshing: 'Memuat ulang...'
+                , });
             }
         });
 
