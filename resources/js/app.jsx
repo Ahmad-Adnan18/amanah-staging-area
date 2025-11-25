@@ -2,9 +2,37 @@ import './bootstrap';
 import Alpine from 'alpinejs';
 import { createRoot } from 'react-dom/client';
 import GlassIcons from './components/GlassIcons';
+// --- 1. TAMBAHAN IMPORT CAPACITOR ---
+import { App } from '@capacitor/app';
 
 window.Alpine = Alpine;
 Alpine.start();
+
+// =================================================================
+// LOGIKA CAPACITOR (ANDROID BACK BUTTON)
+// =================================================================
+// Menangani tombol fisik 'Back' di Android agar UX-nya native
+App.addListener('backButton', ({ canGoBack }) => {
+    const currentUrl = window.location.pathname;
+    // Daftar halaman yang kalau di-back langsung keluar app (Home/Login/Dashboard)
+    const exitPages = ['/', '/login', '/dashboard'];
+
+    if (exitPages.includes(currentUrl)) {
+        // Jika di halaman utama, langsung keluar
+        App.exitApp();
+    } else {
+        // Cek apakah ada history browser sebelumnya?
+        if (document.referrer !== "" && window.history.length > 1) {
+            window.history.back(); // Mundur satu halaman
+        } else {
+            App.exitApp(); // Kalau tidak ada history, baru keluar
+        }
+    }
+});
+
+// =================================================================
+// LOGIKA REACT (GLASS ICONS)
+// =================================================================
 
 const glassRoots = new Map();
 
@@ -81,17 +109,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 1. Registrasi service worker
+    // if ('serviceWorker' in navigator) {
+    //     navigator.serviceWorker.register('/sw.js')
+    //         .then(registration => {
+    //             console.log('Service Worker terdaftar dengan sukses:', registration);
+    //         })
+    //         .catch(error => {
+    //             console.error('Gagal mendaftarkan Service Worker:', error);
+    //         });
+    // } else {
+    //     console.warn('Service Worker tidak didukung di browser ini.');
+    // }
+
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('Service Worker terdaftar dengan sukses:', registration);
-            })
-            .catch(error => {
-                console.error('Gagal mendaftarkan Service Worker:', error);
-            });
-    } else {
-        console.warn('Service Worker tidak didukung di browser ini.');
-    }
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+            registration.unregister();
+            console.log("Service Worker lama berhasil dimatikan.");
+        }
+    });
+}
 
     // 2. Tangkap event 'beforeinstallprompt'
     window.addEventListener('beforeinstallprompt', (e) => {
