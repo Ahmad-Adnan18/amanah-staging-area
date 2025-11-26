@@ -60,37 +60,78 @@
                         </div>
                     </div>
                     @if(auth()->check() && auth()->user()->role === 'admin')
-                    {{-- Kode Registrasi Wali --}}
+                    {{-- Container Utama (Biar rapi ada background abu-abu) --}}
                     <div class="bg-gray-50 border-t border-gray-200 px-6 py-4">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+
+                            {{-- Bagian Kiri: Judul & Deskripsi --}}
                             <div>
                                 <h3 class="text-sm font-semibold text-gray-900">Kode Registrasi Wali</h3>
                                 <p class="text-xs text-gray-500 mt-1">Bagikan kode ini kepada wali santri untuk akses profil.</p>
                             </div>
+
+                            {{-- Bagian Kanan: Action Buttons --}}
                             <div class="flex flex-wrap items-center gap-3">
+
+                                {{-- LOGIC 1: Cek Apakah Kode Sudah Ada? --}}
                                 @if ($santri->kode_registrasi_wali)
-                                <span class="px-4 py-2 bg-white text-gray-800 font-mono text-sm rounded-lg border border-gray-300 shadow-sm">
-                                    {{ $santri->kode_registrasi_wali }}
-                                </span>
-                                <form action="{{ route('santri.profil.generate_wali_code', $santri) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin membuat kode baru? Kode lama akan hangus.')" style="margin: 0;">
-                                    @csrf
-                                    <button type="submit" class="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 transition-colors whitespace-nowrap flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                        </svg>
-                                        Buat Ulang
+
+                                {{-- JIKA ADA: Tampilkan Tombol Copy & Regenerate --}}
+                                <div x-data="{ 
+                            copied: false,
+                            code: '{{ $santri->kode_registrasi_wali }}',
+                            copyCode() {
+                                navigator.clipboard.writeText(this.code).then(() => {
+                                    this.copied = true;
+                                    if(typeof showToast === 'function') {
+                                        showToast('Kode berhasil disalin!', 'success');
+                                    }
+                                    setTimeout(() => this.copied = false, 2000);
+                                });
+                            }
+                        }" class="flex items-center gap-3">
+                                    {{-- Tombol Copy --}}
+                                    <button @click="copyCode()" type="button" class="group relative flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-800 font-mono text-sm rounded-lg border border-gray-300 shadow-sm active:scale-95 transition-all duration-150 cursor-pointer select-none" title="Klik untuk menyalin">
+                                        <span class="font-bold tracking-wider">{{ $santri->kode_registrasi_wali }}</span>
+
+                                        <div class="text-gray-400 group-hover:text-gray-600">
+                                            <svg x-show="!copied" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            </svg>
+                                            <svg x-show="copied" style="display: none;" class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </div>
+
+                                        <span x-show="copied" x-transition.opacity style="display: none;" class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded shadow-lg pointer-events-none">
+                                            Disalin!
+                                        </span>
                                     </button>
-                                </form>
+
+                                    {{-- Tombol Regenerate (Buat Ulang) --}}
+                                    <form action="{{ route('santri.profil.generate_wali_code', $santri) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin membuat kode baru? Kode lama akan hangus.')" style="margin: 0;">
+                                        @csrf
+                                        <button type="submit" class="p-2 text-gray-400 hover:text-red-600 transition-colors rounded-full hover:bg-red-50" title="Generate Ulang">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+
                                 @else
+
+                                {{-- JIKA KOSONG: Tampilkan Tombol Generate --}}
                                 <form action="{{ route('santri.profil.generate_wali_code', $santri) }}" method="POST" class="inline">
                                     @csrf
-                                    <button type="submit" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+                                    <button type="submit" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors active:scale-95">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                                         </svg>
                                         Generate Kode
                                     </button>
                                 </form>
+
                                 @endif
                             </div>
                         </div>

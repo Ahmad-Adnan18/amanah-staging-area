@@ -1,6 +1,38 @@
 <x-app-layout>
     <div class="bg-slate-50 min-h-screen">
         <div class="max-w-7xl mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+
+            {{-- 1. LOGIC PHP: Persiapan Data (Waktu & Notifikasi) --}}
+            @php
+            // Mapping Jam Pelajaran
+            $jamMap = [
+            1 => ['start' => '07:00', 'end' => '07:45', 'label' => '07:00 - 07:45'],
+            2 => ['start' => '07:45', 'end' => '08:30', 'label' => '07:45 - 08:30'],
+            3 => ['start' => '09:00', 'end' => '09:45', 'label' => '09:00 - 09:45'],
+            4 => ['start' => '09:45', 'end' => '10:30', 'label' => '09:45 - 10:30'],
+            5 => ['start' => '11:00', 'end' => '11:45', 'label' => '11:00 - 11:45'],
+            6 => ['start' => '11:45', 'end' => '12:30', 'label' => '11:45 - 12:30'],
+            7 => ['start' => '14:15', 'end' => '15:00', 'label' => '14:15 - 15:00'],
+            ];
+
+            // Persiapan Data Notifikasi untuk JS
+            $notificationData = [];
+
+            // Cek jika User adalah Guru & Bukan Hari Libur
+            if (isset($isTeacher) && $isTeacher && isset($isHoliday) && !$isHoliday) {
+            foreach($scheduleSlots as $slot => $schedule) {
+            if($schedule) { // Jika ada jadwal di jam ini
+            $notificationData[] = [
+            'id' => $slot, // ID unik berdasarkan jam ke-
+            'title' => 'Waktunya Mengajar!',
+            'body' => "Jam ke-{$slot}: {$schedule->subject->nama_pelajaran} di {$schedule->kelas->nama_kelas} ({$schedule->room->name})",
+            'time' => $jamMap[$slot]['start'] // Format "HH:mm"
+            ];
+            }
+            }
+            }
+            @endphp
+
             {{-- Salam & Header --}}
             <div class="mb-6 sm:mb-8">
                 <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
@@ -16,16 +48,16 @@
 
             {{-- Layout satu kolom untuk semua perangkat --}}
             <div class="space-y-4 sm:space-y-6">
-                @if ($isTeacher)
-                {{-- Kartu Jadwal - MARGIN NEGATIF UNTUK MENYATUKAN --}}
-                @if (!$isHoliday)
+                @if (isset($isTeacher) && $isTeacher)
+                {{-- Kartu Jadwal --}}
+                @if (isset($isHoliday) && !$isHoliday)
                 <div class="rounded-2xl shadow-lg text-white p-3 sm:p-4 relative -mt-2" style="
-                            background: 
-                                linear-gradient(135deg, #dc2626, #f87171),
-                                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1), transparent 70%);
-                            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-                            backdrop-filter: blur(4px);
-                        ">
+                                    background: 
+                                        linear-gradient(135deg, #dc2626, #f87171),
+                                        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1), transparent 70%);
+                                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                                    backdrop-filter: blur(4px);
+                                ">
                     {{-- TOMBOL JADWAL LENGKAP --}}
                     <a href="{{ route('jadwal.saya') }}" class="absolute top-3 right-3 bg-white/20 hover:bg-white/30 text-white p-1.5 rounded-lg transition-all duration-300 transform hover:scale-110 group" title="Lihat Jadwal Lengkap">
                         <svg class="w-6 h-6 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,11 +70,6 @@
                             <h2 class="text-lg sm:text-xl font-bold">Jadwal Mengajar Hari Ini</h2>
                             <p class="text-xs opacity-90 mt-1">{{ $todayDateString }}</p>
                         </div>
-                        {{-- <div class="absolute top-3 right-12 bg-white/20 p-1.5 rounded-lg">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>  --}}
                     </div>
 
                     <div class="mt-1 text-xs opacity-80">
@@ -51,17 +78,6 @@
                 </div>
 
                 <div class="space-y-3 -mt-2">
-                    @php
-                    $jamMap = [
-                    1 => ['start' => '07:00', 'end' => '07:45', 'label' => '07:00 - 07:45'],
-                    2 => ['start' => '07:45', 'end' => '08:30', 'label' => '07:45 - 08:30'],
-                    3 => ['start' => '09:00', 'end' => '09:45', 'label' => '09:00 - 09:45'],
-                    4 => ['start' => '09:45', 'end' => '10:30', 'label' => '09:45 - 10:30'],
-                    5 => ['start' => '11:00', 'end' => '11:45', 'label' => '11:00 - 11:45'],
-                    6 => ['start' => '11:45', 'end' => '12:30', 'label' => '11:45 - 12:30'],
-                    7 => ['start' => '14:15', 'end' => '15:00', 'label' => '14:15 - 15:00'],
-                    ];
-                    @endphp
                     @foreach($scheduleSlots as $slot => $schedule)
                     @php
                     $now = \Carbon\Carbon::now('Asia/Jakarta');
@@ -71,7 +87,7 @@
                     $isScheduled = (bool) $schedule;
                     $isCurrent = $isTimeActive;
                     @endphp
-                    <div class="rounded-2xl flex items-center transition-all duration-300 {{ $isTimeActive ? 'bg-white scale-105 shadow-xl border-red-400' : 'bg-white shadow-lg border-transparent' }} border p-3 sm:p-4 relative">
+                    <div class="rounded-2xl flex items-center transition-all duration-300 schedule-slot {{ $isTimeActive ? 'bg-white scale-105 shadow-xl border-red-400' : 'bg-white shadow-lg border-transparent' }} border p-3 sm:p-4 relative">
                         <div class="w-1/3 sm:w-1/4 pr-3 sm:pr-4 text-center">
                             <p class="font-bold {{ $isCurrent ? 'text-red-600' : 'text-slate-800' }} text-base sm:text-lg">{{ $jamMap[$slot]['label'] }}</p>
                             <p class="{{ $isCurrent ? 'text-red-500' : 'text-slate-500' }} text-xs sm:text-sm">Jam Ke-{{ $slot }}</p>
@@ -112,12 +128,12 @@
                 </div>
                 @else
                 <div class="rounded-2xl shadow-lg text-white p-4 sm:p-6" style="
-                            background: 
-                                linear-gradient(135deg, #10b981, #34d399),
-                                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1), transparent 70%);
-                            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-                            backdrop-filter: blur(4px);
-                        ">
+                                    background: 
+                                        linear-gradient(135deg, #10b981, #34d399),
+                                        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1), transparent 70%);
+                                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                                    backdrop-filter: blur(4px);
+                                ">
                     <div class="flex items-center justify-between">
                         <div>
                             <h2 class="text-xl font-bold">Hari Libur</h2>
@@ -135,7 +151,7 @@
                 @endif
 
                 <div>
-                    <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-4 @if($isTeacher) mt-8 @endif">Menu Akses Cepat</h2>
+                    <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-4 @if(isset($isTeacher) && $isTeacher) mt-8 @endif">Menu Akses Cepat</h2>
                     @php
                     $menuItems = [
                     ['route' => 'admin.santri-management.index', 'roles' => null, 'icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', 'label' => 'Data Santri', 'color' => 'blue'],
@@ -167,11 +183,12 @@
                     <div id="dashboard-glass-icons" data-glass-items='@json($glassItems)' data-extra-class="grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-16" class="w-full"></div>
                 </div>
 
-                {{-- Statistik Pondok - Ditampilkan untuk semua perangkat --}}
+                {{-- Statistik Pondok --}}
                 <div>
                     <div>
                         <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-4">Statistik Pondok</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {{-- Total Santri --}}
                             <div class="bg-white p-4 rounded-2xl shadow-lg border border-slate-200 flex items-start gap-4">
                                 <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -185,6 +202,7 @@
                                 </div>
                             </div>
 
+                            {{-- Izin Aktif --}}
                             <div class="bg-white p-4 rounded-2xl shadow-lg border border-slate-200 flex items-start gap-4">
                                 <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-green-100 text-green-600 flex items-center justify-center">
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -197,6 +215,7 @@
                                 </div>
                             </div>
 
+                            {{-- Santri Terlambat --}}
                             <div class="bg-white p-4 rounded-2xl shadow-lg border border-slate-200 flex items-start gap-4">
                                 <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-red-100 text-red-600 flex items-center justify-center">
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,7 +229,7 @@
                             </div>
                         </div>
 
-                        {{-- Progress Bars untuk Komposisi Santri - Ditampilkan hanya di desktop --}}
+                        {{-- Progress Bars untuk Komposisi Santri --}}
                         <div class="lg:block mt-4">
                             <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-lg border border-slate-200">
                                 <div class="flex items-center justify-between mb-4">
@@ -224,7 +243,6 @@
                                     </div>
                                 </div>
 
-                                {{-- Simple Progress Bars sebagai alternatif --}}
                                 <div class="space-y-3">
                                     @php
                                     $putraPercentage = $totalSantri > 0 ? ($totalSantriPutra / $totalSantri) * 100 : 0;
@@ -272,6 +290,81 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
 
     <script>
+        // 1. LOGIK UNTUK NOTIFIKASI JADWAL MENGAJAR (CAPACITOR)
+        document.addEventListener('DOMContentLoaded', async function() {
+            const schedules = @json($notificationData);
+
+            // Hanya jalankan jika di lingkungan Capacitor (App)
+            if (window.Capacitor) {
+                const {
+                    LocalNotifications
+                } = Capacitor.Plugins;
+
+                try {
+                    // Cek/Request Izin Notifikasi (Wajib Android 13+)
+                    let permission = await LocalNotifications.checkPermissions();
+
+                    if (permission.display !== 'granted') {
+                        permission = await LocalNotifications.requestPermissions();
+                    }
+
+                    if (permission.display === 'granted') {
+                        scheduleDailyNotifications(LocalNotifications, schedules);
+                    }
+                } catch (e) {
+                    console.error("Error setting up notifications", e);
+                }
+            }
+        });
+
+        async function scheduleDailyNotifications(LocalNotifications, schedules) {
+            // Batalkan notifikasi yang lama agar tidak duplikat
+            // Kita ambil ID dari jadwal yang ada
+            if (schedules.length > 0) {
+                await LocalNotifications.cancel({
+                    notifications: schedules.map(s => ({
+                        id: s.id
+                    }))
+                });
+            }
+
+            const notificationsToSchedule = [];
+            const now = new Date();
+
+            schedules.forEach(schedule => {
+                // Parse jam dari string "07:00"
+                const [hours, minutes] = schedule.time.split(':');
+
+                const scheduleTime = new Date();
+                scheduleTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+                // Jika jadwal belum lewat hari ini, masukkan antrian
+                if (scheduleTime > now) {
+                    notificationsToSchedule.push({
+                        id: schedule.id
+                        , title: schedule.title
+                        , body: schedule.body
+                        , schedule: {
+                            at: scheduleTime
+                            , allowWhileIdle: true // Penting agar bunyi meski HP sleep
+                        }
+                        , sound: null
+                        , attachments: null
+                        , actionTypeId: ""
+                        , extra: null
+                    });
+                }
+            });
+
+            if (notificationsToSchedule.length > 0) {
+                await LocalNotifications.schedule({
+                    notifications: notificationsToSchedule
+                });
+                console.log('Notifikasi berhasil dijadwalkan:', notificationsToSchedule.length);
+            }
+        }
+
+        // 2. LOGIK ANIMASI CARD & PWA INSTALLER (BAWAAN LAMA)
         document.addEventListener('DOMContentLoaded', function() {
             const scheduleCards = document.querySelectorAll('.schedule-slot');
             scheduleCards.forEach((card, index) => {
@@ -286,7 +379,7 @@
             });
         });
 
-        // PWA
+        // PWA Installer Logic
         let deferredPrompt;
         const installBtn = document.getElementById('install-pwa-button');
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -333,7 +426,6 @@
     </script>
 
     <style>
-        /* Schedule Card Enhancements */
         .schedule-slot {
             position: relative;
             overflow: hidden;
@@ -365,7 +457,6 @@
             }
         }
 
-        /* Responsive adjustments for schedule */
         @media (max-width: 768px) {
             .schedule-slot {
                 flex-direction: column;
