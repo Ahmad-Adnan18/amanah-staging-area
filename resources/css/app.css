@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* =========================================
+   NATIVE FEEL: VIEW TRANSITIONS
+   ========================================= */
+
+/* Mengaktifkan transisi otomatis antar halaman */
+@view-transition {
+    navigation: auto;
+}
+
+/* Mengatur durasi animasi agar halus (mirip aplikasi native) */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.35s; /* 0.35 detik */
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* Easing halus */
+}

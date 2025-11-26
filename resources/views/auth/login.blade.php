@@ -92,10 +92,17 @@
 
                             <div id="biometric-container" class="hidden">
                                 <button type="button" onclick="window.performBiometricLogin()" class="w-full justify-center py-3 text-base inline-flex items-center rounded-lg border-2 border-red-700 px-4 font-semibold text-red-700 bg-white hover:bg-red-50 transition-colors">
-                                    <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.864 4.243A7.5 7.5 0 0119.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 004.5 10.5a7.464 7.464 0 01-1.15 3.993m1.989 3.559A11.209 11.209 0 008.25 10.5a3.75 3.75 0 117.5 0c0 .527-.021 1.049-.064 1.565m4.382.893A7.478 7.478 0 0114.142 18m-1.691 2.219A7.462 7.462 0 0115 15m-1.659 3.75a.75.75 0 00.4.855" />
-                                    </svg>
-                                    Login dengan Sidik Jari
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fingerprint-pattern mr-2">
+                                        <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4" />
+                                        <path d="M14 13.12c0 2.38 0 6.38-1 8.88" />
+                                        <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02" />
+                                        <path d="M2 12a10 10 0 0 1 18-6" />
+                                        <path d="M2 16h.01" />
+                                        <path d="M21.8 16c.2-2 .131-5.354 0-6" />
+                                        <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2" />
+                                        <path d="M8.65 22c.21-.66.45-1.32.57-2" />
+                                        <path d="M9 6.8a6 6 0 0 1 9 5.2v2" />
+                                    </svg> Login dengan Sidik Jari
                                 </button>
                             </div>
                         </div>

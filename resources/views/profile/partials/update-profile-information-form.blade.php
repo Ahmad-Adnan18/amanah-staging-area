@@ -21,7 +21,7 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
+    <form method="post" action="{{ route('profile.update') }}" id="profile-update-form" class="mt-6 space-y-6" enctype="multipart/form-data">
         @csrf
         @method('patch')
 
@@ -97,14 +97,9 @@
                             <button type="button" @click="confirmDeletePhoto = false" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
                                 Batal
                             </button>
-                            <form method="post" action="{{ route('profile.update') }}" class="inline">
-                                @csrf
-                                @method('patch')
-                                <input type="hidden" name="delete_photo" value="1">
-                                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
-                                    Hapus
-                                </button>
-                            </form>
+                            <button type="submit" form="delete-profile-photo-form" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+                                Hapus
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -141,5 +136,11 @@
             </div>
             @endif
         </div>
+    </form>
+
+    <form method="post" action="{{ route('profile.update') }}" id="delete-profile-photo-form" class="hidden" aria-hidden="true">
+        @csrf
+        @method('patch')
+        <input type="hidden" name="delete_photo" value="1">
     </form>
 </section>

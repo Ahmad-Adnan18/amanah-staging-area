@@ -34,6 +34,13 @@ public class MainActivity extends BridgeActivity {
             WebView webView = this.getBridge().getWebView();
 
             // -----------------------------------------------------------
+            // ---> TAMBAHKAN DISINI: MATIKAN SCROLLBAR SECARA PAKSA
+            // -----------------------------------------------------------
+            webView.setVerticalScrollBarEnabled(false);   // Matikan scrollbar vertikal (kanan)
+            webView.setHorizontalScrollBarEnabled(false); // Matikan scrollbar horizontal (bawah)
+            // -----------------------------------------------------------
+
+            // -----------------------------------------------------------
             // FITUR 2: OFFLINE HANDLER (Agar tidak stuck layar abu-abu)
             // -----------------------------------------------------------
             webView.setWebViewClient(new WebViewClient() {

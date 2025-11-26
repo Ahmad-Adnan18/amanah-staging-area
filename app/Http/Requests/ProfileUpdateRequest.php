@@ -15,17 +15,23 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
+        $rules = [
+            'profile_photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'delete_photo' => ['nullable', 'boolean'],
+        ];
+
+        if (! $this->boolean('delete_photo')) {
+            $rules['name'] = ['required', 'string', 'max:255'];
+            $rules['email'] = [
                 'required',
                 'string',
                 'lowercase',
                 'email',
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
-                'profile_photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'], // Maks 2MB
-            ],
-        ];
+            ];
+        }
+
+        return $rules;
     }
 }
