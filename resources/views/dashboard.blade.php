@@ -84,43 +84,73 @@
                     $start = \Carbon\Carbon::today('Asia/Jakarta')->setTimeFromTimeString($jamMap[$slot]['start']);
                     $end = \Carbon\Carbon::today('Asia/Jakarta')->setTimeFromTimeString($jamMap[$slot]['end'])->addMinutes(1);
                     $isTimeActive = $now->between($start, $end);
-                    $isScheduled = (bool) $schedule;
                     $isCurrent = $isTimeActive;
                     @endphp
-                    <div class="rounded-2xl flex items-center transition-all duration-300 schedule-slot {{ $isTimeActive ? 'bg-white scale-105 shadow-xl border-red-400' : 'bg-white shadow-lg border-transparent' }} border p-3 sm:p-4 relative">
-                        <div class="w-1/3 sm:w-1/4 pr-3 sm:pr-4 text-center">
-                            <p class="font-bold {{ $isCurrent ? 'text-red-600' : 'text-slate-800' }} text-base sm:text-lg">{{ $jamMap[$slot]['label'] }}</p>
-                            <p class="{{ $isCurrent ? 'text-red-500' : 'text-slate-500' }} text-xs sm:text-sm">Jam Ke-{{ $slot }}</p>
+
+                    {{-- CONTAINER UTAMA --}}
+                    {{-- Perubahan: Hapus scale-105 di mobile, ganti dengan border tebal & bg-red-50 --}}
+                    <div class="relative flex items-center p-3 sm:p-4 border rounded-2xl transition-all duration-300 schedule-slot 
+            {{ $isTimeActive 
+                ? 'bg-red-50 border-red-500 shadow-md z-10 ring-1 ring-red-500 sm:scale-105 sm:bg-white' 
+                : 'bg-white border-slate-100 shadow-sm' 
+            }}">
+
+                        {{-- KOLOM KIRI: WAKTU (Horizontal / Lurus Samping) --}}
+                        <div class="flex-shrink-0 w-auto border-r border-slate-200 pr-3 mr-3 flex items-center gap-2">
+
+                            {{-- Bagian Waktu (07:00 - 07:45) --}}
+                            <p class="font-bold text-sm sm:text-base whitespace-nowrap {{ $isCurrent ? 'text-red-600' : 'text-slate-800' }}">
+                                {{ $jamMap[$slot]['label'] }}
+                            </p>
+
+                            {{-- Pemisah (Opsional, biar rapi) --}}
+                            <span class="text-slate-300">|</span>
+
+                            {{-- Bagian Label (Jam 1) --}}
+                            <p class="text-xs sm:text-sm uppercase tracking-wider font-semibold whitespace-nowrap {{ $isCurrent ? 'text-red-500' : 'text-slate-400' }}">
+                                Jam {{ $slot }}
+                            </p>
+
                         </div>
-                        <div class="w-2/3 sm:w-3/4 pl-3 sm:pl-4 border-l border-slate-200">
+
+                        {{-- KOLOM KANAN: MAPEL (Flex-1 biaruh sisa ruang) --}}
+                        <div class="flex-1 min-w-0"> {{-- min-w-0 mencegah text overflow --}}
                             @if($schedule)
-                            <p class="font-bold {{ $isCurrent ? 'text-red-700' : 'text-gray-900' }} text-base sm:text-lg">{{ $schedule->subject->nama_pelajaran }}</p>
-                            <div class="text-xs sm:text-sm text-slate-600 flex items-center gap-x-3 mt-1">
-                                <span class="inline-flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path>
-                                    </svg>
-                                    {{ $schedule->kelas->nama_kelas }}
-                                </span>
-                                <span class="inline-flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                    </svg>
-                                    {{ $schedule->room->name }}
-                                </span>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-sm sm:text-lg leading-tight truncate {{ $isCurrent ? 'text-red-700' : 'text-gray-900' }}">
+                                        {{ $schedule->subject->nama_pelajaran }}
+                                    </h3>
+
+                                    {{-- Info Tambahan (Kelas & Ruang) --}}
+                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs sm:text-sm text-slate-500">
+                                        <span class="inline-flex items-center gap-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path>
+                                            </svg>
+                                            {{ $schedule->kelas->nama_kelas }}
+                                        </span>
+                                        <span class="inline-flex items-center gap-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                            </svg>
+                                            {{ $schedule->room->name }}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                             @else
                             <div class="flex items-center h-full">
-                                <p class="text-sm sm:text-base text-slate-400 font-medium italic">Jam Kosong</p>
+                                <p class="text-sm text-slate-400 font-medium italic">Jam Kosong</p>
                             </div>
                             @endif
                         </div>
+
+                        {{-- BADGE "SEKARANG" --}}
                         @if($isCurrent)
-                        <div class="absolute top-2 right-2 flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800 animate-pulse">
-                            <svg class="-ml-0.5 mr-1 h-2 w-2 text-red-500" fill="currentColor" viewBox="0 0 8 8">
-                                <circle cx="4" cy="4" r="3" />
-                            </svg>
-                            Sekarang
+                        <div class="absolute -top-2 right-2 sm:top-2 sm:right-2 flex items-center rounded-full bg-red-600 text-white px-2 py-0.5 text-[10px] sm:text-xs font-bold shadow-sm animate-pulse z-20">
+                            <span class="w-1.5 h-1.5 bg-white rounded-full mr-1.5"></span>
+                            AKTIF
                         </div>
                         @endif
                     </div>
@@ -285,84 +315,16 @@
         </button>
     </div>
 
+
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
 
     <script>
-        // 1. LOGIK UNTUK NOTIFIKASI JADWAL MENGAJAR (CAPACITOR)
-        document.addEventListener('DOMContentLoaded', async function() {
-            const schedules = @json($notificationData);
+        // KITA SIMPAN DATA JADWAL KE WINDOW AGAR BISA DIBACA OLEH APP.JSX
+        window.teacherSchedules = @json($notificationData);
 
-            // Hanya jalankan jika di lingkungan Capacitor (App)
-            if (window.Capacitor) {
-                const {
-                    LocalNotifications
-                } = Capacitor.Plugins;
-
-                try {
-                    // Cek/Request Izin Notifikasi (Wajib Android 13+)
-                    let permission = await LocalNotifications.checkPermissions();
-
-                    if (permission.display !== 'granted') {
-                        permission = await LocalNotifications.requestPermissions();
-                    }
-
-                    if (permission.display === 'granted') {
-                        scheduleDailyNotifications(LocalNotifications, schedules);
-                    }
-                } catch (e) {
-                    console.error("Error setting up notifications", e);
-                }
-            }
-        });
-
-        async function scheduleDailyNotifications(LocalNotifications, schedules) {
-            // Batalkan notifikasi yang lama agar tidak duplikat
-            // Kita ambil ID dari jadwal yang ada
-            if (schedules.length > 0) {
-                await LocalNotifications.cancel({
-                    notifications: schedules.map(s => ({
-                        id: s.id
-                    }))
-                });
-            }
-
-            const notificationsToSchedule = [];
-            const now = new Date();
-
-            schedules.forEach(schedule => {
-                // Parse jam dari string "07:00"
-                const [hours, minutes] = schedule.time.split(':');
-
-                const scheduleTime = new Date();
-                scheduleTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-
-                // Jika jadwal belum lewat hari ini, masukkan antrian
-                if (scheduleTime > now) {
-                    notificationsToSchedule.push({
-                        id: schedule.id
-                        , title: schedule.title
-                        , body: schedule.body
-                        , schedule: {
-                            at: scheduleTime
-                            , allowWhileIdle: true // Penting agar bunyi meski HP sleep
-                        }
-                        , sound: null
-                        , attachments: null
-                        , actionTypeId: ""
-                        , extra: null
-                    });
-                }
-            });
-
-            if (notificationsToSchedule.length > 0) {
-                await LocalNotifications.schedule({
-                    notifications: notificationsToSchedule
-                });
-                console.log('Notifikasi berhasil dijadwalkan:', notificationsToSchedule.length);
-            }
-        }
+        console.log("Data Jadwal dimuat ke Window:", window.teacherSchedules);
 
         // 2. LOGIK ANIMASI CARD & PWA INSTALLER (BAWAAN LAMA)
         document.addEventListener('DOMContentLoaded', function() {
@@ -427,10 +389,14 @@
 
     <style>
         .schedule-slot {
-            position: relative;
-            overflow: hidden;
+            /* Efek smooth saat muncul */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* Hapus layout column di mobile yang bikin jelek */
+        /* Kita percayakan pada utility class Tailwind yang baru saya buat di atas */
+
+        /* Efek Shine Glossy (Opsional) */
         .schedule-slot::before {
             content: '';
             position: absolute;
@@ -438,10 +404,11 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), transparent);
             opacity: 0;
             transition: opacity 0.3s ease;
             pointer-events: none;
+            border-radius: 1rem;
         }
 
         .schedule-slot:hover::before {
@@ -454,26 +421,6 @@
                 right: 1rem;
                 font-size: 14px;
                 padding: 0.75rem 1.5rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .schedule-slot {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .schedule-slot>div:first-child {
-                width: 100% !important;
-                order: 2;
-            }
-
-            .schedule-slot>div:last-child {
-                width: 100% !important;
-                order: 1;
-                border-left: none !important;
-                border-top: 1px solid rgba(0, 0, 0, 0.1);
-                padding-top: 1rem;
             }
         }
 

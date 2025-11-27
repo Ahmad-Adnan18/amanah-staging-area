@@ -1,4 +1,9 @@
 <x-app-layout>
+    @php
+    $fotoUrl = $santri->foto
+    ? Storage::url($santri->foto)
+    : 'https://ui-avatars.com/api/?name='.urlencode($santri->nama).'&background=FBBF24&color=fff&size=128';
+    @endphp
     {{-- AlpineJS helper untuk deteksi mobile --}}
     <script>
         document.addEventListener('alpine:init', () => {
@@ -18,7 +23,17 @@
                         <div class="flex flex-col lg:flex-row items-center lg:items-start gap-6 text-center lg:text-left">
                             {{-- Foto Profil --}}
                             <div class="flex-shrink-0">
-                                <img class="h-24 w-24 lg:h-28 lg:w-28 rounded-full object-cover ring-4 ring-red-100 shadow-lg" src="{{ $santri->foto ? Storage::url($santri->foto) : 'https://ui-avatars.com/api/?name='.urlencode($santri->nama).'&background=FBBF24&color=fff&size=128' }}" alt="Foto Santri">
+                                <div x-data="localPreviewHandler()" @touchstart.passive="startPress" @touchend.passive="endPress" @touchcancel.passive="cancelPress" @contextmenu.prevent="" class="relative cursor-pointer select-none group">
+                                    {{-- Gambar Utama --}}
+                                    <img src="{{ $fotoUrl }}" alt="Foto Santri" class="h-24 w-24 lg:h-28 lg:w-28 rounded-full object-cover ring-4 ring-red-100 shadow-lg transition-transform duration-200" :class="isLongPressActive ? 'scale-90 ring-red-400' : 'group-hover:scale-105'">
+
+                                    {{-- Icon Zoom (Hanya di Desktop) --}}
+                                    <div class="hidden lg:flex absolute inset-0 items-center justify-center bg-black/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                        <svg class="w-6 h-6 text-white drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="flex-grow">
@@ -922,4 +937,112 @@
             </div>
         </div>
     </div>
+
+    {{--
+        MODAL PREVIEW KHUSUS HALAMAN INI (FIX FULLSCREEN MOBILE) 
+    --}}
+    <div id="local-santri-preview" class="hidden" style="position: fixed; top: 0; left: 0; z-index: 99999;">
+
+        {{--
+           1. BACKGROUND BLUR "OVERSIZED"
+           Ukurannya 150% layar & ditarik keluar layar agar menutup celah browser HP 
+        --}}
+        <div onclick="closeLocalModal()" style="
+                position: fixed; 
+                top: -25vh; 
+                left: -25vw; 
+                width: 150vw; 
+                height: 150vh; 
+                background-color: rgba(0, 0, 0, 0.35); 
+                backdrop-filter: blur(15px); 
+                -webkit-backdrop-filter: blur(15px);
+                cursor: pointer;
+             ">
+        </div>
+
+        {{-- 2. CONTAINER GAMBAR (Tengah Layar) --}}
+        <div style="
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            z-index: 100000;
+            pointer-events: none;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+         ">
+            <img src="{{ $fotoUrl }}" alt="Preview Besar" class="rounded-full object-cover shadow-2xl animate-in zoom-in duration-300" style="
+                    width: 70vw; 
+                    height: 70vw; 
+                    max-width: 350px; 
+                    max-height: 350px; 
+                    border: 6px solid rgba(255, 255, 255, 0.6);
+                    aspect-ratio: 1/1;
+                    pointer-events: auto;
+                 ">
+        </div>
+    </div>
+
+    {{-- SCRIPT LOKAL --}}
+    @push('scripts')
+    <script>
+        function localPreviewHandler() {
+            return {
+                pressTimer: null
+                , isLongPressActive: false
+                , isMoved: false,
+
+                startPress() {
+                    this.isMoved = false;
+                    this.pressTimer = setTimeout(() => {
+                        if (!this.isMoved) {
+                            this.isLongPressActive = true;
+                            this.openModal();
+                            if (navigator.vibrate) navigator.vibrate(50);
+                        }
+                    }, 500);
+                },
+
+                endPress() {
+                    clearTimeout(this.pressTimer);
+                    this.isLongPressActive = false;
+                },
+
+                cancelPress() {
+                    clearTimeout(this.pressTimer);
+                    this.isLongPressActive = false;
+                },
+
+                init() {
+                    this.$el.addEventListener('touchmove', () => {
+                        this.isMoved = true;
+                        this.cancelPress();
+                    }, {
+                        passive: true
+                    });
+                },
+
+                openModal() {
+                    const modal = document.getElementById('local-santri-preview');
+                    if (modal) {
+                        modal.style.display = 'block';
+                        modal.classList.remove('hidden');
+                        document.body.style.overflow = 'hidden';
+                    }
+                }
+            };
+        }
+
+        // Fungsi Close Global (Khusus Halaman Ini)
+        window.closeLocalModal = function() {
+            const modal = document.getElementById('local-santri-preview');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        };
+
+    </script>
+    @endpush
 </x-app-layout>

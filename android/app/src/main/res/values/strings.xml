@@ -4,4 +4,6 @@
     <string name="title_activity_main">Amanah</string>
     <string name="package_name">app.perizinan.akademik</string>
     <string name="custom_url_scheme">app.perizinan.akademik</string>
+    <string name="default_notification_channel_id">jadwal_mengajar</string>
+    <string name="default_notification_channel_name">Jadwal Mengajar</string>
 </resources>
