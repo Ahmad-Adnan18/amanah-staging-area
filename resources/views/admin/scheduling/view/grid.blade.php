@@ -1,306 +1,211 @@
 <x-app-layout>
-    <div class="bg-slate-50 min-h-screen">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div class="bg-slate-50 min-h-screen" x-data="{ activeTab: {{ array_key_first($days) }} }">
+        <div class="max-w-7xl px-3 sm:px-4 lg:px-8 py-4 md:py-8 mx-auto">
 
-            <!-- Header Section dengan Action Buttons -->
-            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 mb-8">
-                <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div class="bg-red-100 p-2 rounded-lg">
-                                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">Jadwal Pelajaran (Admin)</h1>
-                                <p class="mt-1 text-sm text-slate-600">Tampilan global jadwal pelajaran - Sistem Hybrid</p>
-                            </div>
+            <!-- Header Section -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold tracking-tight text-slate-900 group flex items-center gap-3">
+                        <div class="p-2 bg-red-600 rounded-xl shadow-lg shadow-red-200 group-hover:scale-105 transition-transform duration-200">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
                         </div>
-                    </div>
-                    <div class="flex flex-wrap gap-3">
-                        <a href="{{ route('admin.scheduling.manual.grid') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 border border-transparent rounded-xl font-semibold text-sm text-white tracking-wide hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5 shadow-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            Tambah Manual
-                        </a>
-                        <a href="{{ route('admin.schedule.swap.show') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-600 border border-transparent rounded-xl font-semibold text-sm text-white tracking-wide hover:bg-amber-700 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5 shadow-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-                            </svg>
-                            Tukar Jadwal
-                        </a>
-                        <a href="{{ route('admin.generator.show') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 border border-transparent rounded-xl font-semibold text-sm text-white tracking-wide hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5 shadow-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                            </svg>
-                            Generator
-                        </a>
-                    </div>
+                        Jadwal Pelajaran
+                    </h1>
+                    <p class="mt-2 text-slate-500 font-medium">Monitoring jadwal pelajaran santri secara real-time.</p>
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+                    <a href="{{ route('admin.scheduling.manual.grid') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl font-semibold text-sm text-slate-700 hover:bg-slate-50 hover:text-red-600 hover:border-red-200 focus:ring-2 focus:ring-red-100 transition-all duration-200 shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        Mode Edit
+                    </a>
+                    <a href="{{ route('admin.schedule.swap.show') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl font-semibold text-sm text-slate-700 hover:bg-slate-50 hover:text-amber-600 hover:border-amber-200 focus:ring-2 focus:ring-amber-100 transition-all duration-200 shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                        </svg>
+                        Tukar Jadwal
+                    </a>
+                    <a href="{{ route('admin.generator.show') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 border border-transparent rounded-xl font-semibold text-sm text-white hover:bg-red-700 focus:ring-4 focus:ring-red-100 transition-all duration-200 shadow-lg shadow-red-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                        Generator Jadwal
+                    </a>
                 </div>
             </div>
 
-            <!-- Success Notification -->
-            @if (session('success'))
-                <x-alert type="success" :message="session('success')" class="mb-6" />
-            @endif
+            <!-- Tab Navigation -->
+            <div class="mb-6 overflow-x-auto pb-2">
+                <nav class="flex space-x-2 md:space-x-4 min-w-max" aria-label="Tabs">
+                    @foreach ($days as $dayKey => $dayName)
+                    <button 
+                        @click="activeTab = {{ $dayKey }}" 
+                        :class="activeTab === {{ $dayKey }} 
+                            ? 'bg-white text-red-600 shadow-md ring-1 ring-red-100' 
+                            : 'bg-slate-100/50 text-slate-500 hover:bg-white hover:text-slate-700 hover:shadow-sm'"
+                        class="px-5 py-3 rounded-xl font-semibold text-sm md:text-base transition-all duration-200 flex items-center gap-2.5 outline-none focus:ring-2 focus:ring-red-500/20">
+                        <span class="w-2 h-2 rounded-full" :class="activeTab === {{ $dayKey }} ? 'bg-red-500' : 'bg-slate-300'"></span>
+                        {{ $dayName }}
+                    </button>
+                    @endforeach
+                </nav>
+            </div>
 
-            @if (session('error'))
-                <x-alert type="error" :message="session('error')" class="mb-6" />
-            @endif
-
-            <!-- Schedule Sections -->
-            <div class="space-y-8">
+            <!-- Content Area -->
+            <div class="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200 relative">
+                
                 @foreach ($days as $dayKey => $dayName)
-                <section class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+                <div x-show="activeTab === {{ $dayKey }}" 
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-y-4"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     class="min-h-[500px]">
+                    
+                    <!-- Table Header Gradient -->
+                    <div class="h-2 bg-gradient-to-r from-red-500 via-orange-500 to-amber-500"></div>
 
-                    <!-- Day Header -->
-                    <div class="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200 px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-red-100 p-2 rounded-lg">
-                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                            </div>
-                            <h2 class="text-xl font-bold text-slate-800">{{ $dayName }}</h2>
-                        </div>
-                    </div>
-
-                    <!-- Desktop Table View -->
-                    <div class="hidden lg:block">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-slate-200">
-                                <thead class="bg-slate-50">
-                                    <tr>
-                                        <th class="px-6 py-4 text-left text-sm font-semibold text-slate-900 whitespace-nowrap w-48 sticky left-0 bg-slate-50 z-20 border-r border-slate-200">
-                                            <div class="flex items-center gap-2">
-                                                <div class="bg-white p-1.5 rounded-lg border border-slate-200">
-                                                    <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                                    </svg>
-                                                </div>
-                                                <span>Kelas</span>
-                                            </div>
-                                        </th>
-                                        @foreach ($timeSlots as $timeSlot)
-                                        <th class="px-4 py-4 text-center text-sm font-semibold text-slate-700 whitespace-nowrap bg-slate-50/80">
-                                            <div class="flex flex-col items-center">
-                                                <span class="text-xs text-slate-500 mb-1">Jam</span>
-                                                <span class="text-sm font-semibold">{{ $timeSlot }}</span>
-                                            </div>
-                                        </th>
-                                        @endforeach
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-slate-200">
-                                    @forelse ($classes as $class)
-                                    <tr class="hover:bg-slate-50/50 transition-colors duration-200 group">
-                                        <td class="px-6 py-4 text-sm font-semibold text-slate-900 bg-white whitespace-nowrap sticky left-0 z-10 border-r border-slate-200 group-hover:bg-slate-50/50">
-                                            <div class="flex items-center gap-3">
-                                                <div class="bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-sm font-semibold border border-red-200 min-w-[80px] text-center">
-                                                    {{ $class->nama_kelas }}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        @foreach ($timeSlots as $timeSlot)
-                                        <td class="px-3 py-3 text-sm border-l border-slate-100 text-center align-top min-h-[120px] group-hover:bg-slate-50/30 transition-colors duration-200">
-
-                                            @if ($grid[$class->id][$dayKey][$timeSlot])
-                                            @php $schedule = $grid[$class->id][$dayKey][$timeSlot]; @endphp
-                                            <div class="p-3 bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-xl text-left h-full flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-200 relative group/card">
-
-                                                <!-- Schedule Content -->
-                                                <div class="space-y-2">
-                                                    <div class="font-semibold text-slate-900 text-sm leading-tight">
-                                                        {{ $schedule->subject->nama_pelajaran ?? 'N/A' }}
-                                                    </div>
-                                                    <div class="text-slate-700 text-sm flex items-center gap-1">
-                                                        <svg class="w-3 h-3 text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                                        </svg>
-                                                        <span class="truncate">{{ $schedule->teacher->name ?? 'N/A' }}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="flex items-center justify-between mt-2 pt-2 border-t border-red-200/50">
-                                                    <div class="text-slate-500 text-xs flex items-center gap-1">
-                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                                        </svg>
-                                                        {{ $schedule->room->name ?? 'N/A' }}
-                                                    </div>
-                                                </div>
-
-                                                <!-- Action Menu -->
-                                                <div class="absolute top-2 right-2 opacity-0 group-hover/card:opacity-100 transition-opacity duration-200">
-                                                    <div class="relative" x-data="{ open: false }">
-                                                        <button @click="open = !open" class="p-1.5 rounded-lg bg-white/80 backdrop-blur-sm shadow-sm border border-slate-200 hover:bg-white hover:shadow-md transition-all duration-200">
-                                                            <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
-                                                            </svg>
-                                                        </button>
-
-                                                        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" @click.away="open = false" class="absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-slate-200 z-10 overflow-hidden">
-                                                            <div class="py-1">
-                                                                <a href="{{ route('admin.scheduling.manual.edit', $schedule) }}" class="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors duration-200">
-                                                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                                    </svg>
-                                                                    Edit Jadwal
-                                                                </a>
-                                                                <form action="{{ route('admin.scheduling.manual.destroy', $schedule) }}" method="POST">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?')" class="flex items-center gap-2 w-full text-left px-4 py-2.5 text-sm text-red-700 hover:bg-red-50 transition-colors duration-200">
-                                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                                        </svg>
-                                                                        Hapus Jadwal
-                                                                    </button>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            @else
-                                            <div class="h-full flex items-center justify-center relative group/empty">
-                                                <div class="text-slate-400 text-sm italic opacity-100 group-hover/empty:opacity-300 transition-opacity duration-200">Kosong</div>
-
-                                            </div>
-                                            @endif
-
-                                        </td>
-                                        @endforeach
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="{{ count($timeSlots) + 1 }}" class="px-6 py-12 text-center text-slate-500">
-                                            <div class="flex flex-col items-center space-y-4">
-                                                <div class="bg-slate-100 p-4 rounded-2xl">
-                                                    <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                    </svg>
-                                                </div>
-                                                <div>
-                                                    <p class="text-base font-medium text-slate-600">Tidak ada kelas aktif untuk ditampilkan.</p>
-                                                    <p class="text-sm text-slate-500 mt-1">Silakan tambah kelas terlebih dahulu.</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Mobile Accordion View -->
-                    <div class="lg:hidden">
-                        <div class="p-4 space-y-4">
-                            @forelse ($classes as $class)
-                            <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
-                                <!-- Class Header -->
-                                <div class="bg-gradient-to-r from-slate-50 to-slate-100 px-4 py-3 border-b border-slate-200">
-                                    <div class="flex items-center justify-between">
-                                        <h3 class="text-base font-semibold text-slate-900 flex items-center gap-2">
-                                            <div class="bg-red-100 text-red-700 px-2.5 py-1 rounded-lg text-sm font-semibold border border-red-200">
+                    <!-- Scrollable Table Container -->
+                    <div class="overflow-x-scroll w-full pb-8 mb-4 relative">
+                        <table class="min-w-max text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/80 border-b border-slate-200">
+                                    {{-- Performance: Removed backdrop-blur and complex shadow --}}
+                                    <th class="sticky left-0 z-20 bg-slate-50 p-4 text-sm font-bold text-slate-700 min-w-[140px] border-r border-slate-200 shadow-sm">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                            </svg>
+                                            KELAS
+                                        </div>
+                                    </th>
+                                    @foreach ($timeSlots as $timeSlot)
+                                    <th class="p-4 text-sm font-bold text-slate-600 min-w-[180px] text-center border-r border-slate-100 last:border-0 bg-slate-50/50">
+                                        <div class="inline-flex flex-col items-center">
+                                            <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-0.5">Jam Ke</span>
+                                            <span class="bg-white px-2 py-0.5 rounded-md shadow-sm border border-slate-200 text-slate-800">{{ $timeSlot }}</span>
+                                        </div>
+                                    </th>
+                                    @endforeach
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                @forelse ($classes as $class)
+                                <tr class="hover:bg-slate-50/60 transition-colors duration-150 group">
+                                    <!-- Sticky Class Column -->
+                                    {{-- Performance: Simplyfied Shadow --}}
+                                    <td class="sticky left-0 z-10 bg-white group-hover:bg-slate-50 transition-colors duration-150 p-4 border-r border-slate-200 shadow-sm">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-50 to-red-100 text-red-700 flex items-center justify-center font-bold text-sm border border-red-200/50">
                                                 {{ $class->nama_kelas }}
                                             </div>
-                                        </h3>
-                                        <span class="text-xs text-slate-500 bg-white px-2 py-1 rounded-lg border border-slate-200">
-                                            {{ count(array_filter($grid[$class->id][$dayKey] ?? [])) }}/{{ count($timeSlots) }}
-                                        </span>
-                                    </div>
-                                </div>
+                                            <div class="hidden sm:block">
+                                                <div class="text-xs font-medium text-slate-500">Wali Kelas</div>
+                                                <div class="text-sm font-semibold text-slate-800 truncate max-w-[100px]">{{ $class->wali_kelas->name ?? '-' }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
 
-                                <!-- Class Schedule -->
-                                <div class="p-4 space-y-3">
+                                    <!-- Schedule Cells -->
                                     @foreach ($timeSlots as $timeSlot)
-                                    @if ($grid[$class->id][$dayKey][$timeSlot])
-                                    @php $schedule = $grid[$class->id][$dayKey][$timeSlot]; @endphp
-                                    <div class="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-xl p-4 relative">
-                                        <div class="flex justify-between items-start mb-2">
-                                            <div class="text-sm font-semibold text-slate-700 bg-white px-2 py-1 rounded-lg border border-slate-200">
-                                                Jam {{ $timeSlot }}
-                                            </div>
-                                            <div class="text-xs text-slate-500 bg-white px-2 py-1 rounded-lg border border-slate-200 flex items-center gap-1">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                                </svg>
-                                                {{ $schedule->room->name ?? 'N/A' }}
-                                            </div>
-                                        </div>
-                                        <div class="space-y-2">
-                                            <div class="text-sm font-semibold text-slate-900">
-                                                {{ $schedule->subject->nama_pelajaran ?? 'N/A' }}
-                                            </div>
-                                            <div class="text-sm text-slate-700 flex items-center gap-2">
-                                                <svg class="w-4 h-4 text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                                </svg>
-                                                <span>{{ $schedule->teacher->name ?? 'N/A' }}</span>
-                                            </div>
-                                        </div>
+                                    <td class="p-3 border-r border-slate-100 last:border-0 align-top h-[140px]">
+                                        @if ($grid[$class->id][$dayKey][$timeSlot])
+                                            @php $schedule = $grid[$class->id][$dayKey][$timeSlot]; @endphp
+                                            {{-- Performance: Removed transition-all, ring, and hover:shadow-md. Added will-change-transform if needed but keeping it simple first. --}}
+                                            <div class="h-full w-full bg-white rounded-xl border border-slate-200 p-3 hover:border-red-300 transition-colors duration-150 flex flex-col justify-between group/card relative overflow-hidden">
+                                                
+                                                <!-- Decorative Top Bar -->
+                                                <div class="absolute top-0 left-0 w-full h-1 bg-red-500 opacity-0 group-hover/card:opacity-100 transition-opacity duration-200"></div>
 
-                                        <!-- Mobile Actions -->
-                                        <div class="flex justify-end gap-2 mt-3 pt-3 border-t border-red-200/50">
-                                            <a href="{{ route('admin.scheduling.manual.edit', $schedule) }}" class="inline-flex items-center gap-1 text-xs bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-200 transition-colors duration-200">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                </svg>
-                                                Edit
-                                            </a>
-                                            <form action="{{ route('admin.scheduling.manual.destroy', $schedule) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" onclick="return confirm('Hapus jadwal ini?')" class="inline-flex items-center gap-1 text-xs bg-red-100 text-red-700 px-3 py-1.5 rounded-lg hover:bg-red-200 transition-colors duration-200">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                    </svg>
-                                                    Hapus
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    @else
-                                    <div class="p-4 text-center text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-300 hover:border-red-300 hover:bg-red-50 transition-all duration-200">
-                                        <div class="text-sm mb-2">Jam {{ $timeSlot }} - Kosong</div>
-                                        <a href="{{ route('admin.scheduling.manual.create') }}?kelas_id={{ $class->id }}&day_of_week={{ $dayKey }}&time_slot={{ $timeSlot }}" class="inline-flex items-center gap-1 text-sm text-red-600 hover:text-red-800 font-medium">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                            </svg>
-                                            Tambah Jadwal
-                                        </a>
-                                    </div>
-                                    @endif
+                                                <div>
+                                                    <div class="font-bold text-slate-800 text-sm leading-tight mb-1 line-clamp-2" title="{{ $schedule->subject->nama_pelajaran ?? 'N/A' }}">
+                                                        {{ $schedule->subject->nama_pelajaran ?? 'Subject N/A' }}
+                                                    </div>
+                                                    
+                                                    <div class="flex items-start gap-1.5 mt-2">
+                                                        <div class="mt-0.5 min-w-[16px]">
+                                                            <div class="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center">
+                                                                <svg class="w-2.5 h-2.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <span class="text-xs text-slate-600 font-medium leading-tight line-clamp-2">
+                                                            {{ $schedule->teacher->name ?? 'Teacher N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mt-3 pt-2 border-t border-slate-100 flex justify-between items-center">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-50 text-slate-600 text-[10px] font-bold uppercase tracking-wide border border-slate-200">
+                                                        {{ $schedule->room->name ?? 'Any' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <div class="h-full w-full rounded-xl border border-dashed border-slate-200 bg-slate-50/50 flex flex-col items-center justify-center gap-2 group/empty transition-colors duration-150 hover:bg-slate-50">
+                                                <div class="w-1 h-8 rounded-full bg-slate-200/60 group-hover/empty:bg-slate-300"></div>
+                                            </div>
+                                        @endif
+                                    </td>
                                     @endforeach
-                                </div>
-                            </div>
-                            @empty
-                            <div class="text-center py-12 text-slate-500 bg-white rounded-xl border border-slate-200">
-                                <div class="flex flex-col items-center space-y-4">
-                                    <div class="bg-slate-100 p-4 rounded-2xl">
-                                        <svg class="w-16 h-16 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <p class="text-base font-medium text-slate-600">Tidak ada kelas aktif untuk ditampilkan.</p>
-                                        <p class="text-sm text-slate-500 mt-1">Silakan tambah kelas terlebih dahulu.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            @endforelse
-                        </div>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="{{ count($timeSlots) + 1 }}" class="p-12 text-center text-slate-500">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                                                <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                                </svg>
+                                            </div>
+                                            <h3 class="text-lg font-semibold text-slate-900">Belum ada kelas</h3>
+                                            <p class="text-slate-500 max-w-sm mx-auto mt-2">Silakan tambahkan data kelas terlebih dahulu di menu Akademik.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
-                </section>
+                </div>
                 @endforeach
+
             </div>
+            
+            <!-- Footer Hints -->
+            <div class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400 px-2">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-3 h-3 bg-white border border-slate-200 rounded shadow-sm"></div>
+                        <span>Jadwal Terisi</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-3 h-3 bg-slate-50 border border-dashed border-slate-300 rounded"></div>
+                        <span>Kosong</span>
+                    </div>
+                </div>
+                <div>
+                   Menampilkan {{ count($classes) }} Kelas
+                </div>
+            </div>
+
         </div>
     </div>
-
-    <!-- AlpineJS untuk dropdown menu -->
+    
+    <!-- AlpineJS Dependencies -->
     <script src="//unpkg.com/alpinejs" defer></script>
+    
+    <style>
+        /* Ensure sticky columns have high z-index and background */
+        thead th.sticky {
+            z-index: 30 !important;
+        }
+        tbody td.sticky {
+            z-index: 20 !important;
+        }
+    </style>
 </x-app-layout>

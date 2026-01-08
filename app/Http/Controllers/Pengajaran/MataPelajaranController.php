@@ -30,7 +30,7 @@ class MataPelajaranController extends Controller
             $query->where('nama_pelajaran', 'LIKE', '%' . $request->nama_pelajaran . '%');
         }
 
-        $mataPelajarans = $query->orderBy('tingkatan')->orderBy('nama_pelajaran')->paginate(15);
+        $mataPelajarans = $query->orderBy('tingkatan')->orderBy('nama_pelajaran')->paginate(50);
 
         // Statistik JP per tingkatan (mengakomodasi tingkatan string)
         $jpPerTingkat = MataPelajaran::select('tingkatan', DB::raw('SUM(duration_jp) as total_jp'))
@@ -221,5 +221,32 @@ class MataPelajaranController extends Controller
         ];
 
         return response()->json($stats);
+    }
+    /**
+     * Method untuk mengubah nama tingkatan secara massal
+     */
+    public function updateTingkatan(Request $request)
+    {
+        $request->validate([
+            'old_tingkatan' => 'required|string',
+            'new_tingkatan' => 'required|string|min:2|max:100',
+        ]);
+
+        $oldTingkatan = $request->old_tingkatan;
+        // Sanitasi tingkatan baru
+        $newTingkatan = trim(ucwords(strtolower($request->new_tingkatan)));
+
+        if ($oldTingkatan === $newTingkatan) {
+            return back()->with('error', 'Nama tingkatan baru sama dengan yang lama.');
+        }
+
+        // Cek apakah tingkatan baru sudah memiliki data pelajaran yang konflik
+        // (Opsional: Jika kita ingin merge, kita biarkan. Jika tidak ingin merge, kita cek dulu)
+        // Disini kita asumsikan behaviournya adalah MERGE jika tujuannya sudah ada.
+        
+        $affectedRows = MataPelajaran::where('tingkatan', $oldTingkatan)
+            ->update(['tingkatan' => $newTingkatan]);
+
+        return back()->with('success', "Berhasil mengubah tingkatan '$oldTingkatan' menjadi '$newTingkatan'. $affectedRows mata pelajaran diperbarui.");
     }
 }

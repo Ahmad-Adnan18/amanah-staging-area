@@ -36,8 +36,8 @@ class SliderController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'type' => 'required|in:image,video,external',
-            // File is required only if type is image/video, and must be a file max 10MB
-            'file' => 'required_if:type,image,video|file|mimes:jpeg,png,jpg,gif,svg,mp4,webm,ogg|max:10240',
+            // File is required only if type is image/video, and must be a file max 2MB
+            'file' => 'required_if:type,image,video|file|mimes:jpeg,png,jpg,gif,svg,mp4,webm,ogg|max:2048',
             // External URL is required if type is external, and must be a valid URL
             'external_url' => 'required_if:type,external|url|nullable',
             'is_active' => 'boolean', // Optional: allow setting active status on creation
@@ -83,8 +83,8 @@ class SliderController extends Controller
             'type' => 'sometimes|required|in:image,video,external',
             'is_active' => 'sometimes|required|boolean',
             'order' => 'sometimes|required|integer|min:0',
-            // File is optional for update. If provided, validate it.
-            'file' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,mp4,webm,ogg|max:10240',
+            // File is optional for update. If provided, validate it (Max 2MB).
+            'file' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,mp4,webm,ogg|max:2048',
             // External URL is required if type becomes 'external', and must be a valid URL
             'external_url' => 'required_if:type,external|url|nullable',
         ]);

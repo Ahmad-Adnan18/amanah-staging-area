@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function () {
         Route::put('santri/{santri}', [SantriController::class, 'update'])->name('santris.update');
         Route::delete('santri/{santri}', [SantriController::class, 'destroy'])->name('santris.destroy');
         Route::get('kelas/{kelas}/santri-json', [KelasController::class, 'getSantrisJson'])->name('kelas.santris.json');
+        Route::patch('mata-pelajaran/update-tingkatan', [MataPelajaranController::class, 'updateTingkatan'])->name('mata-pelajaran.update_tingkatan');
         Route::resource('mata-pelajaran', MataPelajaranController::class)->except(['show']);
         Route::post('generate-all-wali-codes', [KelasController::class, 'generateAllWaliCodes'])->name('kelas.generate_all_wali_codes');
         Route::get('export-wali-codes', [KelasController::class, 'exportWaliCodes'])->name('kelas.export_wali_codes');
@@ -98,6 +99,7 @@ Route::middleware('auth')->group(function () {
         Route::post('kelas/{kelas}/assign-jabatan', [KelasController::class, 'assignJabatan'])->name('kelas.assign_jabatan');
         Route::delete('remove-jabatan/{jabatanUser}', [KelasController::class, 'removeJabatan'])->name('kelas.remove_jabatan');
         Route::post('kelas/{kela}/assign-subjects', [KelasController::class, 'assignSubjects'])->name('kelas.assignSubjects');
+        Route::post('kelas/{kela}/sync-from-schedule', [KelasController::class, 'syncFromSchedule'])->name('kelas.syncFromSchedule');
         Route::resource('absensi', AbsensiController::class)->only(['index', 'store']);
         Route::get('absensi/export', [AbsensiController::class, 'exportLeger'])->name('absensi.export');
         Route::get('absensi/get-schedules-by-kelas/{kelas}', [AbsensiController::class, 'getSchedulesByKelas']);

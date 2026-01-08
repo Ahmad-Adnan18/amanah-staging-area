@@ -180,18 +180,31 @@
 
                 <!-- Panel 2: Alokasi Guru Mengajar -->
                 <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+                    <form id="sync-schedule-form" action="{{ route('pengajaran.kelas.syncFromSchedule', $kela) }}" method="POST" class="hidden">
+                        @csrf
+                    </form>
                     <form action="{{ route('pengajaran.kelas.assignSubjects', $kela) }}" method="POST">
                         @csrf
                         <div class="p-6 border-b border-slate-200">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-lg bg-blue-100">
-                                    <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                    </svg>
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-lg bg-blue-100">
+                                        <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-4">
+                                        <h2 class="text-xl font-bold text-gray-900">Alokasi Guru Mengajar</h2>
+                                        <p class="mt-1 text-slate-600">Tentukan guru yang akan mengajar setiap mata pelajaran di kelas ini</p>
+                                    </div>
                                 </div>
-                                <div class="ml-4">
-                                    <h2 class="text-xl font-bold text-gray-900">Alokasi Guru Mengajar</h2>
-                                    <p class="mt-1 text-slate-600">Tentukan guru yang akan mengajar setiap mata pelajaran di kelas ini</p>
+                                <div>
+                                    <button type="button" onclick="document.getElementById('sync-schedule-form').submit()" class="inline-flex items-center px-4 py-2 border border-blue-600 rounded-md shadow-sm text-sm font-medium text-blue-600 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                                        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                        </svg>
+                                        Sinkronisasi dari Jadwal
+                                    </button>
                                 </div>
                             </div>
                         </div>

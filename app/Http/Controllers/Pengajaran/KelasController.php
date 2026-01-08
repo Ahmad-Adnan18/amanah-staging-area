@@ -117,15 +117,68 @@ class KelasController extends Controller
         $syncData = [];
         if ($request->has('subjects')) {
             foreach ($request->subjects as $mapelId => $teacherId) {
-                if (!empty($teacherId)) {
-                    $syncData[$mapelId] = ['teacher_id' => $teacherId];
+                // Determine teacher ID (null if empty)
+                $teacherIdForDb = !empty($teacherId) ? $teacherId : null;
+
+                // Prepare data for Allocation (Pivot Table)
+                if ($teacherIdForDb) {
+                    $syncData[$mapelId] = ['teacher_id' => $teacherIdForDb];
                 }
+
+                // [REVERSE SYNC] Update Schedule Table
+                // Immediately reflect changes in the actual schedule
+                \App\Models\Schedule::where('kelas_id', $kela->id)
+                    ->where('mata_pelajaran_id', $mapelId)
+                    ->update(['teacher_id' => $teacherIdForDb]);
             }
         }
 
         $kela->mataPelajarans()->sync($syncData);
 
-        return redirect()->back()->with('success', 'Alokasi guru mengajar berhasil disimpan.');
+        return redirect()->back()->with('success', 'Alokasi guru berhasil disimpan dan seluruh jadwal mata pelajaran terkait telah diperbarui.');
+    }
+
+    public function syncFromSchedule(Kelas $kela)
+    {
+        $this->authorize('update', $kela);
+
+        // 1. Ambil semua jadwal untuk kelas ini
+        $schedules = \App\Models\Schedule::where('kelas_id', $kela->id)
+            ->whereNotNull('mata_pelajaran_id')
+            ->whereNotNull('teacher_id')
+            ->get();
+
+        if ($schedules->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada data jadwal yang ditemukan untuk kelas ini.');
+        }
+
+        // 2. Kumpulkan data alokasi (Mapel ID => Teacher ID)
+        // Jika ada mapel yang sama diajar guru beda, ambil yang terakhir (atau bisa logic lain)
+        $syncData = [];
+        foreach ($schedules as $schedule) {
+            $syncData[$schedule->mata_pelajaran_id] = ['teacher_id' => $schedule->teacher_id];
+        }
+
+        // 3. Sync (attach/update) tanpa menghapus yang sudah ada (syncWithoutDetaching)
+        // Atau jika ingin overwrite total yang ada di jadwal, gunakan sync() dengan merge manual
+        
+        // Kita ambil data eksisting dulu agar tidak hilang yang tidak ada di jadwal
+        $existing = $kela->mataPelajarans->pluck('pivot.teacher_id', 'id')->toArray();
+        
+        // Merge: Data jadwal menimpa data eksisting
+        foreach ($syncData as $mapelId => $data) {
+            $existing[$mapelId] = $data['teacher_id'];
+        }
+
+        // Format ulang untuk sync
+        $finalSync = [];
+        foreach ($existing as $mapelId => $teacherId) {
+             $finalSync[$mapelId] = ['teacher_id' => $teacherId];
+        }
+
+        $kela->mataPelajarans()->sync($finalSync);
+
+        return redirect()->back()->with('success', 'Alokasi guru berhasil disinkronisasi dari jadwal (' . count($syncData) . ' mata pelajaran diperbarui).');
     }
 
     public function assignJabatan(Request $request, Kelas $kelas)

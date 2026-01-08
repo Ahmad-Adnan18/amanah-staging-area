@@ -139,7 +139,7 @@
                                         <div>
                                             <label for="file" class="block text-sm font-medium text-gray-700">File</label>
                                             <input type="file" id="file" @change="handleFileUpload" :accept="formData.type === 'image' ? 'image/*' : 'video/*'" class="mt-1 block w-full">
-                                            <p class="mt-1 text-sm text-gray-500">Ukuran maksimal: 10MB</p>
+                                            <p class="mt-1 text-sm text-gray-500">Ukuran maksimal: 2MB</p>
                                             <template x-if="formData.filePreview">
                                                 <div class="mt-2" x-show="formData.type === 'image'">
                                                     <img :src="formData.filePreview" alt="Preview" class="h-32 w-32 object-cover rounded">
@@ -292,6 +292,15 @@
                 handleFileUpload(event) {
                     const file = event.target.files[0];
                     if (file) {
+                         // Validasi Ukuran File (Max 2MB)
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert('File terlalu besar! Maksimal ukuran file adalah 2MB.');
+                            event.target.value = ''; // Reset input file
+                            this.formData.file = null;
+                            this.formData.filePreview = null;
+                            return;
+                        }
+
                         this.formData.file = file; // Simpan file objek
                         // Buat pratinjau untuk gambar
                         if (this.formData.type === 'image') {

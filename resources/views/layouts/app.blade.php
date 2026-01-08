@@ -76,28 +76,13 @@
         }
 
         /* Sembunyikan Scrollbar untuk HTML dan Body (Wajib untuk Capacitor) */
+        /* Hanya sembunyikan jika dijalankan di environment mobile/webview tertentu jika perlu, tapi default jangan di-hide total */
+         /* 
         html,
         body {
-            scrollbar-width: none;
-            /* Firefox */
-            -ms-overflow-style: none;
-            /* IE/Edge */
-        }
-
-        /* Sembunyikan Webkit Scrollbar (Chrome/Safari/Android WebView) */
-        ::-webkit-scrollbar {
-            display: none;
-            width: 0;
-            height: 0;
-            background: transparent;
-        }
-
-        html::-webkit-scrollbar,
-        body::-webkit-scrollbar {
-            display: none;
-            width: 0;
-            height: 0;
-        }
+            scrollbar-width: thin;
+        } 
+        */
 
         /* 1. MATIKAN SELEKSI TEKS DI SELURUH APLIKASI */
         body {
