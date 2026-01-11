@@ -125,5 +125,40 @@ class TeacherController extends Controller
             return redirect()->route('admin.teachers.index')->with('error', 'Terjadi kesalahan saat mengimpor file: ' . $e->getMessage());
         }
     }
+    /**
+     * Generate codes for teachers who don't have one.
+     */
+    public function generateCodes()
+    {
+        $teachers = Teacher::whereNull('teacher_code')
+                           ->orWhere('teacher_code', '')
+                           ->get();
+        
+        $count = 0;
+        foreach ($teachers as $teacher) {
+            // Format: KK + ID (pad left with 0 if needed, e.g. KK001)
+            // Or simple KK + ID as requested: KK1, KK15, etc.
+            // Let's make it slightly neat: KK + 3 digit ID
+            $code = 'KK' . str_pad($teacher->id, 3, '0', STR_PAD_LEFT);
+            
+            // Check uniqueness just in case manual entry conflict
+            while(Teacher::where('teacher_code', $code)->exists()) {
+                 $code = 'KK' . str_pad($teacher->id . rand(1,9), 3, '0', STR_PAD_LEFT);
+            }
+
+            $teacher->update(['teacher_code' => $code]);
+            $count++;
+        }
+
+        return redirect()->route('admin.teachers.index')->with('success', "Berhasil membuatkan kode untuk $count guru.");
+    }
+
+    /**
+     * Export data guru to Excel.
+     */
+    public function export()
+    {
+        return Excel::download(new \App\Exports\TeachersExport, 'data-guru-' . date('Y-m-d') . '.xlsx');
+    }
 }
 

@@ -9,23 +9,31 @@
                 </div>
                 
                 <div x-data="{
-                        source: {{ $sourceSchedule ? json_encode(['id' => $sourceSchedule->id, 'text' => "{$sourceSchedule->subject->nama_pelajaran} ({$sourceSchedule->teacher->name})"]) : 'null' }},
-                        target: {{ $targetSchedule ? json_encode(['id' => $targetSchedule->id, 'text' => "{$targetSchedule->subject->nama_pelajaran} ({$targetSchedule->teacher->name})"]) : 'null' }},
-                        select(scheduleId, scheduleText) {
+                        source: {{ $sourceSchedule ? json_encode(['id' => $sourceSchedule->id, 'text' => "{$sourceSchedule->subject->nama_pelajaran} ({$sourceSchedule->teacher->name})", 'classId' => $sourceSchedule->kelas_id, 'className' => $sourceSchedule->kelas->nama_kelas]) : 'null' }},
+                        target: {{ $targetSchedule ? json_encode(['id' => $targetSchedule->id, 'text' => "{$targetSchedule->subject->nama_pelajaran} ({$targetSchedule->teacher->name})", 'classId' => $targetSchedule->kelas_id, 'className' => $targetSchedule->kelas->nama_kelas]) : 'null' }},
+                        errorMessage: '',
+                        select(scheduleId, scheduleText, classId, className) {
+                            this.errorMessage = '';
+                            
                             if (this.source && this.source.id === scheduleId) {
                                 this.source = null;
                             } else if (this.target && this.target.id === scheduleId) {
                                 this.target = null;
                             } else if (!this.source) {
-                                this.source = { id: scheduleId, text: scheduleText };
+                                this.source = { id: scheduleId, text: scheduleText, classId: classId, className: className };
                             } else if (!this.target) {
-                                this.target = { id: scheduleId, text: scheduleText };
+                                // Validasi: harus kelas yang sama
+                                if (this.source.classId !== classId) {
+                                    this.errorMessage = 'Tidak bisa menukar jadwal antar kelas berbeda! Jadwal sumber: ' + this.source.className + ', Anda memilih: ' + className;
+                                    return;
+                                }
+                                this.target = { id: scheduleId, text: scheduleText, classId: classId, className: className };
                             } else {
-                                this.source = { id: scheduleId, text: scheduleText };
+                                this.source = { id: scheduleId, text: scheduleText, classId: classId, className: className };
                                 this.target = null;
                             }
                         }
-                    }" 
+                    }"  
                     class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     
                     <!-- Kolom Tabel Jadwal -->
@@ -61,7 +69,7 @@
                                                             @php 
                                                                 $scheduleText = "{$schedule->subject->nama_pelajaran} ({$schedule->teacher->name})";
                                                             @endphp
-                                                            <div @click="select({{ $schedule->id }}, '{{ addslashes($scheduleText) }}')" 
+                                                            <div @click="select({{ $schedule->id }}, '{{ addslashes($scheduleText) }}', {{ $class->id }}, '{{ addslashes($class->nama_kelas) }}')" 
                                                                  class="p-2 rounded-lg text-left h-full min-h-[6rem] flex flex-col justify-between text-xs cursor-pointer transition-all border-2"
                                                                  :class="{
                                                                     'border-green-500 bg-green-50 ring-2 ring-green-200': source && source.id === {{ $schedule->id }},
@@ -96,15 +104,32 @@
 
                                 <div class="p-6">
                                     <h3 class="text-lg font-bold text-gray-900">Detail Pertukaran</h3>
+                                    
+                                    <!-- Error Message -->
+                                    <div x-show="errorMessage" x-cloak class="mt-4 p-3 bg-red-50 text-red-800 border border-red-200 rounded-lg text-sm">
+                                        <span x-text="errorMessage"></span>
+                                    </div>
+                                    
                                     <div class="mt-4 space-y-4">
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700">Pelajaran Sumber</label>
-                                            <div class="mt-1 p-3 rounded-lg bg-slate-100 border border-slate-200 min-h-[4rem]" x-text="source ? source.text : 'Pilih dari tabel di kiri'"></div>
+                                            <div class="mt-1 p-3 rounded-lg bg-slate-100 border border-slate-200 min-h-[4rem]">
+                                                <div x-text="source ? source.text : 'Pilih dari tabel di kiri'"></div>
+                                                <div x-show="source" class="text-xs text-slate-500 mt-1" x-text="source ? 'Kelas: ' + source.className : ''"></div>
+                                            </div>
                                         </div>
                                          <div>
                                             <label class="block text-sm font-medium text-gray-700">Pelajaran Target</label>
-                                            <div class="mt-1 p-3 rounded-lg bg-slate-100 border border-slate-200 min-h-[4rem]" x-text="target ? target.text : 'Pilih dari tabel di kiri'"></div>
+                                            <div class="mt-1 p-3 rounded-lg bg-slate-100 border border-slate-200 min-h-[4rem]">
+                                                <div x-text="target ? target.text : 'Pilih dari tabel di kiri'"></div>
+                                                <div x-show="target" class="text-xs text-slate-500 mt-1" x-text="target ? 'Kelas: ' + target.className : ''"></div>
+                                            </div>
                                         </div>
+                                    </div>
+                                    
+                                    <!-- Info validasi -->
+                                    <div class="mt-4 p-3 bg-blue-50 text-blue-800 border border-blue-200 rounded-lg text-xs">
+                                        ℹ️ Pertukaran jadwal hanya bisa dilakukan dalam <strong>kelas yang sama</strong>.
                                     </div>
                                 </div>
                                 <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-4">

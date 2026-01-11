@@ -77,12 +77,23 @@
                         <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">Manajemen Guru</h1>
                         <p class="mt-1 text-slate-600">Kelola semua data guru untuk keperluan penjadwalan.</p>
                     </div>
-                    <a href="{{ route('admin.teachers.create') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                            <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                        </svg>
-                        <span>Tambah Guru</span>
-                    </a>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <form action="{{ route('admin.teachers.generate_codes') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membuatkan kode otomatis untuk semua guru yang belum memiliki kode?');">
+                            @csrf
+                            <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+                                </svg>
+                                <span>Generate Kode</span>
+                            </button>
+                        </form>
+                        <a href="{{ route('admin.teachers.create') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                                <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                            </svg>
+                            <span>Tambah Guru</span>
+                        </a>
+                    </div>
                 </div>
 
                 {{-- Notifikasi Sukses atau Error --}}
@@ -135,6 +146,12 @@
                                 <div class="flex items-center space-x-2">
                                     <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600">Cari</button>
                                     <a href="{{ route('admin.teachers.index') }}" class="w-full sm:w-auto inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Reset</a>
+                                    <a href="{{ route('admin.teachers.export') }}" class="w-full sm:w-auto inline-flex items-center justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                        </svg>
+                                        Export
+                                    </a>
                                 </div>
                             </div>
                         </form>

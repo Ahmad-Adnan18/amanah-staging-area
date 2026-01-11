@@ -139,8 +139,17 @@ class ScheduleManualController extends Controller
         return response()->json(['success' => true, 'message' => 'Jadwal berhasil ditambahkan']);
     }
 
-    public function quickDelete(Schedule $schedule)
+    public function quickDelete(int $scheduleId)
     {
+        $schedule = Schedule::find($scheduleId);
+        
+        if (!$schedule) {
+            return response()->json([
+                'success' => false, 
+                'message' => 'Jadwal tidak ditemukan atau sudah dihapus'
+            ], 404);
+        }
+        
         $schedule->delete();
         return response()->json(['success' => true, 'message' => 'Jadwal berhasil dihapus']);
     }

@@ -94,17 +94,32 @@
                         </div>
 
                         <!-- [BARU] Kode Registrasi Guru -->
+                        <!-- Kode Registrasi Aplikasi (.env) -->
                         <div class="mt-6">
-                            <!-- Tambahkan mt-6 atau space-y-6 pada form jika belum ada -->
-                            <label for="registration_code" class="block text-sm font-medium text-gray-700 mb-1">Kode Registrasi Guru</label>
+                            <label for="registration_code" class="block text-sm font-medium text-gray-700 mb-1">Kode Registrasi Aplikasi</label>
                             <div class="relative">
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
                                     <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" /></svg>
                                 </div>
-                                <input id="registration_code" type="text" name="registration_code" required placeholder="Masukkan kode rahasia Anda" class="block w-full rounded-lg border-gray-300 py-3 pl-11 pr-4 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-red-500 focus:ring-1 focus:ring-red-500 sm:text-sm">
+                                <input id="registration_code" type="text" name="registration_code" required placeholder="Kode keamanan aplikasi" class="block w-full rounded-lg border-gray-300 py-3 pl-11 pr-4 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-red-500 focus:ring-1 focus:ring-red-500 sm:text-sm">
                             </div>
                             <x-input-error :messages="$errors->get('registration_code')" class="mt-2" />
+                        </div>
+
+                        <!-- [BARU] Kode Identitas Guru (DB) -->
+                        <div class="mt-4">
+                            <label for="teacher_code" class="block text-sm font-medium text-gray-700 mb-1">Kode Identitas Guru</label>
+                            <div class="relative">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                                    <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <input id="teacher_code" type="text" name="teacher_code" required placeholder="Kode unik guru Anda" class="block w-full rounded-lg border-gray-300 py-3 pl-11 pr-4 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-red-500 focus:ring-1 focus:ring-red-500 sm:text-sm">
+                            </div>
+                            <x-input-error :messages="$errors->get('teacher_code')" class="mt-2" />
+                            <p class="mt-1 text-xs text-gray-500">Masukkan kode guru yang terdaftar di sistem untuk menghubungkan data.</p>
                         </div>
 
                         <!-- Tombol Register & Link Login -->

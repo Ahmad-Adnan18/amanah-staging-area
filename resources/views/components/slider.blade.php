@@ -49,9 +49,7 @@ $config = json_encode([
                             </template>
                         </div>
                         <div class="carousel-content">
-                            <div class="carousel-chip">
-                                <span x-text="getSlideInitial(item)"></span>
-                            </div>
+
                             <h3 class="carousel-title" x-text="item.title ?? 'Highlight'">Highlight</h3>
                             <p class="carousel-description" x-show="getSlideDescription(item)" x-text="getSlideDescription(item)"></p>
                         </div>
@@ -169,13 +167,9 @@ $config = json_encode([
                 if (!this.viewportWidth) {
                     return 320;
                 }
-
-                if (this.round) {
-                    return Math.min(this.viewportWidth, 420);
-                }
-
-                const innerWidth = Math.max(this.viewportWidth - this.containerPadding * 2, 260);
-                return Math.min(innerWidth, 460);
+                
+                // Allow full width minus padding
+                return this.viewportWidth - (this.containerPadding * 2);
             },
 
             trackItemOffset() {
@@ -199,19 +193,15 @@ $config = json_encode([
 
             getSlideStyle(index) {
                 const width = this.itemWidth();
-                const fractional = this.currentIndexWithDrag();
-                const delta = index - fractional;
-                const rotate = Math.max(-90, Math.min(90, delta * 35));
-                const opacity = Math.abs(delta) >= 2 ? 0.35 : 1;
-
+                
+                // Simple translation for flat slider
                 return {
                     width: `${width}px`,
                     height: this.round ? `${width}px` : 'auto',
-                    transform: `perspective(1200px) rotateY(${rotate}deg)` + (this.round ? '' : ' translateZ(0)'),
-                    opacity,
+                    opacity: 1,
                     transition: this.isDragging
-                        ? 'transform 0s linear, opacity 0s linear'
-                        : `transform ${this.transitionMs}ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity ${this.transitionMs}ms ease`
+                        ? 'none'
+                        : `transform ${this.transitionMs}ms cubic-bezier(0.2, 0.8, 0.2, 1)`
                 };
             },
 
@@ -457,18 +447,7 @@ $config = json_encode([
         z-index: 2;
     }
 
-    .carousel-chip {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 0.9rem;
-        color: #fff;
-    }
+
 
     .carousel-title {
         font-size: 1.25rem;
@@ -538,10 +517,7 @@ $config = json_encode([
             font-size: 1.1rem;
         }
 
-        .carousel-chip {
-            width: 40px;
-            height: 40px;
-        }
+
     }
 
     @media (min-width: 1024px) {

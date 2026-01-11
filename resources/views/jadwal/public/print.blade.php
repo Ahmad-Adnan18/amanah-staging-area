@@ -25,8 +25,8 @@
         .slot-table { width: 100%; margin-bottom: 4px; }
         .slot-table td { border: none; padding: 1.5px 0; font-size: 8pt; border-bottom: 1px dotted #999; }
         .slot-num { width: 18px; color: #555; }
-        .slot-subject { font-weight: bold; }
-        .slot-detail { text-align: right; color: #555; white-space: nowrap; }
+        .slot-subject { font-weight: bold; vertical-align: top; width: 45%; padding-right: 2px;}
+        .slot-detail { text-align: right; color: #555; vertical-align: top; width: 55%; font-size: 8pt; word-wrap: break-word; }
         .summary-table { margin-top: 20px; font-size: 7pt; }
         .summary-table th, .summary-table td { border: 1px solid #000; padding: 3px; text-align: center; }
         .signature-block { margin-top: 25px; width: 40%; float: right; text-align: center; font-size: 9pt; }
@@ -169,7 +169,7 @@
                                         <td class="slot-subject">{{ $schedule->subject->nama_pelajaran ?? '' }}</td>
                                         <td class="slot-detail">
                                             @if($type == 'kelas')
-                                                Ruang: {{ $schedule->room->name ?? '-' }}
+                                                Ustz/h : {{ $schedule->teacher->name ?? '-' }}
                                             @else
                                                 {{ $schedule->kelas->nama_kelas ?? '' }}
                                             @endif
@@ -197,7 +197,7 @@
                                         <td class="slot-subject">{{ $schedule->subject->nama_pelajaran ?? '' }}</td>
                                         <td class="slot-detail">
                                             @if($type == 'kelas')
-                                                Ruang: {{ $schedule->room->name ?? '-' }}
+                                                Ustz/h {{ $schedule->teacher->name ?? '-' }}
                                             @else
                                                 {{ $schedule->kelas->nama_kelas ?? '' }}
                                             @endif

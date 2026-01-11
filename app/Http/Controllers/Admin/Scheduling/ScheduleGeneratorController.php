@@ -44,21 +44,20 @@ class ScheduleGeneratorController extends Controller
     }
 
     /**
-     * Menjalankan proses pembuatan jadwal dalam mode hybrid.
+     * Menjalankan proses pembuatan jadwal (Unified Generator)
      */
     public function generateHybrid(Request $request, ScheduleGeneratorService $generator)
     {
-        $request->validate([
-            'clear_existing' => 'boolean',
-            'strategy' => 'in:incremental,fill_gaps,replace_conflicts',
-        ]);
-
-        $clearExisting = $request->boolean('clear_existing', false);
-        $strategy = $request->input('strategy', 'incremental');
+        $clearExisting = $request->boolean('clear_existing', true);
 
         try {
-            // Inject parameter ke service
-            $result = $generator->run($clearExisting, $strategy);
+            $result = $generator->run($clearExisting, 'incremental');
+
+            $sessionData = [
+                'log' => $result['log'] ?? [],
+                'capacity_warnings' => $result['capacity_warnings'] ?? [],
+                'forced_placements' => $result['forced_placements'] ?? [],
+            ];
 
             if ($result['success']) {
                 $message = $clearExisting
@@ -67,12 +66,12 @@ class ScheduleGeneratorController extends Controller
 
                 return redirect()->route('admin.generator.show')
                     ->with('success', $message)
-                    ->with('log', $result['log']);
+                    ->with($sessionData);
             } else {
                 return redirect()->route('admin.generator.show')
-                    ->with('warning', 'Jadwal berhasil dibuat, namun beberapa mata pelajaran tidak dapat ditempatkan.')
+                    ->with('warning', 'Jadwal berhasil dibuat, namun ' . count($result['unplaced']) . ' mata pelajaran tidak dapat ditempatkan.')
                     ->with('unplaced_subjects', $result['unplaced'])
-                    ->with('log', $result['log']);
+                    ->with($sessionData);
             }
         } catch (\Exception $e) {
             return redirect()->route('admin.generator.show')

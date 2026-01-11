@@ -80,6 +80,12 @@
 
                     {{-- [MOBILE] Tombol-tombol dibuat vertikal dan full-width di mobile --}}
                     <div class="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                        <a :href="activeTab === 'guru-libur' ? '{{ route('jadwal.public.print_all_guru_libur') }}' : '{{ url('/jadwal/print-all') }}/' + activeTab" target="_blank" class="inline-flex items-center gap-2 justify-center rounded-md bg-slate-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" />
+                            </svg>
+                            <span>Cetak Semua</span>
+                        </a>
                         <a :href="printUrl" target="_blank" class="inline-flex items-center gap-2 justify-center rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-600">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                                 <path fill-rule="evenodd" d="M5 2.75C5 1.784 5.784 1 6.75 1h6.5c.966 0 1.75.784 1.75 1.75v3.552c.377.046.752.097 1.128.152A2.25 2.25 0 0118 8.678v4.588A2.25 2.25 0 0115.75 15.5h-3.48a3.748 3.748 0 01-1.048.06c-.34.023-.681.042-1.022.06h-3.48A2.25 2.25 0 012 13.266V8.678c0-.986.62-1.84 1.52-2.174a41.34 41.34 0 011.128-.152V2.75zM6.5 2.5a.25.25 0 00-.25.25v3.5c0 .138.112.25.25.25h6.5a.25.25 0 00.25-.25v-3.5a.25.25 0 00-.25-.25h-6.5zM3.5 8.678v4.588c0 .138.112.25.25.25h2.25v-2.5a.75.75 0 01.75-.75h6.5a.75.75 0 01.75.75v2.5h2.25a.25.25 0 00.25-.25V8.678a.75.75 0 00-.507-.704 41.52 41.52 0 00-1.216-.173.75.75 0 00-.727.69v.252a.75.75 0 01-.75-.75h-6.5a.75.75 0 01-.75-.75v-.252a.75.75 0 00-.727-.69 41.52 41.52 0 00-1.216.173A.75.75 0 003.5 8.678z" clip-rule="evenodd" /></svg>
@@ -202,9 +208,9 @@
                                     <div class="flex-1 border-b border-dotted border-slate-400 pb-1">
                                         <template x-if="scheduleToShow[{{ $dayKey }}] && scheduleToShow[{{ $dayKey }}][{{ $timeSlot }}]">
                                             <div class="flex justify-between items-start gap-x-2">
-                                                <span class="font-bold text-slate-800" x-text="scheduleToShow[{{ $dayKey }}][{{ $timeSlot }}].subject || ''"></span>
-                                                <div class="text-right text-xs text-slate-500 flex-shrink-0">
-                                                    <div x-text="'Ruang: ' + (scheduleToShow[{{ $dayKey }}][{{ $timeSlot }}].room || '-')"></div>
+                                                <span class="font-bold text-slate-800 w-[45%]" x-text="scheduleToShow[{{ $dayKey }}][{{ $timeSlot }}].subject || ''"></span>
+                                                <div class="text-right text-xs text-slate-500 w-[55%]">
+                                                    <div x-text="scheduleToShow[{{ $dayKey }}][{{ $timeSlot }}].teacher ? 'Ustz/h : ' + scheduleToShow[{{ $dayKey }}][{{ $timeSlot }}].teacher : '-'"></div>
                                                 </div>
                                             </div>
                                         </template>

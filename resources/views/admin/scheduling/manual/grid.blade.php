@@ -892,17 +892,13 @@
                         'Apakah Anda yakin ingin menghapus jadwal ini?',
                         async () => {
                             try {
-                                const response = await fetch(`/admin/scheduling/manual/${scheduleId}`, { // Adjusted route if needed, standard resource destroy is DELETE /id
+                                const response = await fetch(`/admin/scheduling/manual/quick-delete/${scheduleId}`, {
                                     method: 'DELETE',
                                     headers: {
                                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                                         'Accept': 'application/json'
                                     }
-                                });
-                                // Handle if route is actually delete-cell or similar
-                                if(!response.ok) {
-                                     // Fallback relative url if needed
-                                } 
+                                }); 
                                 
                                 const result = await response.json();
                                 if (result.success) {

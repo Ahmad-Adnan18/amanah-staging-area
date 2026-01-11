@@ -141,6 +141,10 @@ Route::middleware('auth')->group(function () {
 
             // Rute untuk memproses file Excel yang di-upload
             Route::post('teachers/import', [TeacherController::class, 'import'])->name('teachers.import');
+            // Rute untuk Generate Kode Guru
+            Route::post('teachers/generate-codes', [TeacherController::class, 'generateCodes'])->name('teachers.generate_codes');
+            // Rute untuk Export Data Guru
+            Route::get('teachers/export', [TeacherController::class, 'export'])->name('teachers.export');
             // --- AKHIR RUTE MANAJEMEN GURU ---
 
             Route::get('/settings', [AppSettingController::class, 'index'])->name('settings.index');
@@ -275,6 +279,8 @@ Route::middleware('auth')->group(function () {
     });
     Route::get('/jadwal/print/{type}/{id}', [PublicScheduleController::class, 'print'])->name('jadwal.public.print');
     Route::get('/jadwal/print/pelajaran/{subjectId}', [PublicScheduleController::class, 'printSubjectSchedule'])->name('jadwal.public.print.subject');
+    Route::get('/jadwal/print-all/guru-libur', [PublicScheduleController::class, 'printAllGuruLibur'])->name('jadwal.public.print_all_guru_libur');
+    Route::get('/jadwal/print-all/{type}', [PublicScheduleController::class, 'printAll'])->name('jadwal.public.print_all');
 
     // --- RUTE BARU UNTUK MANAJEMEN INVENTARIS (Scoped per Room) ---
     Route::prefix('admin/rooms/{room}/inventory')->name('admin.rooms.inventory.')->group(function () {

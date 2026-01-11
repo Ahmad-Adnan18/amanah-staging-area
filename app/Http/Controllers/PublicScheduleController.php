@@ -253,4 +253,144 @@ class PublicScheduleController extends Controller
     }
     
 
+
+    public function printAll($type)
+    {
+        ini_set('max_execution_time', 300); // 5 minutes
+        ini_set('memory_limit', '512M');
+
+        $viewName = 'jadwal.public.print-all';
+        $data = [
+            'type' => $type,
+            'items' => []
+        ];
+
+        // Shared data
+        $days = [1 => 'Sabtu', 2 => 'Ahad', 3 => 'Senin', 4 => 'Selasa', 5 => 'Rabu', 6 => 'Kamis'];
+        $timeSlots = range(1, 7);
+        $data['days'] = $days;
+        $data['timeSlots'] = $timeSlots;
+
+        if ($type == 'kelas') {
+            $classes = Kelas::where('is_active_for_scheduling', true)->orderBy('nama_kelas')->get();
+            $schedules = Schedule::with(['subject', 'teacher', 'room', 'kelas'])->get();
+            
+            // Group by class ID -> day -> timeslot
+            $schedulesByClass = [];
+            foreach ($schedules as $schedule) {
+                if ($schedule->kelas_id) {
+                    $schedulesByClass[$schedule->kelas_id][$schedule->day_of_week][$schedule->time_slot] = $schedule;
+                }
+            }
+
+            foreach ($classes as $kelas) {
+                $classSchedules = $schedulesByClass[$kelas->id] ?? [];
+                
+                // Format for view
+                $formattedSchedules = [];
+                if (!empty($classSchedules)) {
+                    foreach ($classSchedules as $day => $slots) {
+                        foreach ($slots as $slot => $sch) {
+                            $formattedSchedules[$day][$slot][] = $sch; 
+                        }
+                    }
+                }
+
+                $data['items'][] = [
+                    'title' => 'Kelas: ' . $kelas->nama_kelas,
+                    'schedules' => $formattedSchedules,
+                    'type' => 'kelas'
+                ];
+            }
+
+        } elseif ($type == 'guru') {
+            $teachers = Teacher::orderBy('name')->get();
+            $schedules = Schedule::with(['subject', 'teacher', 'room', 'kelas'])->get();
+
+            // Group by teacher ID -> day -> timeslot
+            $schedulesByTeacher = [];
+            foreach ($schedules as $schedule) {
+                if ($schedule->teacher_id) {
+                    $schedulesByTeacher[$schedule->teacher_id][$schedule->day_of_week][$schedule->time_slot][] = $schedule;
+                }
+            }
+            
+            // Calculate teaching hours for all (using existing method logic but optimized)
+            $teachingHoursAll = $this->calculateTeachingHours($schedules);
+
+            foreach ($teachers as $teacher) {
+                $teacherSchedules = $schedulesByTeacher[$teacher->id] ?? [];
+                $teachingHoursSummary = $teachingHoursAll[$teacher->id] ?? ['sabtu'=>0,'ahad'=>0,'senin'=>0,'selasa'=>0,'rabu'=>0,'kamis'=>0,'total'=>0];
+
+                $data['items'][] = [
+                    'title' => 'Jadwal Mengajar: ' . $teacher->name,
+                    'schedules' => $teacherSchedules,
+                    'type' => 'guru',
+                    'teacherName' => $teacher->name,
+                    'teachingHoursSummary' => $teachingHoursSummary
+                ];
+            }
+
+        } elseif ($type == 'pelajaran') {
+            // Get all unique subjects by name
+            $scheduleSubjectIds = Schedule::distinct('mata_pelajaran_id')->pluck('mata_pelajaran_id');
+            $allSubjects = MataPelajaran::whereIn('id', $scheduleSubjectIds)->get();
+            
+            $uniqueSubjectNames = $allSubjects->pluck('nama_pelajaran')->unique()->sort();
+
+            $schedules = Schedule::with(['subject', 'teacher', 'room', 'kelas'])->get();
+
+            foreach ($uniqueSubjectNames as $subjectName) {
+                // Get schedules for this subject name
+                $subjectSchedules = $schedules->filter(function ($sch) use ($subjectName) {
+                    return $sch->subject && $sch->subject->nama_pelajaran == $subjectName;
+                });
+                
+                if ($subjectSchedules->isEmpty()) continue;
+
+                $groupedSchedules = [];
+                foreach ($subjectSchedules as $sch) {
+                    $groupedSchedules[$sch->day_of_week][$sch->time_slot][] = $sch;
+                }
+
+                $data['items'][] = [
+                    'title' => 'Jadwal Pelajaran: ' . $subjectName,
+                    'schedules' => $groupedSchedules,
+                    'type' => 'pelajaran',
+                    'subjectName' => $subjectName
+                ];
+            }
+        } else {
+            abort(404);
+        }
+
+        $pdf = Pdf::loadView($viewName, $data)->setPaper('a4', 'landscape');
+        return $pdf->stream('jadwal-all-' . $type . '.pdf');
+    }
+
+    public function printAllGuruLibur()
+    {
+        ini_set('max_execution_time', 300);
+        $days = [1 => 'Sabtu', 2 => 'Ahad', 3 => 'Senin', 4 => 'Selasa', 5 => 'Rabu', 6 => 'Kamis'];
+        
+        $teachers = Teacher::orderBy('name')->get();
+        $schedules = Schedule::with(['subject', 'teacher', 'room', 'kelas'])->get();
+        $teachersDayOff = $this->calculateTeachersDayOff($schedules, $teachers);
+
+        $data = [
+            'items' => [],
+            'title_prefix' => 'Daftar Guru Libur'
+        ];
+
+        foreach ($days as $dayKey => $dayName) {
+            $data['items'][] = [
+                'hari' => $dayName,
+                'guruLibur' => $teachersDayOff[$dayKey] ?? [],
+                'tanggal' => now()->format('d/m/Y')
+            ];
+        }
+
+        $pdf = Pdf::loadView('jadwal.public.print-all-guru-libur', $data)->setPaper('a4', 'portrait');
+        return $pdf->stream('guru-libur-all.pdf');
+    }
 }
