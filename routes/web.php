@@ -36,6 +36,7 @@ use App\Http\Controllers\Admin\AppSettingController;
 use App\Http\Controllers\Kesehatan\RiwayatPenyakitController;
 use App\Http\Controllers\Pengajaran\TahfidzController;
 use App\Http\Controllers\Admin\MasterData\SuratController;
+use App\Http\Controllers\NotificationController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -80,6 +81,27 @@ Route::middleware('auth')->group(function () {
         return view('menu');
     })->name('menu.index');
     Route::get('/perizinan/{perizinan}/pdf', [PerizinanController::class, 'generatePdf'])->name('perizinan.pdf');
+
+    // --- RUTE UNTUK NOTIFIKASI USER ---
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::get('/unread-count', [NotificationController::class, 'getUnreadCount'])->name('unreadCount');
+        Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('markAllAsRead');
+        Route::get('/{notification}', [NotificationController::class, 'show'])->name('show');
+        Route::post('/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('markAsRead');
+    });
+
+    // --- RUTE UNTUK MANAJEMEN NOTIFIKASI (ADMIN/ROLE TERTENTU) ---
+    Route::prefix('admin/notifications')->name('admin.notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'manage'])->name('index');
+        Route::get('/create', [NotificationController::class, 'create'])->name('create');
+        Route::post('/', [NotificationController::class, 'store'])->name('store');
+        Route::get('/{notification}/edit', [NotificationController::class, 'edit'])->name('edit');
+        Route::put('/{notification}', [NotificationController::class, 'update'])->name('update');
+        Route::delete('/{notification}', [NotificationController::class, 'destroy'])->name('destroy');
+    });
+
+
 
     // --- GRUP RUTE PENGELOLAAN PENGAJARAN ---
     Route::prefix('pengajaran')->name('pengajaran.')->group(function () {

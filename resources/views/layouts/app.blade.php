@@ -127,8 +127,32 @@
                                 <span class="text-lg font-bold tracking-wider text-gray-800">{{ config('app.name', 'Amanah') }}</span>
                             </a>
 
-                            <div x-data="profilePreviewHandler()" @touchstart.passive="startPress" @touchend.passive="endPress" @touchcancel.passive="cancelPress" @contextmenu.prevent="" class="flex items-center cursor-pointer select-none">
-                                <img src="{{ Auth::user()->profile_photo ? Storage::url(Auth::user()->profile_photo) : asset('images/default-profile.png') }}" alt="Foto Profil" class="w-10 h-10 rounded-full object-cover border-2 border-red-700 transition-all duration-200" :class="isLongPressActive ? 'scale-95 border-blue-500 ring-4 ring-blue-200' : ''">
+                            <div class="flex items-center gap-2">
+                                {{-- Notification Icon (untuk semua role kecuali wali_santri) --}}
+                                @if(Auth::user()->role !== 'wali_santri')
+                                <a href="{{ route('notifications.index') }}" class="relative p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                                   x-data="{ unreadCount: 0 }"
+                                   x-init="
+                                       fetch('/notifications/unread-count')
+                                           .then(res => res.json())
+                                           .then(data => unreadCount = data.count)
+                                   ">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                    </svg>
+                                    {{-- Badge --}}
+                                    <span x-show="unreadCount > 0" 
+                                          x-text="unreadCount > 99 ? '99+' : unreadCount"
+                                          id="notification-badge"
+                                          class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full px-1">
+                                    </span>
+                                </a>
+                                @endif
+
+                                {{-- Profile Avatar --}}
+                                <div x-data="profilePreviewHandler()" @touchstart.passive="startPress" @touchend.passive="endPress" @touchcancel.passive="cancelPress" @contextmenu.prevent="" class="flex items-center cursor-pointer select-none">
+                                    <img src="{{ Auth::user()->profile_photo ? Storage::url(Auth::user()->profile_photo) : asset('images/default-profile.png') }}" alt="Foto Profil" class="w-10 h-10 rounded-full object-cover border-2 border-red-700 transition-all duration-200" :class="isLongPressActive ? 'scale-95 border-blue-500 ring-4 ring-blue-200' : ''">
+                                </div>
                             </div>
                         </div>
                     </div>
