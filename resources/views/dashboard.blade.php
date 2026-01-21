@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="bg-slate-50 min-h-screen">
-        <div class="max-w-7xl mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8 pb-24 sm:pb-8">
 
             {{-- 1. LOGIC PHP: Persiapan Data (Waktu & Notifikasi) --}}
             @php

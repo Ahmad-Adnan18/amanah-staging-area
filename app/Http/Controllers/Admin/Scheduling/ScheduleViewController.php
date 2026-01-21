@@ -37,5 +37,24 @@ class ScheduleViewController extends Controller
         
         return view('admin.scheduling.view.grid', compact('classes', 'days', 'timeSlots', 'grid'));
     }
+
+    public function monitoring(): View
+    {
+        $teachers = \App\Models\Teacher::with(['schedules.subject', 'schedules.kelas'])
+            ->withCount('schedules')
+            ->orderBy('name')
+            ->get();
+
+        // Calculate statistics
+        $totalTeachers = $teachers->count();
+        $totalHours = $teachers->sum('schedules_count');
+        $averageHours = $totalTeachers > 0 ? round($totalHours / $totalTeachers, 1) : 0;
+        
+        // Find teacher with max hours
+        $maxHoursTeacher = $teachers->sortByDesc('schedules_count')->first();
+        $maxHours = $maxHoursTeacher ? $maxHoursTeacher->schedules_count : 0;
+
+        return view('admin.scheduling.view.monitoring', compact('teachers', 'totalTeachers', 'totalHours', 'averageHours', 'maxHours'));
+    }
 }
 

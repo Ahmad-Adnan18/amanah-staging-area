@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Scheduling;
 use App\Http\Controllers\Controller;
 use App\Services\ScheduleGeneratorService;
 use Illuminate\Http\Request;
+use App\Models\AppSetting;
 
 class ScheduleGeneratorController extends Controller
 {
@@ -13,7 +14,8 @@ class ScheduleGeneratorController extends Controller
      */
     public function show()
     {
-        return view('admin.scheduling.generator.index');
+        $hasPassword = !empty(AppSetting::getValue('generator_password'));
+        return view('admin.scheduling.generator.index', compact('hasPassword'));
     }
 
     /**
@@ -48,6 +50,15 @@ class ScheduleGeneratorController extends Controller
      */
     public function generateHybrid(Request $request, ScheduleGeneratorService $generator)
     {
+        // Validasi Password
+        $savedPassword = AppSetting::getValue('generator_password');
+        if (!empty($savedPassword)) {
+            $inputPassword = $request->input('password');
+            if ($inputPassword !== $savedPassword) {
+                return redirect()->back()->with('error', 'Password generator salah! Akses ditolak.');
+            }
+        }
+
         $clearExisting = $request->boolean('clear_existing', true);
 
         try {

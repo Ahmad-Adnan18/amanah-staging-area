@@ -39,6 +39,7 @@ class AppSettingController extends Controller
             'nama_pondok' => 'nullable|string|max:255',
             'alamat_pondok' => 'nullable|string',
             'telepon_pondok' => 'nullable|string|max:20',
+            'generator_password' => 'nullable|string|max:255',
         ]);
 
         foreach ($request->except('_token', '_method') as $key => $value) {

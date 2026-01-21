@@ -407,7 +407,8 @@ $config = json_encode([
         border-radius: 18px;
         border: 1px solid rgba(255, 255, 255, 0.08);
         overflow: hidden;
-        min-height: 320px;
+        width: 100%;
+        aspect-ratio: 16 / 9;
         background: rgba(255, 255, 255, 0.02);
         backdrop-filter: blur(12px);
         display: flex;

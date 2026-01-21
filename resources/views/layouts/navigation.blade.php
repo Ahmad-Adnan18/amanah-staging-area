@@ -203,6 +203,9 @@ KOMPONEN NAVIGASI HIBRIDA LENGKAP - PROFESIONAL
                 <a href="{{ route('admin.schedule.swap.show') }}" class="{{ $childBase }} {{ request()->routeIs('admin.schedule.swap.*') ? $childActive : $childInactive }}">
                     Tukar Jadwal Manual
                 </a>
+                <a href="{{ route('admin.schedule.monitoring') }}" class="{{ $childBase }} {{ request()->routeIs('admin.schedule.monitoring') ? $childActive : $childInactive }}">
+                    Monitoring Jam Ngajar
+                </a>
             </div>
         </div>
         @endif
@@ -403,7 +406,7 @@ KOMPONEN NAVIGASI HIBRIDA LENGKAP - PROFESIONAL
     $dockInactiveClass = 'text-slate-500';
 @endphp
 
-<footer class="fixed bottom-0 left-0 z-10 w-full border-t border-slate-200 bg-white/95 backdrop-blur supports-backdrop-blur:bg-white/80 md:hidden">
+<footer class="fixed bottom-0 left-0 z-50 w-full border-t border-slate-200 bg-white/95 backdrop-blur supports-backdrop-blur:bg-white/80 md:hidden pb-[env(safe-area-inset-bottom)]">
     <nav class="mx-auto max-w-screen-md">
         <ul class="flex items-stretch justify-between gap-1 px-2">
             @foreach($dockItems as $item)

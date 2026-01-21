@@ -170,6 +170,7 @@ Route::middleware('auth')->group(function () {
 
         // Rute untuk Melihat Jadwal
         Route::get('scheduling/view/grid', [ScheduleViewController::class, 'grid'])->name('schedule.view.grid');
+        Route::get('scheduling/view/monitoring', [ScheduleViewController::class, 'monitoring'])->name('schedule.monitoring');
 
         // RUTE BARU UNTUK FITUR TUKAR JADWAL MANUAL
         Route::get('scheduling/swap', [\App\Http\Controllers\Admin\Scheduling\ScheduleSwapController::class, 'showForm'])->name('schedule.swap.show');
