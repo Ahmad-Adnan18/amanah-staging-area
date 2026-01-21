@@ -347,6 +347,27 @@
                         </div>
                     </div>
 
+                    <!-- Section: Versi Aplikasi (Android) -->
+                    <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+                        <div class="border-b border-slate-200 px-6 py-4">
+                            <h2 class="text-lg font-semibold text-gray-900">Update Aplikasi Android</h2>
+                            <p class="text-sm text-slate-600 mt-1">Atur versi terbaru aplikasi agar user mendapatkan notifikasi update</p>
+                        </div>
+
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Versi Android Terbaru (Misal: 1.0.1)
+                                    </label>
+                                    <input type="text" name="latest_android_version" value="{{ \App\Models\AppSetting::getValue('latest_android_version') ?? '1.0.0' }}" class="w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors" placeholder="Contoh: 1.0.1">
+                                    <p class="text-xs text-slate-500 mt-1">Pastikan sesuai dengan versionName di 'android/app/build.gradle' pada file project.</p>
+                                </div>
+                                 <!-- Optional: URL APK kalau mau custom, defaultnya ke /download/apk -->
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Section: Keamanan -->
                     <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
                         <div class="border-b border-slate-200 px-6 py-4">

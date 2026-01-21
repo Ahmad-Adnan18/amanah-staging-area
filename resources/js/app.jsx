@@ -3,6 +3,7 @@ import Alpine from 'alpinejs';
 import { createRoot } from 'react-dom/client';
 import GlassIcons from './components/GlassIcons';
 import { App } from '@capacitor/app';
+// import { Browser } from '@capacitor/browser'; // Removed logic
 // --- 1. TAMBAHAN IMPORT BIOMETRIC & PREFERENCES ---
 import { NativeBiometric } from '@capgo/capacitor-native-biometric';
 import { Preferences } from '@capacitor/preferences';
@@ -410,6 +411,97 @@ const initPushNotifications = async () => {
     }
 };
 
-document.addEventListener('DOMContentLoaded', initPushNotifications);
 
-document.addEventListener('DOMContentLoaded', initPushNotifications);
+// =================================================================
+// LOGIKA CEK UPDATE APLIKASI (PROFESSIONAL UI)
+// =================================================================
+const checkForUpdates = async () => {
+    if (!('Capacitor' in window)) return;
+
+    try {
+        const info = await App.getInfo();
+        const currentVersion = info.version;
+        
+        const response = await fetch('/api/check-update');
+        const data = await response.json();
+        const latestVersion = data.latest_version;
+
+        if (isUpdateAvailable(currentVersion, latestVersion)) {
+            // Tampilkan Modal Update
+            showUpdateModal(latestVersion, data.download_url, data.release_notes);
+        }
+
+    } catch (e) {
+        console.error('Update Check Failed:', e);
+    }
+};
+
+// Helper: Show Beautiful Modal
+function showUpdateModal(version, url, notes) {
+    // 1. Cek jika modal sudah ada (biar gak dobel)
+    if (document.getElementById('update-modal')) return;
+
+    // 2. Buat Elemen Modal
+    const modalHtml = `
+        <div id="update-modal" class="fixed inset-0 z-[9999] flex items-center justify-center px-4 animate-fade-in">
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeUpdateModal()"></div>
+            
+            <!-- Card -->
+            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all scale-100 p-6 text-center">
+                <!-- Icon -->
+                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-red-600">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Update Tersedia! 🚀</h3>
+                <p class="text-gray-500 text-sm mb-6">
+                    Versi terbaru <strong>v${version}</strong> sudah rilis. <br>
+                    Yuk update biar aplikasi makin lancar jaya!
+                </p>
+
+                <div class="space-y-3">
+                    <button onclick="window.location.href='${url}'" class="w-full inline-flex justify-center items-center rounded-xl bg-red-600 px-4 py-3 text-sm font-semibold text-white shadow-lg hover:bg-red-500 transition-all active:scale-95">
+                        Update Sekarang
+                    </button>
+                    <button onclick="closeUpdateModal()" class="w-full inline-flex justify-center rounded-xl bg-slate-100 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-200 transition-all">
+                        Nanti Saja
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // 3. Inject ke Body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+// Helper: Close Modal
+window.closeUpdateModal = () => {
+    const modal = document.getElementById('update-modal');
+    if (modal) modal.remove();
+};
+
+// Helper: Compare version strings
+function isUpdateAvailable(current, latest) {
+    if (!current || !latest) return false;
+    if (current === latest) return false;
+
+    const v1 = current.split('.').map(Number);
+    const v2 = latest.split('.').map(Number);
+    
+    for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
+        const num1 = v1[i] || 0;
+        const num2 = v2[i] || 0;
+        if (num2 > num1) return true;
+        if (num2 < num1) return false;
+    }
+    return false;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initPushNotifications();
+    setTimeout(checkForUpdates, 2000); 
+});

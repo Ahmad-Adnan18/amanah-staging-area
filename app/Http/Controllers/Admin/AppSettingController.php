@@ -40,6 +40,7 @@ class AppSettingController extends Controller
             'alamat_pondok' => 'nullable|string',
             'telepon_pondok' => 'nullable|string|max:20',
             'generator_password' => 'nullable|string|max:255',
+            'latest_android_version' => 'nullable|string|max:20',
         ]);
 
         foreach ($request->except('_token', '_method') as $key => $value) {
@@ -82,7 +83,6 @@ class AppSettingController extends Controller
                     return redirect()->back()->with('error', "Gagal mengunggah {$key}. Silakan coba lagi.");
                 }
             } else {
-                $value = $value;
                 $changes[$key] = $value;
             }
 

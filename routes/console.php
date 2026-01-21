@@ -20,3 +20,4 @@ Artisan::command('inspire', function () {
 
 // TAMBAHKAN PENJADWALAN ANDA DI SINI
 Schedule::command('app:update-status-command')->daily();
+Schedule::command('schedule:notify-teachers')->everyMinute();

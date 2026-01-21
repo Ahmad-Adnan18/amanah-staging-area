@@ -43,7 +43,7 @@
                             </svg>
                             Kembali ke Dashboard
                         </a>
-                        <a href="{{ url('/jadwal/print/guru/' . $teacher->id) }}" target="_blank" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-700 text-white rounded-md text-sm font-semibold hover:bg-red-600 shadow-sm transition-colors hidden-print">
+                        <a href="{{ url('/jadwal/print/guru/' . $teacher->id . '/jadwal.pdf') }}" target="_blank" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-700 text-white rounded-md text-sm font-semibold hover:bg-red-600 shadow-sm transition-colors hidden-print">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                                 <path fill-rule="evenodd" d="M5 2.75C5 1.784 5.784 1 6.75 1h6.5c.966 0 1.75.784 1.75 1.75v3.552c.377.046.752.097 1.128.152A2.25 2.25 0 0118 8.678v4.588A2.25 2.25 0 0115.75 15.5h-3.48a3.748 3.748 0 01-1.048.06c-.34.023-.681.042-1.022.06h-3.48A2.25 2.25 0 012 13.266V8.678c0-.986.62-1.84 1.52-2.174a41.34 41.34 0 011.128-.152V2.75zM6.5 2.5a.25.25 0 00-.25.25v3.5c0 .138.112.25.25.25h6.5a.25.25 0 00.25-.25v-3.5a.25.25 0 00-.25-.25h-6.5zM3.5 8.678v4.588c0 .138.112.25.25.25h2.25v-2.5a.75.75 0 01.75-.75h6.5a.75.75 0 01.75.75v2.5h2.25a.25.25 0 00.25-.25V8.678a.75.75 0 00-.507-.704 41.52 41.52 0 00-1.216-.173.75.75 0 00-.727.69v.252a.75.75 0 01-.75-.75h-6.5a.75.75 0 01-.75-.75v-.252a.75.75 0 00-.727-.69 41.52 41.52 0 00-1.216.173A.75.75 0 003.5 8.678z" clip-rule="evenodd" />
                             </svg>

@@ -43,7 +43,17 @@ Route::get('/', function () {
 });
 
 Route::get('/download', [DownloadController::class, 'show'])->name('download.show');
-Route::get('/download/apk', [DownloadController::class, 'apk'])->name('download.apk');
+Route::get('/download/Amanah.apk', [DownloadController::class, 'apk'])->name('download.apk');
+
+// Helper Landing Page dihapus karena kembali ke direct download dengan nama file benar
+
+Route::get('/api/check-update', function () {
+    return response()->json([
+        'latest_version' => \App\Models\AppSetting::getValue('latest_android_version') ?? '1.0.0',
+        'download_url' => route('download.apk'),
+        'force_update' => false
+    ]);
+});
 
 // RUTE BARU UNTUK REGISTRASI WALI
 Route::get('/wali-register', [WaliRegistrationController::class, 'create'])->name('wali.register');
@@ -65,22 +75,22 @@ Route::middleware('auth')->group(function () {
         // Profil Santri (menggunakan view santri-profile.show)
         Route::get('/{santri}/profil', [SantriProfileController::class, 'show'])->name('profil.show');
         Route::post('/{santri}/profil/generate-wali-code', [SantriProfileController::class, 'generateWaliCode'])->name('profil.generate_wali_code');
-        Route::get('/{santri}/profil/rapor/export', [SantriProfileController::class, 'exportRapor'])->name('profil.rapor.export');
-        Route::get('/{santri}/profil/rapor/export-pdf', [SantriProfileController::class, 'exportRaporPdf'])->name('profil.rapor.export.pdf');
+        Route::get('/{santri}/profil/rapor/export.xlsx', [SantriProfileController::class, 'exportRapor'])->name('profil.rapor.export');
+        Route::get('/{santri}/profil/rapor/rapor.pdf', [SantriProfileController::class, 'exportRaporPdf'])->name('profil.rapor.export.pdf');
 
         // Portofolio Santri (menggunakan view pengajaran.santri.*)
         Route::get('/portofolio', [SantriProfileController::class, 'listForPortofolio'])->name('portofolio.list');
         Route::get('/{santri}/portofolio', [SantriProfileController::class, 'portofolio'])->name('profil.portofolio');
-        Route::get('/{santri}/portofolio/export-pdf', [SantriProfileController::class, 'exportPortofolioPdf'])->name('profil.portofolio.export-pdf');
+        Route::get('/{santri}/portofolio/portofolio.pdf', [SantriProfileController::class, 'exportPortofolioPdf'])->name('profil.portofolio.export-pdf');
     });
 
     // Rute untuk melihat jadwal publik (per kelas/guru)
     Route::get('/jadwal', [\App\Http\Controllers\PublicScheduleController::class, 'index'])->name('jadwal.public.index');
-    Route::get('/jadwal/print/guru-libur/{day}', [PublicScheduleController::class, 'printGuruLibur']);
+    Route::get('/jadwal/print/guru-libur/{day}/guru_libur.pdf', [PublicScheduleController::class, 'printGuruLibur']);
     Route::get('/menu', function () {
         return view('menu');
     })->name('menu.index');
-    Route::get('/perizinan/{perizinan}/pdf', [PerizinanController::class, 'generatePdf'])->name('perizinan.pdf');
+    Route::get('/perizinan/{perizinan}/surat_izin.pdf', [PerizinanController::class, 'generatePdf'])->name('perizinan.pdf');
 
     // --- RUTE UNTUK NOTIFIKASI USER ---
     Route::prefix('notifications')->name('notifications.')->group(function () {
@@ -126,12 +136,12 @@ Route::middleware('auth')->group(function () {
         Route::post('kelas/{kela}/assign-subjects', [KelasController::class, 'assignSubjects'])->name('kelas.assignSubjects');
         Route::post('kelas/{kela}/sync-from-schedule', [KelasController::class, 'syncFromSchedule'])->name('kelas.syncFromSchedule');
         Route::resource('absensi', AbsensiController::class)->only(['index', 'store']);
-        Route::get('absensi/export', [AbsensiController::class, 'exportLeger'])->name('absensi.export');
+        Route::get('absensi/export.xlsx', [AbsensiController::class, 'exportLeger'])->name('absensi.export');
         Route::get('absensi/get-schedules-by-kelas/{kelas}', [AbsensiController::class, 'getSchedulesByKelas']);
         Route::put('absensi/{absensi}', [AbsensiController::class, 'update'])->name('absensi.update');
         Route::delete('absensi/{absensi}', [AbsensiController::class, 'destroy'])->name('absensi.destroy');
         Route::get('absensi/laporan-periodik', [AbsensiController::class, 'laporanPeriodik'])->name('absensi.laporan-periodik');
-        Route::get('absensi/export-periodik', [AbsensiController::class, 'exportPeriodik'])->name('absensi.export-periodik');
+        Route::get('absensi/export-periodik.xlsx', [AbsensiController::class, 'exportPeriodik'])->name('absensi.export-periodik');
         
     });
 
@@ -169,7 +179,7 @@ Route::middleware('auth')->group(function () {
             // Rute untuk Generate Kode Guru
             Route::post('teachers/generate-codes', [TeacherController::class, 'generateCodes'])->name('teachers.generate_codes');
             // Rute untuk Export Data Guru
-            Route::get('teachers/export', [TeacherController::class, 'export'])->name('teachers.export');
+            Route::get('teachers/data.xlsx', [TeacherController::class, 'export'])->name('teachers.export');
             // --- AKHIR RUTE MANAJEMEN GURU ---
 
             Route::get('/settings', [AppSettingController::class, 'index'])->name('settings.index');
@@ -252,17 +262,17 @@ Route::middleware('auth')->group(function () {
     Route::prefix('laporan')->name('laporan.')->group(function () {
         Route::get('/', [ReportController::class, 'index'])->name('index');
         Route::get('/perizinan', [ReportController::class, 'perizinan'])->name('perizinan');
-        Route::get('/perizinan/export', [ReportController::class, 'exportPerizinan'])->name('perizinan.export');
+        Route::get('/perizinan/data.xlsx', [ReportController::class, 'exportPerizinan'])->name('perizinan.export');
         Route::get('/pelanggaran', [ReportController::class, 'pelanggaran'])->name('pelanggaran');
-        Route::get('/pelanggaran/export', [ReportController::class, 'exportPelanggaran'])->name('pelanggaran.export');
-        Route::get('/santri/export', [ReportController::class, 'exportSantri'])->name('santri.export');
+        Route::get('/pelanggaran/data.xlsx', [ReportController::class, 'exportPelanggaran'])->name('pelanggaran.export');
+        Route::get('/santri/data.xlsx', [ReportController::class, 'exportSantri'])->name('santri.export');
     });
 
     // --- RUTE BARU UNTUK AKADEMIK ---
     Route::prefix('akademik')->name('akademik.')->group(function () {
         Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
         Route::post('/nilai', [NilaiController::class, 'store'])->name('nilai.store');
-        Route::get('/nilai/export', [NilaiController::class, 'exportLeger'])->name('nilai.export');
+        Route::get('/nilai/leger.xlsx', [NilaiController::class, 'exportLeger'])->name('nilai.export');
         Route::get('/placement', [PlacementController::class, 'index'])->name('placement.index');
         Route::post('/placement', [PlacementController::class, 'place'])->name('placement.place');
         Route::get('/nilai/get-mapel-by-kelas/{kelas}', [NilaiController::class, 'getMataPelajaranByKelas'])->name('nilai.get-mapel-by-kelas');
@@ -303,10 +313,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/import', [SantriManagementController::class, 'showImportForm'])->name('import.show');
         Route::post('/import', [SantriManagementController::class, 'import'])->name('import.store');
     });
-    Route::get('/jadwal/print/{type}/{id}', [PublicScheduleController::class, 'print'])->name('jadwal.public.print');
-    Route::get('/jadwal/print/pelajaran/{subjectId}', [PublicScheduleController::class, 'printSubjectSchedule'])->name('jadwal.public.print.subject');
-    Route::get('/jadwal/print-all/guru-libur', [PublicScheduleController::class, 'printAllGuruLibur'])->name('jadwal.public.print_all_guru_libur');
-    Route::get('/jadwal/print-all/{type}', [PublicScheduleController::class, 'printAll'])->name('jadwal.public.print_all');
+    Route::get('/jadwal/print/{type}/{id}/jadwal.pdf', [PublicScheduleController::class, 'print'])->name('jadwal.public.print');
+    Route::get('/jadwal/print/pelajaran/{subjectId}/jadwal_mapel.pdf', [PublicScheduleController::class, 'printSubjectSchedule'])->name('jadwal.public.print.subject');
+    Route::get('/jadwal/print-all/guru-libur/semua_guru_libur.pdf', [PublicScheduleController::class, 'printAllGuruLibur'])->name('jadwal.public.print_all_guru_libur');
+    Route::get('/jadwal/print-all/{type}/semua_jadwal.pdf', [PublicScheduleController::class, 'printAll'])->name('jadwal.public.print_all');
 
     // --- RUTE BARU UNTUK MANAJEMEN INVENTARIS (Scoped per Room) ---
     Route::prefix('admin/rooms/{room}/inventory')->name('admin.rooms.inventory.')->group(function () {
@@ -323,7 +333,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [RekapanHarianController::class, 'index'])->name('index')->middleware('can:viewAny,App\Models\RekapanHarian');
         Route::post('/', [RekapanHarianController::class, 'store'])->name('store')->middleware('can:create,App\Models\RekapanHarian');
         Route::get('/laporan', [RekapanHarianController::class, 'laporan'])->name('laporan')->middleware('can:viewReport,App\Models\RekapanHarian');
-        Route::post('/export', [RekapanHarianController::class, 'export'])->name('export');
+        Route::post('/export.xlsx', [RekapanHarianController::class, 'export'])->name('export');
     });
 
     // Slider management routes
