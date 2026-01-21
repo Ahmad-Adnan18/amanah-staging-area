@@ -215,7 +215,38 @@ class NotificationController extends Controller
 
         $validated['created_by'] = Auth::id();
 
-        Notification::create($validated);
+        $notification = Notification::create($validated);
+
+        // --- KIRIM PUSH NOTIFICATION ---
+        if ($request->boolean('publish_now')) {
+            try {
+                // Determine target users
+                $query = \App\Models\User::whereNotNull('fcm_token');
+                
+                if ($notification->target_roles) {
+                    $query->whereIn('role', $notification->target_roles);
+                } else {
+                    // Jika broadcast semua, tetap exclude wali_santri sesuai aturan awal
+                    $query->where('role', '!=', 'wali_santri');
+                }
+
+                $tokens = $query->pluck('fcm_token')->toArray();
+                
+                if (!empty($tokens)) {
+                    $fcm = new \App\Services\FcmService();
+                    $fcm->broadcast(
+                        $tokens,
+                        $notification->title,
+                        // Strip tags agar plain text di notif HP
+                        strip_tags($notification->message), 
+                        ['notification_id' => (string) $notification->id]
+                    );
+                }
+            } catch (\Exception $e) {
+                // Silent fail agar tidak mengganggu flow simpan notif
+                \Illuminate\Support\Facades\Log::error('FCM Broadcast Error: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('admin.notifications.index')
             ->with('success', 'Notifikasi berhasil dibuat.');

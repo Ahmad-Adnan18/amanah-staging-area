@@ -22,8 +22,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'teacher_code', // DITAMBAHKAN untuk penjadwalan
+        'teacher_code',
         'profile_photo',
+        'fcm_token',
     ];
 
     /**

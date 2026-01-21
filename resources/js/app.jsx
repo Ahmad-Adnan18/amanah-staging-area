@@ -7,6 +7,7 @@ import { App } from '@capacitor/app';
 import { NativeBiometric } from '@capgo/capacitor-native-biometric';
 import { Preferences } from '@capacitor/preferences';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { PushNotifications } from '@capacitor/push-notifications';
 
 window.Alpine = Alpine;
 Alpine.start();
@@ -304,3 +305,111 @@ const scheduleClasses = async (schedules) => {
         console.error("Gagal menjadwalkan notifikasi:", error);
     }
 };
+
+// =================================================================
+// LOGIKA PUSH NOTIFICATION (FCM) - FIXED & CLEAN
+// =================================================================
+// =================================================================
+// LOGIKA PUSH NOTIFICATION (FCM) - PRODUCTION READY
+// =================================================================
+const initPushNotifications = async () => {
+    const isPushSupported = 'Capacitor' in window;
+    if (!isPushSupported) return;
+
+    console.log('FCM: Initializing...');
+
+    try {
+        // 1. Bersihkan listener lama
+        await PushNotifications.removeAllListeners();
+
+        // 2. Listener Token
+        PushNotifications.addListener('registration', async (token) => {
+            console.log('FCM Token:', token.value);
+
+            // Kirim ke Backend Laravel
+            try {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                };
+                if (csrfToken) headers['X-CSRF-TOKEN'] = csrfToken;
+
+                await fetch('/notifications/fcm-token', {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({ token: token.value })
+                });
+                console.log('Token sent to backend');
+            } catch (err) {
+                console.error('Failed sending token to backend:', err);
+            }
+        });
+
+        // 3. Listener Error
+        PushNotifications.addListener('registrationError', (error) => {
+            console.error('Push Registration Error:', error);
+        });
+
+        // 4. Listener Notifikasi Masuk (Foreground)
+        PushNotifications.addListener('pushNotificationReceived', async (notification) => {
+            console.log('Push received:', notification);
+            // Tampilkan Local Notification
+            await LocalNotifications.schedule({
+                notifications: [{
+                    title: notification.title || 'Info',
+                    body: notification.body || '',
+                    id: new Date().getTime(),
+                    schedule: { at: new Date(new Date().getTime() + 100) },
+                    sound: 'default',
+                    actionTypeId: '',
+                    extra: null
+                }]
+            });
+        });
+
+        // 5. Listener Notifikasi Diklik
+        PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
+            console.log('Push action performed:', notification);
+            const notifId = notification.notification.data.notification_id;
+            if (notifId) {
+                window.location.href = `/notifications/${notifId}`;
+            } else {
+                window.location.href = '/notifications';
+            }
+        });
+
+        // 6. Request Permission & Register
+        // Helper: Timeout Wrapper untuk mencegah hanging
+        const withTimeout = (promise, ms = 3000) => {
+            return Promise.race([
+                promise,
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), ms))
+            ]);
+        };
+
+        let permStatus;
+        try {
+            permStatus = await withTimeout(PushNotifications.checkPermissions(), 5000);
+        } catch (e) {
+            console.warn('Check Permission Timeout, attempting request...');
+        }
+
+        if (!permStatus || permStatus.receive === 'prompt') {
+            permStatus = await PushNotifications.requestPermissions();
+        }
+
+        if (permStatus.receive === 'granted') {
+            await PushNotifications.register();
+        } else {
+            console.log('Push notification permission denied');
+        }
+
+    } catch (error) {
+        console.error('FCM Setup Error:', error);
+    }
+};
+
+document.addEventListener('DOMContentLoaded', initPushNotifications);
+
+document.addEventListener('DOMContentLoaded', initPushNotifications);

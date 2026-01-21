@@ -89,6 +89,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('markAllAsRead');
         Route::get('/{notification}', [NotificationController::class, 'show'])->name('show');
         Route::post('/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('markAsRead');
+        
+        // FCM Token Update (menggunakan WEB middleware / Session Auth)
+        Route::post('/fcm-token', [\App\Http\Controllers\Api\FcmController::class, 'updateToken'])->name('updateToken');
     });
 
     // --- RUTE UNTUK MANAJEMEN NOTIFIKASI (ADMIN/ROLE TERTENTU) ---
