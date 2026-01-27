@@ -5,11 +5,11 @@ KOMPONEN NAVIGASI HIBRIDA LENGKAP - PROFESIONAL
 -->
 
 <!-- [BAGIAN 1] Overlay Latar Belakang untuk Sidebar Mobile -->
-<div x-show="sidebarOpen" class="fixed inset-0 z-20 bg-black bg-opacity-50 transition-opacity md:hidden" @click="sidebarOpen = false" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+<div x-show="sidebarOpen" class="fixed inset-0 z-[60] bg-black bg-opacity-50 transition-opacity md:hidden" @click="sidebarOpen = false" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
 </div>
 
 <!-- [BAGIAN 2] Sidebar Utama -->
-<aside class="fixed inset-y-0 left-0 z-30 flex w-64 transform flex-col bg-white text-gray-900 border-r border-slate-200 transition-all duration-300 ease-in-out -translate-x-full md:translate-x-0 shadow-xl" :class="{ 'translate-x-0': sidebarOpen }" x-cloak>
+<aside class="fixed inset-y-0 left-0 z-[70] flex w-64 transform flex-col bg-white text-gray-900 border-r border-slate-200 transition-all duration-300 ease-in-out -translate-x-full md:translate-x-0 shadow-xl" :class="{ 'translate-x-0': sidebarOpen }" x-cloak>
 
     <!-- Logo dan Nama Aplikasi -->
     <div class="flex h-20 flex-shrink-0 items-center justify-center border-b border-slate-200 bg-white/95 backdrop-blur-sm">
@@ -420,7 +420,7 @@ KOMPONEN NAVIGASI HIBRIDA LENGKAP - PROFESIONAL
     $dockInactiveClass = 'text-slate-500';
 @endphp
 
-<footer class="fixed bottom-0 left-0 z-50 w-full border-t border-slate-200 bg-white/95 backdrop-blur supports-backdrop-blur:bg-white/80 md:hidden pb-[env(safe-area-inset-bottom)]">
+<footer class="fixed bottom-0 left-0 z-40 w-full border-t border-slate-200 bg-white/95 backdrop-blur supports-backdrop-blur:bg-white/80 md:hidden pb-[env(safe-area-inset-bottom)]">
     <nav class="mx-auto max-w-screen-md">
         <ul class="flex items-stretch justify-between gap-1 px-2">
             @foreach($dockItems as $item)

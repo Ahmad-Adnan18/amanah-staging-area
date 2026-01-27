@@ -15,7 +15,7 @@ class NotifyUpcomingSchedule extends Command
      *
      * @var string
      */
-    protected $signature = 'schedule:notify-teachers';
+    protected $signature = 'schedule:notify-upcoming';
 
     /**
      * The console command description.
@@ -32,14 +32,19 @@ class NotifyUpcomingSchedule extends Command
         $now = Carbon::now('Asia/Jakarta');
         
         // Kita cek untuk jadwal 10 menit ke depan
+        // Format H:i (misal: 07:00, 07:45)
         $targetTime = $now->copy()->addMinutes(10)->format('H:i');
         
-        // Logika Hari (Sama dengan DashboardController)
+        // [TESTING ONLY] Hardcode DIHAPUS, kembali ke real-time
+        // $targetTime = '07:00';
+        
+        // Logika Hari (Sesuai DashboardController)
+        // Sabtu (6) -> 1, Ahad (0) -> 2, Senin (1) -> 3, dst
         $dayMap = [6 => 1, 0 => 2, 1 => 3, 2 => 4, 3 => 5, 4 => 6];
         $currentDayId = $dayMap[$now->dayOfWeek] ?? null;
 
         if (!$currentDayId) {
-            $this->info('Hari ini libur/tidak ada jadwal (Jumat/Minggu diluar mapping).');
+            // Hari libur (Jumat/Minggu diluar mapping jika ada)
             return;
         }
 
@@ -64,7 +69,7 @@ class NotifyUpcomingSchedule extends Command
         }
 
         if (!$upcomingSlot) {
-            $this->info("Tidak ada jam pelajaran yang mulai pukul {$targetTime}");
+            // Bukan waktu notifikasi (misal jam 07:05, targetnya 07:15 -> tidak ada slot mulai jam segitu)
             return;
         }
 
@@ -83,24 +88,27 @@ class NotifyUpcomingSchedule extends Command
                 continue;
             }
 
-            $title = "Waktunya Mengajar! 📚";
-            $body = "Ustadz, 10 menit lagi mengajar {$schedule->subject->nama_pelajaran} di kelas {$schedule->kelas->nama_kelas} ({$schedule->room->name}).";
+            $title = "10 Menit Lagi Mengajar! ⏰";
+            $body = "Siap-siap Ustadz: {$schedule->subject->nama_pelajaran} di kelas {$schedule->kelas->nama_kelas} ({$schedule->room->name}).";
             
             try {
-                $fcmService->broadcast(
+                // Gunakan sendNotification untuk single user
+                $fcmService->sendNotification(
+                    $teacher->user->fcm_token,
                     $title, 
                     $body, 
-                    $teacher->user->fcm_token,
-                    ['notification_id' => 'schedule-' . $schedule->id]
+                    ['type' => 'upcoming_schedule', 'schedule_id' => (string) $schedule->id]
                 );
                 
-                $this->info("Notif dikirim ke: {$teacher->user->name}");
+                $this->info("Notif upcoming dikirim ke: {$teacher->user->name}");
                 $count++;
             } catch (\Exception $e) {
-                Log::error("Gagal kirim notif jadwal ke {$teacher->user->name}: " . $e->getMessage());
+                Log::error("Gagal kirim notif upcoming ke {$teacher->user->name}: " . $e->getMessage());
             }
         }
 
-        $this->info("Selesai. Terkirim: {$count}");
+        if ($count > 0) {
+            $this->info("Selesai. Terkirim: {$count}");
+        }
     }
 }

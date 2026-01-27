@@ -119,7 +119,7 @@
             @include('layouts.navigation')
 
             <main class="md:ml-64">
-                <header class="md:hidden sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-slate-200 header-safe-area">
+                <header class="md:hidden sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-slate-200 header-safe-area">
                     <div class="px-4 sm:px-6 lg:px-8">
                         <div class="flex h-16 items-center justify-between">
                             <a href="{{ route('dashboard') }}" class="flex items-center gap-2">

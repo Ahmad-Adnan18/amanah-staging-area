@@ -349,3 +349,64 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+// FILE: routes/web.php (TEMPORARY TEST ROUTE)
+// Letakkan ini di bagian paling bawah file
+
+Route::middleware(['auth'])->get('/dashboard-test-notif', function () {
+    // 1. Buat Mock Data Jadwal (Seolah-olah User adalah Guru)
+    $isTeacher = true; // Paksa jadi guru
+    $isHoliday = false; // Bukan hari libur
+
+    // 2. Tentukan Waktu Jadwal (5 Menit dari Sekarang)
+    // Biar notifikasinya valid "akan datang"
+    $now = \Carbon\Carbon::now();
+    $futureTime = $now->copy()->addMinutes(5); // 5 menit lagi
+    $slotJam = 1; // Anggap jam ke-1
+
+    // Format Data Jadwal untuk Dashboard
+    $scheduleSlots = [];
+    $todayDateString = $now->translatedFormat('l, d F Y');
+
+    // Buat Dummy Schedule Object
+    // Kita pakai standard object saja biar gak perlu insert DB
+    $dummySchedule = new \stdClass();
+    $dummySchedule->id = 9999; // ID Acak
+    $dummySchedule->subject = (object) ['nama_pelajaran' => 'TEST NOTIFIKASI'];
+    $dummySchedule->kelas = (object) ['nama_kelas' => 'X-TEST'];
+    $dummySchedule->room = (object) ['name' => 'Lab Komputer'];
+    
+    // Masukkan ke slot jam ke-1
+    $scheduleSlots[$slotJam] = $dummySchedule;
+
+    // Data Statistik Dummy
+    $totalSantri = 100;
+    $totalSantriPutra = 50;
+    $totalSantriPutri = 50;
+    $totalIzinAktif = 0;
+    $jumlahTerlambat = 0;
+
+    // Override Jam Map untuk Jam ke-1 agar sesuai waktu 5 menit lagi
+    $jamMap = [
+        1 => [
+            'start' => $futureTime->format('H:i'), 
+            'end' => $futureTime->copy()->addMinutes(45)->format('H:i'), 
+            'label' => $futureTime->format('H:i') . ' - ' . $futureTime->copy()->addMinutes(45)->format('H:i')
+        ],
+        // Slot lain dummy
+        2 => ['start' => '08:00', 'end' => '08:45', 'label' => '08:00 - 08:45'],
+    ];
+
+    return view('dashboard', compact(
+        'isTeacher',
+        'isHoliday',
+        'scheduleSlots',
+        'todayDateString',
+        'jamMap',
+        'totalSantri',
+        'totalSantriPutra',
+        'totalSantriPutri',
+        'totalIzinAktif',
+        'jumlahTerlambat'
+    ));
+})->name('test.notif');

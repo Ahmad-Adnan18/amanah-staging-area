@@ -347,10 +347,10 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            installBtn ? .classList.remove('hidden');
+            installBtn?.classList.remove('hidden');
         });
 
-        installBtn ? .addEventListener('click', async () => {
+        installBtn?.addEventListener('click', async () => {
             if (!deferredPrompt) return;
             const {
                 outcome

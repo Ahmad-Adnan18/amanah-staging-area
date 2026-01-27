@@ -19,5 +19,9 @@ Artisan::command('inspire', function () {
 */
 
 // TAMBAHKAN PENJADWALAN ANDA DI SINI
+use Illuminate\Support\Facades\Schedule;
+
+// TAMBAHKAN PENJADWALAN ANDA DI SINI
 Schedule::command('app:update-status-command')->daily();
-Schedule::command('schedule:notify-teachers')->everyMinute();
+Schedule::command('schedule:notify-teachers')->dailyAt('06:00')->timezone('Asia/Jakarta');
+Schedule::command('schedule:notify-upcoming')->everyMinute()->timezone('Asia/Jakarta');
