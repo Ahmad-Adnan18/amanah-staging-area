@@ -234,101 +234,169 @@ document.addEventListener('DOMContentLoaded', () => {
 // =================================================================
 // LOGIKA PUSH NOTIFICATION (FCM) - PRODUCTION READY
 // =================================================================
+// --- 1. TAMBAHAN IMPORT FIREBASE (WEB) ---
+import { initializeApp } from "firebase/app";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+
+// ... (Import lain tetap)
+
+// =================================================================
+// KONFIGURASI FIREBASE WEB (DARI USER)
+// =================================================================
+const firebaseConfig = {
+    apiKey: "AIzaSyA0jXdEMSnmv4SQvxop17SqLKt4m8ab_UE",
+    authDomain: "sistem-perizinan-santri-ec4de.firebaseapp.com",
+    projectId: "sistem-perizinan-santri-ec4de",
+    storageBucket: "sistem-perizinan-santri-ec4de.firebasestorage.app",
+    messagingSenderId: "1065097278114",
+    appId: "1:1065097278114:web:c22400c714f0d805ffddfb"
+};
+
+// VAPID KEY (Required for Web Push)
+// TODO: User harus mengisi ini dari Firebase Console -> Project Settings -> Cloud Messaging -> Web Configuration
+const VAPID_KEY = "BNEIgcr7NvMEGIiGFWZBZjfyPpd5lDcV8tgcJVnvw5iY2Kboaa06JwSqFPz15RMAZuWaO56Rka8Icd3yqnWhvPI";
+
+// =================================================================
+// LOGIKA PUSH NOTIFICATION (HYBRID: NATIVE + WEB)
+// =================================================================
 const initPushNotifications = async () => {
-    const isPushSupported = 'Capacitor' in window;
-    if (!isPushSupported) return;
+    const isNative = 'Capacitor' in window;
 
-    console.log('FCM: Initializing...');
-
-    try {
-        // 1. Bersihkan listener lama
-        await PushNotifications.removeAllListeners();
-
-        // 2. Listener Token
-        PushNotifications.addListener('registration', async (token) => {
-            console.log('FCM Token:', token.value);
-
-            // Kirim ke Backend Laravel
-            try {
-                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                };
-                if (csrfToken) headers['X-CSRF-TOKEN'] = csrfToken;
-
-                await fetch('/notifications/fcm-token', {
-                    method: 'POST',
-                    headers: headers,
-                    body: JSON.stringify({ token: token.value })
-                });
-                console.log('Token sent to backend');
-            } catch (err) {
-                console.error('Failed sending token to backend:', err);
-            }
-        });
-
-        // 3. Listener Error
-        PushNotifications.addListener('registrationError', (error) => {
-            console.error('Push Registration Error:', error);
-        });
-
-        // 4. Listener Notifikasi Masuk (Foreground)
-        PushNotifications.addListener('pushNotificationReceived', async (notification) => {
-            console.log('Push received:', notification);
-            // Tampilkan Local Notification
-            await LocalNotifications.schedule({
-                notifications: [{
-                    title: notification.title || 'Info',
-                    body: notification.body || '',
-                    id: new Date().getTime(),
-                    schedule: { at: new Date(new Date().getTime() + 100) },
-                    sound: 'default',
-                    actionTypeId: '',
-                    extra: null
-                }]
-            });
-        });
-
-        // 5. Listener Notifikasi Diklik
-        PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
-            console.log('Push action performed:', notification);
-            const notifId = notification.notification.data.notification_id;
-            if (notifId) {
-                window.location.href = `/notifications/${notifId}`;
-            } else {
-                window.location.href = '/notifications';
-            }
-        });
-
-        // 6. Request Permission & Register
-        // Helper: Timeout Wrapper untuk mencegah hanging
-        const withTimeout = (promise, ms = 3000) => {
-            return Promise.race([
-                promise,
-                new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), ms))
-            ]);
-        };
-
-        let permStatus;
+    // ----------------------------------------------------------------
+    // JALUR 1: NATIVE (ANDROID APK)
+    // ----------------------------------------------------------------
+    if (isNative) {
+        console.log('FCM: Initializing Native Mode...');
         try {
-            permStatus = await withTimeout(PushNotifications.checkPermissions(), 5000);
-        } catch (e) {
-            console.warn('Check Permission Timeout, attempting request...');
-        }
+            // 1. Bersihkan listener lama
+            await PushNotifications.removeAllListeners();
 
-        if (!permStatus || permStatus.receive === 'prompt') {
-            permStatus = await PushNotifications.requestPermissions();
-        }
+            // [FIX] Buat Channel Wajib untuk Android 8+
+            // Channel ID diganti 'jadwal_mengajar_v2' agar settingan suara TER-UPDATE di HP user
+            await PushNotifications.createChannel({
+                id: 'jadwal_mengajar_v2',
+                name: 'Jadwal Mengajar',
+                description: 'Notifikasi jadwal pelajaran dengan suara khusus',
+                importance: 5,
+                visibility: 1,
+                vibration: true,
+                sound: 'notif_schedule.wav' // Custom Sound di res/raw/
+            });
 
-        if (permStatus.receive === 'granted') {
-            await PushNotifications.register();
-        } else {
-            console.log('Push notification permission denied');
-        }
+            // 2. Listener Token
+            PushNotifications.addListener('registration', async (token) => {
+                console.log('FCM Native Token:', token.value);
+                await sendTokenToBackend(token.value);
+            });
 
-    } catch (error) {
-        console.error('FCM Setup Error:', error);
+            // 3. Listener Error
+            PushNotifications.addListener('registrationError', (error) => {
+                console.error('Push Registration Error:', error);
+            });
+
+            // 4. Listener Notifikasi Masuk (Foreground)
+            PushNotifications.addListener('pushNotificationReceived', async (notification) => {
+                console.log('Push received:', notification);
+                await LocalNotifications.schedule({
+                    notifications: [{
+                        title: notification.title || 'Info',
+                        body: notification.body || '',
+                        id: new Date().getTime(),
+                        schedule: { at: new Date(new Date().getTime() + 100) },
+                        sound: 'default',
+                    }]
+                });
+            });
+
+            // 5. Listener Notifikasi Diklik
+            PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
+                const notifId = notification.notification.data.notification_id;
+                if (notifId) window.location.href = `/notifications/${notifId}`;
+                else window.location.href = '/notifications';
+            });
+
+            // 6. Request Permission
+            let permStatus = await PushNotifications.checkPermissions();
+            if (permStatus.receive === 'prompt') {
+                permStatus = await PushNotifications.requestPermissions();
+            }
+            if (permStatus.receive === 'granted') {
+                await PushNotifications.register();
+            }
+        } catch (error) {
+            console.error('FCM Native Setup Error:', error);
+        }
+    }
+
+    // ----------------------------------------------------------------
+    // JALUR 2: WEB (iOS Safari PWA / Chrome Desktop)
+    // ----------------------------------------------------------------
+    else {
+        console.log('FCM: Initializing Web Mode...');
+        try {
+            // Cek apakah browser support SW & Push
+            if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+                console.log('Push Messaging not supported');
+                return;
+            }
+
+            const app = initializeApp(firebaseConfig);
+            const messaging = getMessaging(app);
+
+            // Request Permission (Browser style)
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                console.log('Notification permission granted.');
+
+                // Get Token
+                if (VAPID_KEY === "YOUR_VAPID_KEY_HERE") {
+                    console.warn("VAPID KEY Belum diisi! Web Push tidak akan jalan.");
+                    return;
+                }
+
+                const token = await getToken(messaging, {
+                    vapidKey: VAPID_KEY
+                });
+
+                if (token) {
+                    console.log('FCM Web Token:', token);
+                    await sendTokenToBackend(token);
+                } else {
+                    console.log('No registration token available. Request permission to generate one.');
+                }
+            } else {
+                console.log('Unable to get permission to notify.');
+            }
+
+            // Handle Foreground Message
+            onMessage(messaging, (payload) => {
+                console.log('Message received. ', payload);
+                const { title, body } = payload.notification;
+                // Tampilkan Toast / Custom UI
+                new Notification(title, { body: body, icon: '/logo.png' });
+            });
+
+        } catch (error) {
+            console.error('FCM Web Setup Error:', error);
+        }
+    }
+};
+
+// Helper: Kirim Token ke Laravel
+const sendTokenToBackend = async (tokenValue) => {
+    try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const headers = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
+        if (csrfToken) headers['X-CSRF-TOKEN'] = csrfToken;
+
+        await fetch('/notifications/fcm-token', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({ token: tokenValue })
+        });
+        console.log('Token sent to backend');
+    } catch (err) {
+        console.error('Failed sending token to backend:', err);
     }
 };
 

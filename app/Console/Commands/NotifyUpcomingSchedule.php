@@ -91,6 +91,22 @@ class NotifyUpcomingSchedule extends Command
             $title = "10 Menit Lagi Mengajar! ⏰";
             $body = "Siap-siap Ustadz: {$schedule->subject->nama_pelajaran} di kelas {$schedule->kelas->nama_kelas} ({$schedule->room->name}).";
             
+            // SIMPAN KE DATABASE
+            try {
+                $sender = \App\Models\User::where('role', 'admin')->first() ?? \App\Models\User::first();
+                \App\Models\Notification::create([
+                    'title' => $title,
+                    'message' => $body,
+                    'type' => 'urgent', // Urgent karena pengingat
+                    'user_id' => $teacher->user->id,
+                    'created_by' => $sender ? $sender->id : 1,
+                    'published_at' => now(),
+                    'expires_at' => now()->addHours(24), 
+                ]);
+            } catch (\Exception $e) {
+                Log::error("Failed saving upcoming notification to DB: " . $e->getMessage());
+            }
+
             try {
                 // Gunakan sendNotification untuk single user
                 $fcmService->sendNotification(

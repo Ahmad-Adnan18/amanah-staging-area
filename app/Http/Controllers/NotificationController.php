@@ -161,7 +161,8 @@ class NotificationController extends Controller
             abort(403, 'Anda tidak memiliki akses untuk mengelola notifikasi.');
         }
 
-        $notifications = Notification::with('creator:id,name')
+        $notifications = Notification::whereNull('user_id') // Hanya tampilkan notifikasi publik/broadcast
+            ->with('creator:id,name')
             ->orderByDesc('created_at')
             ->paginate(15);
 

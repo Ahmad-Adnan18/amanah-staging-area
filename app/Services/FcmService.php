@@ -49,6 +49,28 @@ class FcmService
                         'body' => $body,
                     ],
                     'data' => $data,
+                    // Tambahan Wajib untuk Real-Time Notif
+                    'android' => [
+                        'priority' => 'HIGH',
+                        'notification' => [
+                            'channel_id' => 'jadwal_mengajar_v2', // Match channel baru
+                            'notification_priority' => 'PRIORITY_HIGH',
+                            'sound' => 'notif_schedule.wav', // Custom Sound
+                            'icon' => 'ic_stat_kunka', // Custom Icon
+                            'default_sound' => false, // Jangan pakai default
+                        ],
+                    ],
+                    'apns' => [
+                        'headers' => [
+                            'apns-priority' => '10', // 10 = High Priority
+                        ],
+                        'payload' => [
+                            'aps' => [
+                                'sound' => 'default',
+                                'content-available' => 1,
+                            ],
+                        ],
+                    ],
                 ],
             ];
 

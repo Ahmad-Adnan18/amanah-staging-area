@@ -58,6 +58,11 @@
             </intent-filter>
         </activity>
 
+        <!-- Default Notification Icon (Monochrome) -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_kunka" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

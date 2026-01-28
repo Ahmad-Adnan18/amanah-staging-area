@@ -25,3 +25,8 @@ use Illuminate\Support\Facades\Schedule;
 Schedule::command('app:update-status-command')->daily();
 Schedule::command('schedule:notify-teachers')->dailyAt('06:00')->timezone('Asia/Jakarta');
 Schedule::command('schedule:notify-upcoming')->everyMinute()->timezone('Asia/Jakarta');
+
+// Bersihkan notifikasi yang sudah expired lebih dari 3 hari (agar DB tidak bengkak)
+Schedule::call(function () {
+    \App\Models\Notification::where('expires_at', '<', now()->subDays(3))->delete();
+})->daily();

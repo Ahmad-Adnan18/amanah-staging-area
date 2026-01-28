@@ -117,7 +117,25 @@ class NotifyTeachersOfSchedule extends Command
             $bodyLines[] = "Selamat mengajar! 🚀";
             $body = implode("\n", $bodyLines);
 
-            // 5. KIRIM VIA FCM
+            // 5. SIMPAN KE DATABASE (Agar muncul di menu Notifikasi)
+            try {
+                // Cari user admin sebagai sender (atau user pertama)
+                $sender = \App\Models\User::where('role', 'admin')->first() ?? \App\Models\User::first();
+                
+                \App\Models\Notification::create([
+                    'title' => $title,
+                    'message' => $body,
+                    'type' => 'info',
+                    'user_id' => $teacher->user->id, // Personal Target
+                    'created_by' => $sender ? $sender->id : 1,
+                    'published_at' => now(),
+                    'expires_at' => now()->addHours(24), // Expire dalam 24 jam
+                ]);
+            } catch (\Exception $e) {
+                Log::error("Failed saving notification to DB: " . $e->getMessage());
+            }
+
+            // 6. KIRIM VIA FCM
             try {
                 $status = $fcmService->sendNotification(
                     $teacher->user->fcm_token,

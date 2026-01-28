@@ -17,6 +17,7 @@ class Notification extends Model
         'message',
         'type',
         'target_roles',
+        'user_id', // Personal Target
         'created_by',
         'published_at',
         'expires_at',
@@ -29,6 +30,14 @@ class Notification extends Model
     ];
 
     /**
+     * Relasi ke user target (Personal)
+     */
+    public function targetUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
      * Relasi ke user yang membuat notifikasi
      */
     public function creator(): BelongsTo
@@ -36,27 +45,14 @@ class Notification extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    /**
-     * Relasi many-to-many ke user yang sudah membaca
-     */
-    public function readers(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'notification_reads')
-            ->withPivot('read_at');
-    }
+    // ... (readers relation) ...
 
-    /**
-     * Scope untuk notifikasi yang sudah dipublish
-     */
     public function scopePublished($query)
     {
         return $query->whereNotNull('published_at')
             ->where('published_at', '<=', now());
     }
 
-    /**
-     * Scope untuk notifikasi yang belum expired
-     */
     public function scopeNotExpired($query)
     {
         return $query->where(function ($q) {
@@ -65,21 +61,17 @@ class Notification extends Model
         });
     }
 
-    /**
-     * Scope untuk notifikasi yang bisa dilihat oleh role tertentu
-     */
     public function scopeForRole($query, string $role)
     {
         return $query->where(function ($q) use ($role) {
-            // Jika target_roles null, berarti untuk semua role
             $q->whereNull('target_roles')
-              // Atau jika role user ada di dalam target_roles
               ->orWhereJsonContains('target_roles', $role);
         });
     }
 
     /**
      * Scope untuk notifikasi yang visible untuk user saat ini
+     * Support Global (Role) OR Personal (User ID)
      */
     public function scopeVisibleToCurrentUser($query)
     {
@@ -87,7 +79,18 @@ class Notification extends Model
         
         return $query->published()
             ->notExpired()
-            ->forRole($user->role);
+            ->where(function($q) use ($user) {
+                // 1. Cek Role (Global) - HANYA JIKA user_id NULL
+                $q->where(function($sub) use ($user) {
+                    $sub->whereNull('user_id')
+                        ->where(function($roleQ) use ($user) {
+                             $roleQ->whereNull('target_roles')
+                                   ->orWhereJsonContains('target_roles', $user->role);
+                        });
+                })
+                // 2. ATAU Personal Message (User ID match)
+                ->orWhere('user_id', $user->id);
+            });
     }
 
     /**
